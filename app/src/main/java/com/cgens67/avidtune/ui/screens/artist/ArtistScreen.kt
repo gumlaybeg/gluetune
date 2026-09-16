@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -23,17 +25,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -43,14 +42,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -72,14 +68,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -105,7 +100,6 @@ import com.cgens67.gluetune.LocalDatabase
 import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
 import com.cgens67.gluetune.LocalPlayerConnection
 import com.cgens67.gluetune.R
-import com.cgens67.gluetune.constants.AppBarHeight
 import com.cgens67.gluetune.constants.EnableArtistCanvasKey
 import com.cgens67.gluetune.db.entities.ArtistEntity
 import com.cgens67.gluetune.extensions.toMediaItem
@@ -129,7 +123,6 @@ import com.cgens67.gluetune.ui.menu.YouTubeArtistMenu
 import com.cgens67.gluetune.ui.menu.YouTubePlaylistMenu
 import com.cgens67.gluetune.ui.menu.YouTubeSongMenu
 import com.cgens67.gluetune.ui.theme.PlayerColorExtractor
-import com.cgens67.gluetune.ui.utils.backToMain
 import com.cgens67.gluetune.ui.utils.resize
 import com.cgens67.gluetune.utils.rememberPreference
 import com.cgens67.gluetune.viewmodels.ArtistViewModel
@@ -173,6 +166,14 @@ fun ArtistScreen(
 
     val lazyListState = rememberLazyListState()
     val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    // Dynamic responsive heights based on orientation
+    val headerHeight = if (isLandscape) 220.dp else 420.dp
+    val spacerHeight = if (isLandscape) 150.dp else 300.dp
+    val headerThresholdDp = if (isLandscape) 180.dp else 380.dp
+    val headerHeightPx = with(density) { headerThresholdDp.toPx() }
 
     // Gradient colors for theme & background
     var gradientColors by remember { mutableStateOf<List<Color>>(emptyList()) }
@@ -196,15 +197,17 @@ fun ArtistScreen(
         }
     }
 
-    // Skeleton loading state
-    var isFetching by remember { mutableStateOf(true) }
+    // Skeleton loading state: don't flash shimmer if data is already available
+    var isFetching by rememberSaveable(artistPage != null) {
+        mutableStateOf(artistPage == null)
+    }
     LaunchedEffect(artistPage) {
         if (artistPage != null) {
             isFetching = false
         }
     }
     LaunchedEffect(Unit) {
-        delay(2500) // 2.5 seconds timeout for shimmer
+        delay(2500)
         isFetching = false
     }
 
@@ -243,29 +246,49 @@ fun ArtistScreen(
         }
     }
 
-    // View calculations for collapsing header effect
-    val headerHeightPx = with(density) { 380.dp.toPx() }
-    val scrollOffset = lazyListState.firstVisibleItemScrollOffset
-    val firstVisibleIndex = lazyListState.firstVisibleItemIndex
+    // Reactive scroll progress tracking
+    val scrollOffset by remember {
+        derivedStateOf {
+            if (lazyListState.firstVisibleItemIndex > 0) {
+                headerHeightPx
+            } else {
+                lazyListState.firstVisibleItemScrollOffset.toFloat()
+            }
+        }
+    }
 
-    // Background parallax effect
+    // Parallax & Fade transitions
     val imageTranslationY by remember {
         derivedStateOf {
-            if (firstVisibleIndex == 0) scrollOffset * 0.5f else headerHeightPx * 0.5f
+            -scrollOffset * 0.4f
         }
     }
-    
-    // Top Bar Alpha (Fades in when scrolled past header)
-    val topBarAlpha by remember {
+    val imageAlpha by remember {
         derivedStateOf {
-            if (firstVisibleIndex > 0) 1f
-            else (scrollOffset / (headerHeightPx * 0.7f)).coerceIn(0f, 1f)
+            (1f - (scrollOffset / (headerHeightPx * 0.85f))).coerceIn(0f, 1f)
         }
     }
+
+    val topBarProgress by remember {
+        derivedStateOf {
+            if (lazyListState.firstVisibleItemIndex > 0) {
+                1f
+            } else {
+                (lazyListState.firstVisibleItemScrollOffset / (headerHeightPx * 0.65f)).coerceIn(0f, 1f)
+            }
+        }
+    }
+
     val topBarContainerColor by animateColorAsState(
-        targetValue = dominantColor.copy(alpha = topBarAlpha * 0.95f),
-        animationSpec = tween(300),
+        targetValue = dominantColor.copy(alpha = topBarProgress * 0.95f),
+        animationSpec = tween(250),
         label = "topBarColor"
+    )
+
+    val buttonBgAlpha by animateFloatAsState(
+        targetValue = if (topBarProgress > 0.8f) 0f else 0.6f,
+        animationSpec = tween(250),
+        label = "buttonBgAlpha"
     )
 
     Box(
@@ -278,10 +301,10 @@ fun ArtistScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(420.dp)
+                    .height(headerHeight)
                     .graphicsLayer {
                         translationY = imageTranslationY
-                        alpha = 1f - (scrollOffset / (headerHeightPx * 1.2f)).coerceIn(0f, 1f)
+                        alpha = imageAlpha
                     }
             ) {
                 if (isFetching) {
@@ -306,7 +329,7 @@ fun ArtistScreen(
                     }
                 }
 
-                // Smooth gradient overlay to blend into the list
+                // Smooth gradient overlay to blend into the sheet
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -334,9 +357,9 @@ fun ArtistScreen(
                 .asPaddingValues(),
             modifier = Modifier.fillMaxSize()
         ) {
-            // Transparent spacer to push content below the parallax image
+            // Transparent spacer to push content below parallax header
             item {
-                Spacer(modifier = Modifier.height(300.dp))
+                Spacer(modifier = Modifier.height(spacerHeight))
             }
 
             if (isFetching && artistPage == null) {
@@ -448,7 +471,7 @@ fun ArtistScreen(
                                 lineHeight = 24.sp
                             )
 
-                            // Action Buttons
+                            // Action Buttons (Proper padding and sizing so text never truncates)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
@@ -491,7 +514,11 @@ fun ArtistScreen(
                                             }
                                         }
                                     },
-                                    modifier = Modifier.weight(1f).height(52.dp).semantics { role = Role.Button },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(48.dp)
+                                        .semantics { role = Role.Button },
+                                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp),
                                     shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
                                     colors = ToggleButtonDefaults.toggleButtonColors(
                                         containerColor = if (isSubscribed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
@@ -501,12 +528,13 @@ fun ArtistScreen(
                                     Icon(
                                         painter = painterResource(if (isSubscribed) R.drawable.subscribed else R.drawable.subscribe),
                                         contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(18.dp)
                                     )
-                                    Spacer(Modifier.width(8.dp))
+                                    Spacer(Modifier.width(6.dp))
                                     Text(
                                         text = stringResource(if (isSubscribed) R.string.subscribed else R.string.subscribe),
-                                        style = MaterialTheme.typography.labelLarge,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.SemiBold,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
@@ -519,7 +547,11 @@ fun ArtistScreen(
                                         onCheckedChange = {
                                             playerConnection.playQueue(YouTubeQueue(radioEndpoint))
                                         },
-                                        modifier = Modifier.weight(1f).height(52.dp).semantics { role = Role.Button },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(48.dp)
+                                            .semantics { role = Role.Button },
+                                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp),
                                         shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(),
                                         colors = ToggleButtonDefaults.toggleButtonColors(
                                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -529,12 +561,13 @@ fun ArtistScreen(
                                         Icon(
                                             painter = painterResource(R.drawable.radio),
                                             contentDescription = null,
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(18.dp)
                                         )
-                                        Spacer(Modifier.width(8.dp))
+                                        Spacer(Modifier.width(6.dp))
                                         Text(
                                             text = stringResource(R.string.radio),
-                                            style = MaterialTheme.typography.labelLarge,
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.SemiBold,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
                                         )
@@ -548,7 +581,11 @@ fun ArtistScreen(
                                         onCheckedChange = {
                                             playerConnection.playQueue(YouTubeQueue(shuffleEndpoint))
                                         },
-                                        modifier = Modifier.weight(1f).height(52.dp).semantics { role = Role.Button },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(48.dp)
+                                            .semantics { role = Role.Button },
+                                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp),
                                         shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
                                         colors = ToggleButtonDefaults.toggleButtonColors(
                                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -558,12 +595,13 @@ fun ArtistScreen(
                                         Icon(
                                             painter = painterResource(R.drawable.shuffle),
                                             contentDescription = stringResource(R.string.shuffle),
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(18.dp)
                                         )
-                                        Spacer(Modifier.width(8.dp))
+                                        Spacer(Modifier.width(6.dp))
                                         Text(
                                             text = stringResource(R.string.shuffle),
-                                            style = MaterialTheme.typography.labelLarge,
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.SemiBold,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
                                         )
@@ -673,7 +711,7 @@ fun ArtistScreen(
                             NavigationTitle(
                                 title = getTranslatedArtistSectionTitle(section.title),
                                 onClick = section.moreEndpoint?.let {
-                                    { navController.navigate("artist/${viewModel.artistId}/items?browseId=${it.browseId}?params=${it.params}") }
+                                    { navController.navigate("artist/${viewModel.artistId}/items?browseId=${it.browseId}&params=${it.params}") }
                                 },
                             )
                         }
@@ -805,9 +843,9 @@ fun ArtistScreen(
         TopAppBar(
             title = {
                 AnimatedVisibility(
-                    visible = topBarAlpha > 0.8f,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    visible = topBarProgress > 0.8f,
+                    enter = fadeIn(tween(250)),
+                    exit = fadeOut(tween(200))
                 ) {
                     Text(
                         text = artistName,
@@ -825,12 +863,12 @@ fun ArtistScreen(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (topBarAlpha > 0.8f) 0f else 0.6f))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = buttonBgAlpha))
                 ) {
                     Icon(
                         painterResource(R.drawable.arrow_back),
                         contentDescription = null,
-                        tint = if (topBarAlpha > 0.8f) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             },
@@ -847,12 +885,12 @@ fun ArtistScreen(
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (topBarAlpha > 0.8f) 0f else 0.6f))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = buttonBgAlpha))
                 ) {
                     Icon(
                         painterResource(R.drawable.link),
                         contentDescription = null,
-                        tint = if (topBarAlpha > 0.8f) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             },
