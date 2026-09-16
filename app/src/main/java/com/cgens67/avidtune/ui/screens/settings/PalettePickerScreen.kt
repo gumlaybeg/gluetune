@@ -717,20 +717,18 @@ private fun ThemePreviewCard(
     )
 
     val backgroundColor = if (isDarkTheme) {
-        Color(0xFF1C1C1E)
+        Color(0xFF16181D)
     } else {
-        animatedTertiary.copy(alpha = 0.15f)
+        animatedTertiary.copy(alpha = 0.12f)
     }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(cardHeight)
-            .shadow(16.dp, RoundedCornerShape(24.dp)),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = backgroundColor
-        ),
+            .shadow(16.dp, RoundedCornerShape(28.dp)),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -738,177 +736,183 @@ private fun ThemePreviewCard(
                 val w = size.width
                 val h = size.height
 
-                val gradientBrush = Brush.radialGradient(
-                    colors = listOf(
-                        animatedPrimary.copy(alpha = 0.2f),
-                        Color.Transparent
+                // Atmospheric background glow (Sun / Horizon)
+                val sunCenter = Offset(w * 0.72f, h * 0.32f)
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            animatedTertiary.copy(alpha = 0.45f),
+                            animatedTertiary.copy(alpha = 0.12f),
+                            Color.Transparent
+                        ),
+                        center = sunCenter,
+                        radius = h * 0.55f
                     ),
-                    center = Offset(w * 0.5f, h * 0.5f),
-                    radius = w * 0.7f
+                    radius = h * 0.55f,
+                    center = sunCenter
                 )
-                drawRect(brush = gradientBrush)
 
-                val stroke = h * 0.025f
-                val strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                // Sun disc
+                drawCircle(
+                    color = animatedTertiary.copy(alpha = 0.85f),
+                    radius = h * 0.11f,
+                    center = sunCenter
+                )
 
-                // Ground Line
+                // Distant rolling hills
+                val hillPath = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(0f, h * 0.78f)
+                    cubicTo(w * 0.25f, h * 0.72f, w * 0.45f, h * 0.82f, w * 0.75f, h * 0.75f)
+                    cubicTo(w * 0.88f, h * 0.72f, w * 0.95f, h * 0.74f, w, h * 0.76f)
+                    lineTo(w, h)
+                    lineTo(0f, h)
+                    close()
+                }
+                drawPath(
+                    path = hillPath,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            animatedSecondary.copy(alpha = 0.25f),
+                            animatedSecondary.copy(alpha = 0.05f)
+                        ),
+                        startY = h * 0.7f,
+                        endY = h
+                    )
+                )
+
+                // Road / Ground line
+                val groundY = h * 0.82f
+                val roadStroke = h * 0.012f
                 drawLine(
                     color = animatedNeutral.copy(alpha = 0.6f),
-                    start = Offset(w * 0.1f, h * 0.85f),
-                    end = Offset(w * 0.9f, h * 0.85f),
-                    strokeWidth = stroke * 1.5f,
-                    cap = strokeCap
+                    start = Offset(w * 0.08f, groundY),
+                    end = Offset(w * 0.92f, groundY),
+                    strokeWidth = roadStroke,
+                    cap = androidx.compose.ui.graphics.StrokeCap.Round
                 )
 
-                // LEFT STICKMAN (Attacker) - Primary Color
-                // Head
-                drawCircle(
-                    color = animatedPrimary,
-                    radius = h * 0.08f,
-                    center = Offset(w * 0.35f, h * 0.35f)
-                )
-                // Torso
-                drawLine(
-                    color = animatedPrimary,
-                    start = Offset(w * 0.35f, h * 0.43f),
-                    end = Offset(w * 0.35f, h * 0.65f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Planted Leg
-                drawLine(
-                    color = animatedPrimary,
-                    start = Offset(w * 0.35f, h * 0.65f),
-                    end = Offset(w * 0.25f, h * 0.85f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Kicking Leg
-                drawLine(
-                    color = animatedPrimary,
-                    start = Offset(w * 0.35f, h * 0.65f),
-                    end = Offset(w * 0.5f, h * 0.55f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Punching Arm
-                drawLine(
-                    color = animatedPrimary,
-                    start = Offset(w * 0.35f, h * 0.5f),
-                    end = Offset(w * 0.55f, h * 0.4f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Back Arm
-                drawLine(
-                    color = animatedPrimary,
-                    start = Offset(w * 0.35f, h * 0.5f),
-                    end = Offset(w * 0.2f, h * 0.55f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
+                // Speed lines behind cyclist
+                val dashPaint = animatedNeutral.copy(alpha = 0.35f)
+                drawLine(dashPaint, Offset(w * 0.14f, groundY - h * 0.06f), Offset(w * 0.22f, groundY - h * 0.06f), roadStroke * 0.8f, androidx.compose.ui.graphics.StrokeCap.Round)
+                drawLine(dashPaint, Offset(w * 0.09f, groundY - h * 0.14f), Offset(w * 0.19f, groundY - h * 0.14f), roadStroke * 0.8f, androidx.compose.ui.graphics.StrokeCap.Round)
+                drawLine(dashPaint, Offset(w * 0.16f, groundY - h * 0.22f), Offset(w * 0.25f, groundY - h * 0.22f), roadStroke * 0.8f, androidx.compose.ui.graphics.StrokeCap.Round)
 
-                // RIGHT STICKMAN (Defender) - Secondary Color
-                // Head (tilted back)
-                drawCircle(
-                    color = animatedSecondary,
-                    radius = h * 0.08f,
-                    center = Offset(w * 0.68f, h * 0.3f)
-                )
-                // Torso (leaning back)
-                drawLine(
-                    color = animatedSecondary,
-                    start = Offset(w * 0.66f, h * 0.38f),
-                    end = Offset(w * 0.72f, h * 0.6f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Planted Leg
-                drawLine(
-                    color = animatedSecondary,
-                    start = Offset(w * 0.72f, h * 0.6f),
-                    end = Offset(w * 0.68f, h * 0.85f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Lifted Leg
-                drawLine(
-                    color = animatedSecondary,
-                    start = Offset(w * 0.72f, h * 0.6f),
-                    end = Offset(w * 0.85f, h * 0.7f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Blocking Arm
-                drawLine(
-                    color = animatedSecondary,
-                    start = Offset(w * 0.69f, h * 0.45f),
-                    end = Offset(w * 0.58f, h * 0.37f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
-                // Flailing Arm
-                drawLine(
-                    color = animatedSecondary,
-                    start = Offset(w * 0.69f, h * 0.45f),
-                    end = Offset(w * 0.8f, h * 0.35f),
-                    strokeWidth = stroke,
-                    cap = strokeCap
-                )
+                // ── BICYCLE & RIDER GEOMETRY ──
+                val wheelRadius = h * 0.12f
+                val frameStroke = h * 0.02f
+                val riderStroke = h * 0.024f
 
-                // IMPACT BURST - Tertiary Color
-                val impactCenter = Offset(w * 0.56f, h * 0.39f)
-                val burstRadius = h * 0.08f
-                for (i in 0 until 8) {
-                    val angle = (i * Math.PI / 4).toFloat()
-                    val startX = impactCenter.x + kotlin.math.cos(angle) * (burstRadius * 0.4f)
-                    val startY = impactCenter.y + kotlin.math.sin(angle) * (burstRadius * 0.4f)
-                    val endX = impactCenter.x + kotlin.math.cos(angle) * burstRadius
-                    val endY = impactCenter.y + kotlin.math.sin(angle) * burstRadius
-                    drawLine(
-                        color = animatedTertiary,
-                        start = Offset(startX, startY),
-                        end = Offset(endX, endY),
-                        strokeWidth = stroke * 0.8f,
-                        cap = strokeCap
+                val rearHub = Offset(w * 0.36f, groundY - wheelRadius)
+                val frontHub = Offset(w * 0.64f, groundY - wheelRadius)
+                val bottomBracket = Offset(w * 0.48f, groundY - wheelRadius * 0.85f)
+                val seatCluster = Offset(w * 0.43f, groundY - wheelRadius * 2.15f)
+                val headTubeTop = Offset(w * 0.58f, groundY - wheelRadius * 2.35f)
+                val handlebar = Offset(w * 0.61f, groundY - wheelRadius * 2.55f)
+                val saddle = Offset(w * 0.41f, groundY - wheelRadius * 2.3f)
+
+                // 1. Wheels (Rear & Front)
+                listOf(rearHub, frontHub).forEach { hub ->
+                    // Outer tire
+                    drawCircle(
+                        color = animatedSecondary,
+                        radius = wheelRadius,
+                        center = hub,
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = frameStroke * 1.1f)
+                    )
+                    // Inner hub
+                    drawCircle(
+                        color = animatedPrimary,
+                        radius = wheelRadius * 0.18f,
+                        center = hub
                     )
                 }
+
+                // 2. Bicycle Frame
+                val frameColor = animatedPrimary
+                // Chainstay (Rear Hub -> BB)
+                drawLine(frameColor, rearHub, bottomBracket, frameStroke, androidx.compose.ui.graphics.StrokeCap.Round)
+                // Seatstay (Rear Hub -> Seat Cluster)
+                drawLine(frameColor, rearHub, seatCluster, frameStroke * 0.85f, androidx.compose.ui.graphics.StrokeCap.Round)
+                // Seat tube (BB -> Seat Cluster)
+                drawLine(frameColor, bottomBracket, seatCluster, frameStroke, androidx.compose.ui.graphics.StrokeCap.Round)
+                // Down tube (BB -> Head Tube)
+                drawLine(frameColor, bottomBracket, headTubeTop, frameStroke, androidx.compose.ui.graphics.StrokeCap.Round)
+                // Top tube (Seat Cluster -> Head Tube)
+                drawLine(frameColor, seatCluster, headTubeTop, frameStroke, androidx.compose.ui.graphics.StrokeCap.Round)
+                // Fork (Head Tube -> Front Hub)
+                drawLine(frameColor, headTubeTop, frontHub, frameStroke, androidx.compose.ui.graphics.StrokeCap.Round)
+                // Handlebars stem & grip
+                drawLine(frameColor, headTubeTop, handlebar, frameStroke * 0.9f, androidx.compose.ui.graphics.StrokeCap.Round)
+                // Saddle
+                drawLine(frameColor, seatCluster, saddle, frameStroke * 1.2f, androidx.compose.ui.graphics.StrokeCap.Round)
+                drawLine(animatedNeutral, Offset(saddle.x - h * 0.035f, saddle.y), Offset(saddle.x + h * 0.035f, saddle.y), frameStroke * 1.3f, androidx.compose.ui.graphics.StrokeCap.Round)
+
+                // 3. Cyclist (Silhouette)
+                val cyclistColor = if (isDarkTheme) Color.White else Color(0xFF1E2024)
+                val hip = Offset(saddle.x + h * 0.015f, saddle.y - h * 0.02f)
+                val shoulder = Offset(w * 0.52f, groundY - wheelRadius * 3.1f)
+                val headCenter = Offset(w * 0.55f, groundY - wheelRadius * 3.65f)
+                val knee = Offset(w * 0.49f, groundY - wheelRadius * 1.6f)
+                val pedal = bottomBracket
+
+                // Torso (leaning forward aerodynamically)
+                drawLine(cyclistColor, hip, shoulder, riderStroke * 1.25f, androidx.compose.ui.graphics.StrokeCap.Round)
+
+                // Head with helmet contour
+                drawCircle(cyclistColor, radius = h * 0.058f, center = headCenter)
+                // Helmet visor/tail
+                drawLine(
+                    color = animatedPrimary,
+                    start = Offset(headCenter.x - h * 0.065f, headCenter.y - h * 0.035f),
+                    end = Offset(headCenter.x + h * 0.075f, headCenter.y - h * 0.01f),
+                    strokeWidth = riderStroke * 0.8f,
+                    cap = androidx.compose.ui.graphics.StrokeCap.Round
+                )
+
+                // Arms reaching handlebars
+                val elbow = Offset(w * 0.57f, groundY - wheelRadius * 2.75f)
+                drawLine(cyclistColor, shoulder, elbow, riderStroke, androidx.compose.ui.graphics.StrokeCap.Round)
+                drawLine(cyclistColor, elbow, handlebar, riderStroke, androidx.compose.ui.graphics.StrokeCap.Round)
+
+                // Legs pedaling
+                drawLine(cyclistColor, hip, knee, riderStroke * 1.15f, androidx.compose.ui.graphics.StrokeCap.Round)
+                drawLine(cyclistColor, knee, pedal, riderStroke, androidx.compose.ui.graphics.StrokeCap.Round)
             }
 
-            // Top left palette dots
+            // Top-left color swatches
             Row(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(16.dp),
+                    .padding(20.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf(animatedPrimary, animatedSecondary, animatedTertiary, animatedNeutral).forEach { color ->
                     Box(
                         modifier = Modifier
-                            .size(16.dp)
-                            .shadow(2.dp, CircleShape)
+                            .size(14.dp)
+                            .shadow(3.dp, CircleShape)
                             .clip(CircleShape)
                             .background(color)
-                            .border(1.dp, Color.White.copy(alpha = 0.3f), CircleShape)
+                            .border(1.dp, Color.White.copy(alpha = 0.4f), CircleShape)
                     )
                 }
             }
 
-            // Bottom right palette name
+            // Bottom-right palette badge
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(16.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .padding(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 color = animatedPrimary,
-                shadowElevation = 4.dp
+                shadowElevation = 6.dp
             ) {
                 Text(
                     text = palette.name,
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = palette.onPrimary,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
                 )
             }
         }
