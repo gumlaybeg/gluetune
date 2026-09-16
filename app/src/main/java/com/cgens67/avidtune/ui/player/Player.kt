@@ -532,20 +532,24 @@ fun BottomSheetPlayer(
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row(
-                    modifier =
-                        Modifier
-                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
-                            .padding(top = queueSheetState.collapsedBound)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
+                        .padding(bottom = queueSheetState.collapsedBound),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                     ) {
                         val screenWidth = LocalConfiguration.current.screenWidthDp
-                        val thumbnailSize = (screenWidth * 0.4).dp
+                        val thumbnailSize = (screenWidth * 0.35).dp
 
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.nestedScroll(state.preUpPostDownNestedScrollConnection)
                         ) {
                             Thumbnail(
                                 sliderPositionProvider = { sliderPosition },
@@ -557,70 +561,81 @@ fun BottomSheetPlayer(
                     }
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top)),
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top))
+                            .verticalScroll(rememberScrollState()),
                     ) {
-                        Spacer(Modifier.weight(1f))
-
                         mediaMetadata?.let {
-                            PlayerTitleSection(
-                                mediaMetadata = it,
-                                textBackgroundColor = TextBackgroundColor,
-                                navController = navController,
-                                state = state
-                            )
-                            Spacer(Modifier.height(12.dp))
-                            
-                            if (minimalPlayerDesign) {
-                                PlayerTopActionsV3(
-                                    mediaMetadata = it,
-                                    textBackgroundColor = TextBackgroundColor,
-                                    currentSongLiked = currentSongLiked,
-                                    context = context,
-                                    playerConnection = playerConnection,
-                                    onMoreOptions = {
-                                        menuState.show {
-                                            PlayerMenu(
-                                                mediaMetadata = it,
-                                                navController = navController,
-                                                playerBottomSheetState = state,
-                                                onShowDetailsDialog = { showDetailsDialog = true },
-                                                onDismiss = menuState::dismiss,
-                                            )
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = PlayerHorizontalPadding),
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    PlayerTitleSection(
+                                        mediaMetadata = it,
+                                        textBackgroundColor = TextBackgroundColor,
+                                        navController = navController,
+                                        state = state
+                                    )
+                                }
+                                
+                                Spacer(modifier = Modifier.width(12.dp))
+                                
+                                if (minimalPlayerDesign) {
+                                    PlayerTopActionsV3(
+                                        mediaMetadata = it,
+                                        textBackgroundColor = TextBackgroundColor,
+                                        currentSongLiked = currentSongLiked,
+                                        context = context,
+                                        playerConnection = playerConnection,
+                                        onMoreOptions = {
+                                            menuState.show {
+                                                PlayerMenu(
+                                                    mediaMetadata = it,
+                                                    navController = navController,
+                                                    playerBottomSheetState = state,
+                                                    onShowDetailsDialog = { showDetailsDialog = true },
+                                                    onDismiss = menuState::dismiss,
+                                                )
+                                            }
                                         }
-                                    }
-                                )
-                            } else {
-                                PlayerTopActionsV4(
-                                    mediaMetadata = it,
-                                    textBackgroundColor = TextBackgroundColor,
-                                    currentSongLiked = currentSongLiked,
-                                    onShare = {
-                                        val intent = Intent().apply {
-                                            action = Intent.ACTION_SEND
-                                            type = "text/plain"
-                                            putExtra(
-                                                Intent.EXTRA_TEXT,
-                                                "https://music.youtube.com/watch?v=${it.id}"
-                                            )
+                                    )
+                                } else {
+                                    PlayerTopActionsV4(
+                                        mediaMetadata = it,
+                                        textBackgroundColor = TextBackgroundColor,
+                                        currentSongLiked = currentSongLiked,
+                                        onShare = {
+                                            val intent = Intent().apply {
+                                                action = Intent.ACTION_SEND
+                                                type = "text/plain"
+                                                putExtra(
+                                                    Intent.EXTRA_TEXT,
+                                                    "https://music.youtube.com/watch?v=${it.id}"
+                                                )
+                                            }
+                                            context.startActivity(Intent.createChooser(intent, null))
+                                        },
+                                        onToggleLike = { playerConnection.toggleLike() },
+                                        onMoreOptions = {
+                                            menuState.show {
+                                                PlayerMenu(
+                                                    mediaMetadata = it,
+                                                    navController = navController,
+                                                    playerBottomSheetState = state,
+                                                    onShowDetailsDialog = { showDetailsDialog = true },
+                                                    onDismiss = menuState::dismiss,
+                                                )
+                                            }
                                         }
-                                        context.startActivity(Intent.createChooser(intent, null))
-                                    },
-                                    onToggleLike = { playerConnection.toggleLike() },
-                                    onMoreOptions = {
-                                        menuState.show {
-                                            PlayerMenu(
-                                                mediaMetadata = it,
-                                                navController = navController,
-                                                playerBottomSheetState = state,
-                                                onShowDetailsDialog = { showDetailsDialog = true },
-                                                onDismiss = menuState::dismiss,
-                                            )
-                                        }
-                                    }
-                                )
+                                    )
+                                }
                             }
 
                             Spacer(Modifier.height(12.dp))
@@ -684,8 +699,6 @@ fun BottomSheetPlayer(
                                 )
                             }
                         }
-
-                        Spacer(Modifier.weight(1f))
                     }
                 }
             }
