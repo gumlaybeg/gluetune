@@ -17,6 +17,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.Orientation
@@ -175,17 +176,33 @@ inline fun ListItem(
         else -> defaultContentColor
     }
     val subtitleContentColor = when {
-        isActive -> MaterialTheme.colorScheme.primary.copy(alpha = 0.75f)
-        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
+        isActive -> MaterialTheme.colorScheme.onSurfaceVariant
+        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
         else -> defaultContentColor.copy(alpha = 0.7f)
     }
     val trailingContentColor = when {
         isActive -> MaterialTheme.colorScheme.primary
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-        else -> defaultContentColor
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-    val itemCornerRadius = rememberItemCornerRadius()
+    val itemCornerRadius = 16.dp
+
+    val backgroundModifier = when {
+        isActive -> Modifier
+            .clip(RoundedCornerShape(itemCornerRadius))
+            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.32f))
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+                shape = RoundedCornerShape(itemCornerRadius)
+            )
+        isSelected -> Modifier
+            .clip(RoundedCornerShape(itemCornerRadius))
+            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f))
+        else -> Modifier
+            .clip(RoundedCornerShape(itemCornerRadius))
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -194,17 +211,8 @@ inline fun ListItem(
                 .focusable()
                 .height(ListItemHeight)
                 .padding(horizontal = 8.dp, vertical = 2.dp)
-                .then(
-                    when {
-                        isActive -> Modifier
-                            .clip(RoundedCornerShape(itemCornerRadius))
-                            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f))
-                        isSelected -> Modifier
-                            .clip(RoundedCornerShape(itemCornerRadius))
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-                        else -> Modifier
-                    }
-                ),
+                .then(backgroundModifier)
+                .padding(horizontal = 4.dp),
     ) {
         Box(Modifier.padding(6.dp), contentAlignment = Alignment.Center) { thumbnailContent() }
         Column(
@@ -226,7 +234,7 @@ inline fun ListItem(
                 CompositionLocalProvider(LocalContentColor provides subtitleContentColor) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
                     ) { subtitle() }
                 }
             }
@@ -259,8 +267,8 @@ fun ListItem(
             Text(
                 text = subtitle,
                 color = when {
-                    isActive -> MaterialTheme.colorScheme.primary.copy(alpha = 0.75f)
-                    isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
+                    isActive -> MaterialTheme.colorScheme.onSurfaceVariant
+                    isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                     else -> defaultSubtitleColor.copy(alpha = 0.7f)
                 },
                 style = MaterialTheme.typography.bodySmall,
@@ -489,7 +497,7 @@ fun SongListItem(
 ) {
     val swipeEnabled by rememberPreference(SwipeToSongKey, defaultValue = false)
     val resolvedSwipeContentBackgroundColor = swipeContentBackgroundColor ?: MaterialTheme.colorScheme.surface
-    val itemCornerRadius = rememberItemCornerRadius()
+    val itemCornerRadius = 12.dp
 
     val content: @Composable () -> Unit = {
         ListItem(
@@ -598,7 +606,7 @@ fun ArtistListItem(
                 tint = MaterialTheme.colorScheme.error,
                 modifier =
                     Modifier
-                        .size(18.dp)
+                        .size(15.dp)
                         .padding(end = 2.dp),
             )
         }
@@ -707,7 +715,7 @@ fun AlbumListItem(
     isPlaying: Boolean = false,
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val itemCornerRadius = rememberItemCornerRadius()
+    val itemCornerRadius = 12.dp
     ListItem(
         title = album.album.title,
         subtitle =
@@ -820,7 +828,7 @@ fun PlaylistListItem(
     badges: @Composable RowScope.() -> Unit = {},
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val itemCornerRadius = rememberItemCornerRadius()
+    val itemCornerRadius = 12.dp
     ListItem(
         title = playlist.playlist.name,
         subtitle =
@@ -1297,34 +1305,39 @@ fun ItemThumbnail(
             }
         }
 
-        val showCircularPlay = (isActive && !isPlaying && albumIndex == null)
-
-        PlayingIndicatorBox(
-            isActive = isActive,
-            playWhenReady = isPlaying,
-            color =
-                if (albumIndex != null) {
-                    if (isActive) {
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    }
-                } else {
-                    Color.White
-                },
-            modifier =
-                Modifier
+        // Active playing indicator
+        if (isActive) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        color =
-                            if (albumIndex != null || showCircularPlay) {
-                                Color.Transparent
-                            } else {
-                                Color.Black.copy(alpha = ActiveBoxAlpha)
-                            },
-                        shape = shape,
-                    ),
-        )
+                    .background(Color.Black.copy(alpha = 0.42f), shape)
+            ) {
+                if (isPlaying) {
+                    PlayingIndicator(
+                        color = Color.White,
+                        modifier = Modifier.height(18.dp),
+                        bars = 3,
+                        barWidth = 3.dp
+                    )
+                } else {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.play),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1723,10 +1736,10 @@ private object Icon {
         Icon(
             painter = painterResource(R.drawable.favorite),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.error,
+            tint = Color(0xFFE53935),
             modifier =
                 Modifier
-                    .size(16.dp)
+                    .size(14.dp)
                     .padding(end = 2.dp),
         )
     }
@@ -1736,10 +1749,10 @@ private object Icon {
         Icon(
             painter = painterResource(R.drawable.library_add_check),
             contentDescription = null,
-            tint = Color.White.copy(alpha = 0.9f),
+            tint = LocalContentColor.current.copy(alpha = 0.85f),
             modifier =
                 Modifier
-                    .size(16.dp)
+                    .size(14.dp)
                     .padding(end = 2.dp),
         )
     }
@@ -1754,10 +1767,10 @@ private object Icon {
                 Icon(
                     painter = painterResource(R.drawable.offline),
                     contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.9f),
+                    tint = LocalContentColor.current.copy(alpha = 0.85f),
                     modifier =
                         Modifier
-                            .size(16.dp)
+                            .size(14.dp)
                             .padding(end = 2.dp),
                 )
             }
@@ -1767,24 +1780,24 @@ private object Icon {
                     Box(contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(
                             progress = { percent / 100f },
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(16.dp),
                             strokeWidth = 2.dp,
-                            trackColor = Color.White.copy(alpha = 0.3f),
-                            color = Color.White
+                            trackColor = LocalContentColor.current.copy(alpha = 0.2f),
+                            color = LocalContentColor.current
                         )
                         Text(
                             text = "${percent.toInt()}%",
                             style = MaterialTheme.typography.labelSmall,
                             fontSize = 8.sp,
-                            color = Color.White,
+                            color = LocalContentColor.current,
                         )
                     }
                 } else {
                     CircularWavyProgressIndicator(
-                        color = Color.White,
+                        color = LocalContentColor.current,
                         modifier =
                             Modifier
-                                .size(16.dp)
+                                .size(14.dp)
                                 .padding(end = 2.dp),
                     )
                 }
@@ -1799,10 +1812,10 @@ private object Icon {
         Icon(
             painter = painterResource(R.drawable.explicit),
             contentDescription = null,
-            tint = Color.White.copy(alpha = 0.85f),
+            tint = LocalContentColor.current.copy(alpha = 0.7f),
             modifier =
                 Modifier
-                    .size(16.dp)
+                    .size(14.dp)
                     .padding(end = 2.dp),
         )
     }
@@ -2514,7 +2527,7 @@ fun MediaMetadataListItem(
     shouldLoadImage: Boolean = true,
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val itemCornerRadius = rememberItemCornerRadius()
+    val itemCornerRadius = 12.dp
     ListItem(
         title = mediaMetadata.title,
         subtitle =
@@ -2576,7 +2589,7 @@ fun YouTubeListItem(
     },
 ) {
     val swipeEnabled by rememberPreference(SwipeToSongKey, defaultValue = false)
-    val itemCornerRadius = rememberItemCornerRadius()
+    val itemCornerRadius = 12.dp
 
     val content: @Composable () -> Unit = {
         ListItem(
