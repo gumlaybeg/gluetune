@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 
 @Composable
 fun NavigationTitle(

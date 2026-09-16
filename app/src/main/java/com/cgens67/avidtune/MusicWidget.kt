@@ -1,4 +1,4 @@
-package com.cgens67.avidtune
+package com.cgens67.gluetune
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -15,7 +15,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.Player
 import coil.ImageLoader
 import coil.request.ImageRequest
-import com.cgens67.avidtune.playback.PlayerConnection
+import com.cgens67.gluetune.playback.PlayerConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -127,15 +127,15 @@ class MusicWidget : AppWidgetProvider() {
     }
 
     companion object {
-        const val ACTION_PLAY_PAUSE = "com.cgens67.avidtune.ACTION_PLAY_PAUSE"
-        const val ACTION_PREV = "com.cgens67.avidtune.ACTION_PREV"
-        const val ACTION_NEXT = "com.cgens67.avidtune.ACTION_NEXT"
-        const val ACTION_SHUFFLE = "com.cgens67.avidtune.ACTION_SHUFFLE"
-        const val ACTION_LIKE = "com.cgens67.avidtune.ACTION_LIKE"
-        const val ACTION_REPLAY = "com.cgens67.avidtune.ACTION_REPLAY"
-        const val ACTION_OPEN_APP = "com.cgens67.avidtune.ACTION_OPEN_APP"
-        const val ACTION_STATE_CHANGED = "com.cgens67.avidtune.ACTION_STATE_CHANGED"
-        const val ACTION_UPDATE_PROGRESS = "com.cgens67.avidtune.ACTION_UPDATE_PROGRESS"
+        const val ACTION_PLAY_PAUSE = "com.cgens67.gluetune.ACTION_PLAY_PAUSE"
+        const val ACTION_PREV = "com.cgens67.gluetune.ACTION_PREV"
+        const val ACTION_NEXT = "com.cgens67.gluetune.ACTION_NEXT"
+        const val ACTION_SHUFFLE = "com.cgens67.gluetune.ACTION_SHUFFLE"
+        const val ACTION_LIKE = "com.cgens67.gluetune.ACTION_LIKE"
+        const val ACTION_REPLAY = "com.cgens67.gluetune.ACTION_REPLAY"
+        const val ACTION_OPEN_APP = "com.cgens67.gluetune.ACTION_OPEN_APP"
+        const val ACTION_STATE_CHANGED = "com.cgens67.gluetune.ACTION_STATE_CHANGED"
+        const val ACTION_UPDATE_PROGRESS = "com.cgens67.gluetune.ACTION_UPDATE_PROGRESS"
 
         fun updateAllWidgets(context: Context) {
             val appWidgetManager = AppWidgetManager.getInstance(context)

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 data class WordTimestamp(
     val text: String,

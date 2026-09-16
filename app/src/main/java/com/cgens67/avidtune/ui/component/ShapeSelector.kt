@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -54,10 +54,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.DefaultMiniPlayerThumbnailShape
-import com.cgens67.avidtune.constants.MiniPlayerThumbnailShapeKey
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.DefaultMiniPlayerThumbnailShape
+import com.cgens67.gluetune.constants.MiniPlayerThumbnailShapeKey
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.launch
 
 data class SmallButtonShapeOption(

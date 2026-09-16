@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
@@ -49,8 +49,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.ui.screens.Screens
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.ui.screens.Screens
 
 @Composable
 fun FloatingNavigationToolbar(

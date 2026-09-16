@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.player
+package com.cgens67.gluetune.ui.player
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -39,13 +39,13 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.*
-import com.cgens67.avidtune.ui.component.AppConfig
-import com.cgens67.avidtune.ui.utils.resize
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.*
+import com.cgens67.gluetune.ui.component.AppConfig
+import com.cgens67.gluetune.ui.utils.resize
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 

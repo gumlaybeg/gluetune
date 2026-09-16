@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 import android.content.Context
 import com.cgens67.innertube.YouTube

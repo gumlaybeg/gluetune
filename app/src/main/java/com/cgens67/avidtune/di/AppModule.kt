@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.di
+package com.cgens67.gluetune.di
 
 import android.content.Context
 import androidx.media3.database.DatabaseProvider
@@ -6,11 +6,11 @@ import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.NoOpCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
-import com.cgens67.avidtune.constants.MaxSongCacheSizeKey
-import com.cgens67.avidtune.db.InternalDatabase
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
+import com.cgens67.gluetune.constants.MaxSongCacheSizeKey
+import com.cgens67.gluetune.db.InternalDatabase
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

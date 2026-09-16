@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.playlist
+package com.cgens67.gluetune.ui.screens.playlist
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -109,43 +109,43 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.SongItem
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalDownloadUtil
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.ListItemHeight
-import com.cgens67.avidtune.constants.PlaylistEditLockKey
-import com.cgens67.avidtune.constants.PlaylistSongSortDescendingKey
-import com.cgens67.avidtune.constants.PlaylistSongSortType
-import com.cgens67.avidtune.constants.PlaylistSongSortTypeKey
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.db.entities.PlaylistSong
-import com.cgens67.avidtune.db.entities.PlaylistSongMap
-import com.cgens67.avidtune.extensions.move
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.ExoDownloadService
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.ui.component.DefaultDialog
-import com.cgens67.avidtune.ui.component.DraggableScrollbar
-import com.cgens67.avidtune.ui.component.EmptyPlaceholder
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.SongListItem
-import com.cgens67.avidtune.ui.component.SortHeader
-import com.cgens67.avidtune.ui.component.TextFieldDialog
-import com.cgens67.avidtune.ui.menu.PlaylistMenu
-import com.cgens67.avidtune.ui.menu.SelectionSongMenu
-import com.cgens67.avidtune.ui.menu.SongMenu
-import com.cgens67.avidtune.ui.utils.ItemWrapper
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.deletePlaylistImage
-import com.cgens67.avidtune.utils.getPlaylistImageUri
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
-import com.cgens67.avidtune.utils.saveCustomPlaylistImage
-import com.cgens67.avidtune.viewmodels.LocalPlaylistViewModel
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalDownloadUtil
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.ListItemHeight
+import com.cgens67.gluetune.constants.PlaylistEditLockKey
+import com.cgens67.gluetune.constants.PlaylistSongSortDescendingKey
+import com.cgens67.gluetune.constants.PlaylistSongSortType
+import com.cgens67.gluetune.constants.PlaylistSongSortTypeKey
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.db.entities.PlaylistSong
+import com.cgens67.gluetune.db.entities.PlaylistSongMap
+import com.cgens67.gluetune.extensions.move
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.ExoDownloadService
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.ui.component.DefaultDialog
+import com.cgens67.gluetune.ui.component.DraggableScrollbar
+import com.cgens67.gluetune.ui.component.EmptyPlaceholder
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.SongListItem
+import com.cgens67.gluetune.ui.component.SortHeader
+import com.cgens67.gluetune.ui.component.TextFieldDialog
+import com.cgens67.gluetune.ui.menu.PlaylistMenu
+import com.cgens67.gluetune.ui.menu.SelectionSongMenu
+import com.cgens67.gluetune.ui.menu.SongMenu
+import com.cgens67.gluetune.ui.utils.ItemWrapper
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.deletePlaylistImage
+import com.cgens67.gluetune.utils.getPlaylistImageUri
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
+import com.cgens67.gluetune.utils.saveCustomPlaylistImage
+import com.cgens67.gluetune.viewmodels.LocalPlaylistViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -907,7 +907,7 @@ fun LocalPlaylistScreen(
                 }
             },
             navigationIcon = {
-                com.cgens67.avidtune.ui.component.IconButton(
+                com.cgens67.gluetune.ui.component.IconButton(
                     onClick = {
                         when {
                             isSearching -> {

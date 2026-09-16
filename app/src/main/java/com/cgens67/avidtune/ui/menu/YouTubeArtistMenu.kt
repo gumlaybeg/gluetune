@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.menu
+package com.cgens67.gluetune.ui.menu
 
 import android.content.Intent
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,16 +24,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.cgens67.innertube.models.ArtistItem
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.ArtistEntity
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.ui.component.YouTubeListItem
-import com.cgens67.avidtune.ui.component.MenuItemData
-import com.cgens67.avidtune.ui.component.MenuGroup
-import com.cgens67.avidtune.ui.component.NewAction
-import com.cgens67.avidtune.ui.component.NewActionGrid
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.ArtistEntity
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.ui.component.YouTubeListItem
+import com.cgens67.gluetune.ui.component.MenuItemData
+import com.cgens67.gluetune.ui.component.MenuGroup
+import com.cgens67.gluetune.ui.component.NewAction
+import com.cgens67.gluetune.ui.component.NewActionGrid
 
 
 @OptIn(ExperimentalMaterial3Api::class)

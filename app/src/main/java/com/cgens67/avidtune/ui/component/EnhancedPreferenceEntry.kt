@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 
 /** Enhanced version of PreferenceEntry with icon and improved design */
 @Composable

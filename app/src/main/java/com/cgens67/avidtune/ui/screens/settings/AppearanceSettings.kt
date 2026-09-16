@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.content.Context
 import android.os.Build
@@ -110,61 +110,61 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.edit
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AppFont
-import com.cgens67.avidtune.constants.AppFontKey
-import com.cgens67.avidtune.constants.AppTextSize
-import com.cgens67.avidtune.constants.AppTextSizeKey
-import com.cgens67.avidtune.constants.ArtistCanvasProviderOrderKey
-import com.cgens67.avidtune.constants.ChipSortTypeKey
-import com.cgens67.avidtune.constants.CustomThemeColorKey
-import com.cgens67.avidtune.constants.DarkModeKey
-import com.cgens67.avidtune.constants.DefaultOpenTabKey
-import com.cgens67.avidtune.constants.DynamicThemeKey
-import com.cgens67.avidtune.constants.EnableAppleMusicCanvasKey
-import com.cgens67.avidtune.constants.EnableArtistCanvasKey
-import com.cgens67.avidtune.constants.EnableAvidCanvasKey
-import com.cgens67.avidtune.constants.GridItemSize
-import com.cgens67.avidtune.constants.GridItemsSizeKey
-import com.cgens67.avidtune.constants.LibraryFilter
-import com.cgens67.avidtune.constants.LyricsClickKey
-import com.cgens67.avidtune.constants.LyricsTextPositionKey
-import com.cgens67.avidtune.constants.MiniPlayerStyle
-import com.cgens67.avidtune.constants.MiniPlayerStyleKey
-import com.cgens67.avidtune.constants.PlayerBackgroundStyle
-import com.cgens67.avidtune.constants.PlayerBackgroundStyleKey
-import com.cgens67.avidtune.constants.PlayerButtonsStyle
-import com.cgens67.avidtune.constants.PlayerButtonsStyleKey
-import com.cgens67.avidtune.constants.PlayerTextAlignmentKey
-import com.cgens67.avidtune.constants.PureBlackKey
-import com.cgens67.avidtune.constants.SliderStyle
-import com.cgens67.avidtune.constants.SliderStyleKey
-import com.cgens67.avidtune.constants.SlimNavBarKey
-import com.cgens67.avidtune.constants.SwipeThumbnailKey
-import com.cgens67.avidtune.constants.UseSystemFontKey
-import com.cgens67.avidtune.ui.component.AvatarSelector
-import com.cgens67.avidtune.ui.component.DefaultDialog
-import com.cgens67.avidtune.ui.component.EnumListPreference
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.LanguagePreference
-import com.cgens67.avidtune.ui.component.ListPreference
-import com.cgens67.avidtune.ui.component.PlayerSliderTrack
-import com.cgens67.avidtune.ui.component.PreferenceEntry
-import com.cgens67.avidtune.ui.component.SettingsGeneralCategory
-import com.cgens67.avidtune.ui.component.SettingsPage
-import com.cgens67.avidtune.ui.component.SwitchPreference
-import com.cgens67.avidtune.ui.component.ThumbnailCornerRadiusSelectorButton
-import com.cgens67.avidtune.ui.theme.DefaultThemeColor
-import com.cgens67.avidtune.ui.theme.ThemeSeedPalette
-import com.cgens67.avidtune.ui.theme.ThemeSeedPaletteCodec
-import com.cgens67.avidtune.ui.theme.googleSansBold
-import com.cgens67.avidtune.ui.theme.sfProDisplayBold
-import com.cgens67.avidtune.ui.theme.spaceGroteskBold
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AppFont
+import com.cgens67.gluetune.constants.AppFontKey
+import com.cgens67.gluetune.constants.AppTextSize
+import com.cgens67.gluetune.constants.AppTextSizeKey
+import com.cgens67.gluetune.constants.ArtistCanvasProviderOrderKey
+import com.cgens67.gluetune.constants.ChipSortTypeKey
+import com.cgens67.gluetune.constants.CustomThemeColorKey
+import com.cgens67.gluetune.constants.DarkModeKey
+import com.cgens67.gluetune.constants.DefaultOpenTabKey
+import com.cgens67.gluetune.constants.DynamicThemeKey
+import com.cgens67.gluetune.constants.EnableAppleMusicCanvasKey
+import com.cgens67.gluetune.constants.EnableArtistCanvasKey
+import com.cgens67.gluetune.constants.EnableAvidCanvasKey
+import com.cgens67.gluetune.constants.GridItemSize
+import com.cgens67.gluetune.constants.GridItemsSizeKey
+import com.cgens67.gluetune.constants.LibraryFilter
+import com.cgens67.gluetune.constants.LyricsClickKey
+import com.cgens67.gluetune.constants.LyricsTextPositionKey
+import com.cgens67.gluetune.constants.MiniPlayerStyle
+import com.cgens67.gluetune.constants.MiniPlayerStyleKey
+import com.cgens67.gluetune.constants.PlayerBackgroundStyle
+import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
+import com.cgens67.gluetune.constants.PlayerButtonsStyle
+import com.cgens67.gluetune.constants.PlayerButtonsStyleKey
+import com.cgens67.gluetune.constants.PlayerTextAlignmentKey
+import com.cgens67.gluetune.constants.PureBlackKey
+import com.cgens67.gluetune.constants.SliderStyle
+import com.cgens67.gluetune.constants.SliderStyleKey
+import com.cgens67.gluetune.constants.SlimNavBarKey
+import com.cgens67.gluetune.constants.SwipeThumbnailKey
+import com.cgens67.gluetune.constants.UseSystemFontKey
+import com.cgens67.gluetune.ui.component.AvatarSelector
+import com.cgens67.gluetune.ui.component.DefaultDialog
+import com.cgens67.gluetune.ui.component.EnumListPreference
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.LanguagePreference
+import com.cgens67.gluetune.ui.component.ListPreference
+import com.cgens67.gluetune.ui.component.PlayerSliderTrack
+import com.cgens67.gluetune.ui.component.PreferenceEntry
+import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
+import com.cgens67.gluetune.ui.component.SettingsPage
+import com.cgens67.gluetune.ui.component.SwitchPreference
+import com.cgens67.gluetune.ui.component.ThumbnailCornerRadiusSelectorButton
+import com.cgens67.gluetune.ui.theme.DefaultThemeColor
+import com.cgens67.gluetune.ui.theme.ThemeSeedPalette
+import com.cgens67.gluetune.ui.theme.ThemeSeedPaletteCodec
+import com.cgens67.gluetune.ui.theme.googleSansBold
+import com.cgens67.gluetune.ui.theme.sfProDisplayBold
+import com.cgens67.gluetune.ui.theme.spaceGroteskBold
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -438,7 +438,7 @@ fun AppearanceSettings(
             onDismiss = { showCanvasReorderDialog = false },
             onSave = { newOrder ->
                 onCanvasProviderOrderChange(newOrder.joinToString(","))
-                com.cgens67.avidtune.ui.component.ArtistCanvasHelper.clearCache()
+                com.cgens67.gluetune.ui.component.ArtistCanvasHelper.clearCache()
                 showCanvasReorderDialog = false
             }
         )
@@ -498,7 +498,7 @@ fun AppearanceSettings(
                         onAppFontChange(newFont)
                         coroutineScope.launch {
                             delay(100)
-                            com.cgens67.avidtune.ui.component.LocaleManager.getInstance(context).restartApp(context)
+                            com.cgens67.gluetune.ui.component.LocaleManager.getInstance(context).restartApp(context)
                         }
                     }
                 )},
@@ -511,7 +511,7 @@ fun AppearanceSettings(
                             context.dataStore.edit {
                                 it[AppTextSizeKey] = newValue.name
                             }
-                            com.cgens67.avidtune.ui.component.LocaleManager.getInstance(context).restartApp(context)
+                            com.cgens67.gluetune.ui.component.LocaleManager.getInstance(context).restartApp(context)
                         }
                     },
                     valueText = {
@@ -695,7 +695,7 @@ fun AppearanceSettings(
                             checked = enableAvidCanvas,
                             onCheckedChange = {
                                 onEnableAvidCanvasChange(it)
-                                com.cgens67.avidtune.ui.component.ArtistCanvasHelper.clearCache()
+                                com.cgens67.gluetune.ui.component.ArtistCanvasHelper.clearCache()
                             }
                         )
                         HorizontalDivider(
@@ -709,7 +709,7 @@ fun AppearanceSettings(
                             checked = enableAppleMusicCanvas,
                             onCheckedChange = {
                                 onEnableAppleMusicCanvasChange(it)
-                                com.cgens67.avidtune.ui.component.ArtistCanvasHelper.clearCache()
+                                com.cgens67.gluetune.ui.component.ArtistCanvasHelper.clearCache()
                             }
                         )
                         HorizontalDivider(

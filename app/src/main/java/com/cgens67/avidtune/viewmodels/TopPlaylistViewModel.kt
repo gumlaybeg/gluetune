@@ -1,11 +1,11 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cgens67.avidtune.constants.MyTopFilter
-import com.cgens67.avidtune.db.MusicDatabase
+import com.cgens67.gluetune.constants.MyTopFilter
+import com.cgens67.gluetune.db.MusicDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi

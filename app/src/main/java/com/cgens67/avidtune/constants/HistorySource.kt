@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.constants
+package com.cgens67.gluetune.constants
 
 enum class HistorySource {
     LOCAL, REMOTE

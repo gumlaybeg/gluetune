@@ -362,7 +362,7 @@
     <string name="backup_create_failed">"Yedek oluşturulamadı"</string>
     <string name="restore_failed">"Yedek yüklenemedi"</string>
     <string name="discord_integration">"Discord entegrasyonu"</string>
-    <string name="discord_information">"AvidTune discord hesabınızın durumunu ayarlamak için KizzyRPC kütüphanesini kullanır. Bu, Discord'un Hizmet Şartları'nın ihlali olarak değerlendirilebilecek Discord Gateway bağlantısının kullanılmasını gerektirir. Ancak, bu nedenle kullanıcı hesaplarının askıya alındığı bilinen bir vaka yoktur. Kendi sorumluluğunuzda kullanın. OpenTunne yalnızca tokeninizi çıkarır, diğer her şey yerel olarak depolanır."</string>
+    <string name="discord_information">"GlueTune discord hesabınızın durumunu ayarlamak için KizzyRPC kütüphanesini kullanır. Bu, Discord'un Hizmet Şartları'nın ihlali olarak değerlendirilebilecek Discord Gateway bağlantısının kullanılmasını gerektirir. Ancak, bu nedenle kullanıcı hesaplarının askıya alındığı bilinen bir vaka yoktur. Kendi sorumluluğunuzda kullanın. OpenTunne yalnızca tokeninizi çıkarır, diğer her şey yerel olarak depolanır."</string>
     <string name="dismiss">"Vazgeç"</string>
     <string name="options">"Ayarlar"</string>
     <string name="preview">"Önizleme"</string>

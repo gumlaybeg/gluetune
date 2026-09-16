@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.theme
+package com.cgens67.gluetune.ui.theme
 
 import android.graphics.Bitmap
 import android.os.Build
@@ -25,9 +25,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import androidx.palette.graphics.Palette
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AppFont
-import com.cgens67.avidtune.constants.PlayerBackgroundStyle
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AppFont
+import com.cgens67.gluetune.constants.PlayerBackgroundStyle
 import com.google.material.color.dynamiccolor.DynamicScheme
 import com.google.material.color.hct.Hct
 import com.google.material.color.scheme.SchemeTonalSpot
@@ -41,7 +41,7 @@ val spaceGroteskBold = FontFamily(Font(R.font.spacegroteskbold))
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AvidTuneTheme(
+fun GlueTuneTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     pureBlack: Boolean = false,
     expressive: Boolean = true,

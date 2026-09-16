@@ -4,7 +4,7 @@
     ExperimentalFoundationApi::class,
 )
 
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import android.content.res.Configuration
 import android.net.Uri
@@ -54,12 +54,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.NewsLastReadTimestampKey
-import com.cgens67.avidtune.ui.component.IconButton as AppIconButton
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.dataStore
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.NewsLastReadTimestampKey
+import com.cgens67.gluetune.ui.component.IconButton as AppIconButton
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.dataStore
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.cio.endpoint
@@ -173,8 +173,8 @@ class NewsRepository @Inject constructor() {
     fun getCachedItem(id: String): NewsItem? = metadataCache?.find { it.id == id }
 
     private companion object {
-        const val METADATA_URL = "https://raw.githubusercontent.com/cgens67/avidtune-news/main/metadata.json"
-        const val CONTENT_BASE_URL = "https://raw.githubusercontent.com/cgens67/avidtune-news/main/content/"
+        const val METADATA_URL = "https://raw.githubusercontent.com/cgens67/gluetune-news/main/metadata.json"
+        const val CONTENT_BASE_URL = "https://raw.githubusercontent.com/cgens67/gluetune-news/main/content/"
     }
 }
 

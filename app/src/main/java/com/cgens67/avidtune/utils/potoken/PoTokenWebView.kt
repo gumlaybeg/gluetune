@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils.potoken
+package com.cgens67.gluetune.utils.potoken
 
 import android.content.Context
 import android.os.Handler
@@ -11,7 +11,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.MainThread
 import androidx.collection.ArrayMap
-import com.cgens67.avidtune.BuildConfig
+import com.cgens67.gluetune.BuildConfig
 import com.cgens67.innertube.YouTube
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler

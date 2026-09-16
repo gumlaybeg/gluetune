@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.models
+package com.cgens67.gluetune.models
 
 import java.io.Serializable
 

@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.content.Context
 import android.content.res.Configuration
@@ -99,17 +99,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.CustomThemeColorKey
-import com.cgens67.avidtune.constants.DarkModeKey
-import com.cgens67.avidtune.ui.component.IconButton as AppIconButton
-import com.cgens67.avidtune.ui.theme.DefaultThemeColor
-import com.cgens67.avidtune.ui.theme.ThemeSeedPalette
-import com.cgens67.avidtune.ui.theme.ThemeSeedPaletteCodec
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.CustomThemeColorKey
+import com.cgens67.gluetune.constants.DarkModeKey
+import com.cgens67.gluetune.ui.component.IconButton as AppIconButton
+import com.cgens67.gluetune.ui.theme.DefaultThemeColor
+import com.cgens67.gluetune.ui.theme.ThemeSeedPalette
+import com.cgens67.gluetune.ui.theme.ThemeSeedPaletteCodec
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import com.google.material.color.hct.Hct
 import com.google.material.color.scheme.SchemeTonalSpot
 import kotlinx.coroutines.Dispatchers

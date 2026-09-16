@@ -1,13 +1,13 @@
-package com.cgens67.avidtune.extensions
+package com.cgens67.gluetune.extensions
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.cgens67.innertube.utils.parseCookieString
-import com.cgens67.avidtune.constants.InnerTubeCookieKey
-import com.cgens67.avidtune.constants.YtmSyncKey
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
+import com.cgens67.gluetune.constants.InnerTubeCookieKey
+import com.cgens67.gluetune.constants.YtmSyncKey
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
 import kotlinx.coroutines.runBlocking
 
 fun Context.isSyncEnabled(): Boolean {

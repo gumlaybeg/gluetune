@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.view.ViewConfiguration
 import androidx.compose.animation.animateColorAsState

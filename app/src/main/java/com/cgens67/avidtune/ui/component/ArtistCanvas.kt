@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.content.Context
 import android.util.Base64
@@ -32,10 +32,10 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import com.cgens67.avidtune.constants.ArtistCanvasProviderOrderKey
-import com.cgens67.avidtune.constants.EnableAppleMusicCanvasKey
-import com.cgens67.avidtune.constants.EnableAvidCanvasKey
-import com.cgens67.avidtune.utils.dataStore
+import com.cgens67.gluetune.constants.ArtistCanvasProviderOrderKey
+import com.cgens67.gluetune.constants.EnableAppleMusicCanvasKey
+import com.cgens67.gluetune.constants.EnableAvidCanvasKey
+import com.cgens67.gluetune.utils.dataStore
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
@@ -84,7 +84,7 @@ object AvidCanvasProvider : ArtistCanvasProvider {
             val formattedName = artistName.lowercase().replace(Regex("[^a-z0-9]"), "_")
             if (formattedName.isBlank()) return@runCatching null
 
-            val baseUrl = "https://raw.githubusercontent.com/cgens67/avidtune-canvas/main/canvas/$formattedName"
+            val baseUrl = "https://raw.githubusercontent.com/cgens67/gluetune-canvas/main/canvas/$formattedName"
 
             // Check mp4 first
             val mp4Url = "$baseUrl.mp4"

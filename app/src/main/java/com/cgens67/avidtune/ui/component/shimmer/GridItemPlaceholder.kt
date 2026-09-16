@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component.shimmer
+package com.cgens67.gluetune.ui.component.shimmer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.constants.GridThumbnailHeight
-import com.cgens67.avidtune.constants.ThumbnailCornerRadius
+import com.cgens67.gluetune.constants.GridThumbnailHeight
+import com.cgens67.gluetune.constants.ThumbnailCornerRadius
 
 @Composable
 fun GridItemPlaceHolder(

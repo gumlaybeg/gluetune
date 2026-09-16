@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.app.Activity
 import android.content.Context
@@ -96,8 +96,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.LanguageCodeToName
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.LanguageCodeToName
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

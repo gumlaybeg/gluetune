@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.menu
+package com.cgens67.gluetune.ui.menu
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -23,17 +23,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.utils.parseCookieString
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.InnerTubeCookieKey
-import com.cgens67.avidtune.constants.ListThumbnailSize
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.ui.component.CreatePlaylistDialog
-import com.cgens67.avidtune.ui.component.DefaultDialog
-import com.cgens67.avidtune.ui.component.ListDialog
-import com.cgens67.avidtune.ui.component.ListItem
-import com.cgens67.avidtune.ui.component.PlaylistListItem
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.InnerTubeCookieKey
+import com.cgens67.gluetune.constants.ListThumbnailSize
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.ui.component.CreatePlaylistDialog
+import com.cgens67.gluetune.ui.component.DefaultDialog
+import com.cgens67.gluetune.ui.component.ListDialog
+import com.cgens67.gluetune.ui.component.ListItem
+import com.cgens67.gluetune.ui.component.PlaylistListItem
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
@@ -43,9 +43,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.constants.BottomSheetAnimationSpec
-import com.cgens67.avidtune.constants.BottomSheetSoftAnimationSpec
-import com.cgens67.avidtune.constants.NavigationBarAnimationSpec
+import com.cgens67.gluetune.constants.BottomSheetAnimationSpec
+import com.cgens67.gluetune.constants.BottomSheetSoftAnimationSpec
+import com.cgens67.gluetune.constants.NavigationBarAnimationSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch

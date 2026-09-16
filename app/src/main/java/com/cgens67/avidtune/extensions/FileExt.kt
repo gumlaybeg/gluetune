@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.extensions
+package com.cgens67.gluetune.extensions
 
 import java.io.File
 import java.io.InputStream

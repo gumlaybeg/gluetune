@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,10 +45,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.ui.component.shimmer.ShimmerHost
-import com.cgens67.avidtune.viewmodels.MoodAndGenresViewModel
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.ui.component.shimmer.ShimmerHost
+import com.cgens67.gluetune.viewmodels.MoodAndGenresViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

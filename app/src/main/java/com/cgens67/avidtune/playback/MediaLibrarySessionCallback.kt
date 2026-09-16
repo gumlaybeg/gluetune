@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.playback
+package com.cgens67.gluetune.playback
 
 import android.content.ContentResolver
 import android.content.Context
@@ -16,14 +16,14 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.MediaSessionConstants
-import com.cgens67.avidtune.constants.SongSortType
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.PlaylistEntity
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.extensions.toggleRepeatMode
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.MediaSessionConstants
+import com.cgens67.gluetune.constants.SongSortType
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.PlaylistEntity
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.extensions.toggleRepeatMode
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -57,14 +57,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.constants.AppleMusicLyricsBlurKey
-import com.cgens67.avidtune.constants.DisableBlurKey
-import com.cgens67.avidtune.lyrics.LyricsEntry
-import com.cgens67.avidtune.lyrics.WordTimestamp
-import com.cgens67.avidtune.playback.PlayerConnection
-import com.cgens67.avidtune.ui.screens.settings.LyricsPosition
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.constants.AppleMusicLyricsBlurKey
+import com.cgens67.gluetune.constants.DisableBlurKey
+import com.cgens67.gluetune.lyrics.LyricsEntry
+import com.cgens67.gluetune.lyrics.WordTimestamp
+import com.cgens67.gluetune.playback.PlayerConnection
+import com.cgens67.gluetune.ui.screens.settings.LyricsPosition
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.isActive
 import kotlin.math.PI
 import kotlin.math.cos

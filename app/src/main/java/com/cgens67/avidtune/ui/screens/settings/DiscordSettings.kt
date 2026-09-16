@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
@@ -75,30 +75,30 @@ import androidx.core.net.toUri
 import androidx.media3.common.Player.STATE_READY
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.DiscordInfoDismissedKey
-import com.cgens67.avidtune.constants.DiscordNameKey
-import com.cgens67.avidtune.constants.DiscordTokenKey
-import com.cgens67.avidtune.constants.DiscordUseDetailsKey
-import com.cgens67.avidtune.constants.DiscordUsernameKey
-import com.cgens67.avidtune.constants.EnableDiscordRPCKey
-import com.cgens67.avidtune.constants.SliderStyle
-import com.cgens67.avidtune.constants.SliderStyleKey
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.InfoLabel
-import com.cgens67.avidtune.ui.component.PreferenceEntry
-import com.cgens67.avidtune.ui.component.PreferenceGroupTitle
-import com.cgens67.avidtune.ui.component.SettingsGeneralCategory
-import com.cgens67.avidtune.ui.component.SettingsPage
-import com.cgens67.avidtune.ui.component.SwitchPreference
-import com.cgens67.avidtune.ui.component.TextFieldDialog
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.makeTimeString
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.DiscordInfoDismissedKey
+import com.cgens67.gluetune.constants.DiscordNameKey
+import com.cgens67.gluetune.constants.DiscordTokenKey
+import com.cgens67.gluetune.constants.DiscordUseDetailsKey
+import com.cgens67.gluetune.constants.DiscordUsernameKey
+import com.cgens67.gluetune.constants.EnableDiscordRPCKey
+import com.cgens67.gluetune.constants.SliderStyle
+import com.cgens67.gluetune.constants.SliderStyleKey
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.InfoLabel
+import com.cgens67.gluetune.ui.component.PreferenceEntry
+import com.cgens67.gluetune.ui.component.PreferenceGroupTitle
+import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
+import com.cgens67.gluetune.ui.component.SettingsPage
+import com.cgens67.gluetune.ui.component.SwitchPreference
+import com.cgens67.gluetune.ui.component.TextFieldDialog
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.makeTimeString
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import com.my.kizzy.rpc.KizzyRPC
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -416,7 +416,7 @@ fun EnhancedRichPresence(
 
                         Column {
                             Text(
-                                text = "AvidTune",
+                                text = "GlueTune",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
@@ -516,7 +516,7 @@ fun EnhancedRichPresence(
                                         .align(Alignment.BottomEnd)
                                         .padding(8.dp)
                                 ) {
-                                    // Logo de AvidTune como fallback mejorado
+                                    // Logo de GlueTune como fallback mejorado
                                     val artistAvatar = song?.artists?.firstOrNull()?.thumbnailUrl
 
                                     Card(
@@ -539,7 +539,7 @@ fun EnhancedRichPresence(
                                                     contentScale = ContentScale.Crop
                                                 )
                                             } else {
-                                                // Logo de AvidTune con estilo mejorado
+                                                // Logo de GlueTune con estilo mejorado
                                                 Box(
                                                     modifier = Modifier
                                                         .fillMaxSize()
@@ -554,8 +554,8 @@ fun EnhancedRichPresence(
                                                     contentAlignment = Alignment.Center
                                                 ) {
                                                     Image(
-                                                        painter = painterResource(R.drawable.avidtune),
-                                                        contentDescription = "AvidTune",
+                                                        painter = painterResource(R.drawable.gluetune),
+                                                        contentDescription = "GlueTune",
                                                         modifier = Modifier
                                                             .size(20.dp)
                                                             .alpha(0.9f),
@@ -651,12 +651,12 @@ fun EnhancedRichPresence(
                         Text("YouTube Music", maxLines = 1, fontWeight = FontWeight.Medium)
                     }
 
-                    // Botón AvidTune mejorado
+                    // Botón GlueTune mejorado
                     OutlinedButton(
                         onClick = {
                             val intent = Intent(
                                 Intent.ACTION_VIEW,
-                                "https://github.com/cgens67/AvidTune".toUri()
+                                "https://github.com/cgens67/GlueTune".toUri()
                             )
                             context.startActivity(intent)
                         },
@@ -681,14 +681,14 @@ fun EnhancedRichPresence(
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.avidtune),
-                                contentDescription = "AvidTune",
+                                painter = painterResource(R.drawable.gluetune),
+                                contentDescription = "GlueTune",
                                 modifier = Modifier.size(12.dp),
                                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                             )
                         }
                         Spacer(Modifier.width(8.dp))
-                        Text("AvidTune", maxLines = 1, fontWeight = FontWeight.Medium)
+                        Text("GlueTune", maxLines = 1, fontWeight = FontWeight.Medium)
                     }
                 }
             }

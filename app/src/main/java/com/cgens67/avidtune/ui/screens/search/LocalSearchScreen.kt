@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.search
+package com.cgens67.gluetune.ui.screens.search
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -33,27 +33,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.CONTENT_TYPE_LIST
-import com.cgens67.avidtune.constants.ListItemHeight
-import com.cgens67.avidtune.db.entities.Album
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.ui.component.AlbumListItem
-import com.cgens67.avidtune.ui.component.ArtistListItem
-import com.cgens67.avidtune.ui.component.ChipsRow
-import com.cgens67.avidtune.ui.component.EmptyPlaceholder
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.PlaylistListItem
-import com.cgens67.avidtune.ui.component.SongListItem
-import com.cgens67.avidtune.ui.menu.SongMenu
-import com.cgens67.avidtune.viewmodels.LocalFilter
-import com.cgens67.avidtune.viewmodels.LocalSearchViewModel
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.CONTENT_TYPE_LIST
+import com.cgens67.gluetune.constants.ListItemHeight
+import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.ui.component.AlbumListItem
+import com.cgens67.gluetune.ui.component.ArtistListItem
+import com.cgens67.gluetune.ui.component.ChipsRow
+import com.cgens67.gluetune.ui.component.EmptyPlaceholder
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.PlaylistListItem
+import com.cgens67.gluetune.ui.component.SongListItem
+import com.cgens67.gluetune.ui.menu.SongMenu
+import com.cgens67.gluetune.viewmodels.LocalFilter
+import com.cgens67.gluetune.viewmodels.LocalSearchViewModel
 import kotlinx.coroutines.flow.drop
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -6,7 +6,7 @@
 )
 @file:Suppress("OPT_IN_USAGE", "OPT_IN_USAGE_ERROR")
 
-package com.cgens67.avidtune.playback
+package com.cgens67.gluetune.playback
 
 import android.content.Context
 import android.content.Intent
@@ -48,11 +48,11 @@ import androidx.media3.common.C
 import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.SettingsGeneralCategory
-import com.cgens67.avidtune.ui.component.SwitchPreference
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
+import com.cgens67.gluetune.ui.component.SwitchPreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -111,11 +111,11 @@ class BiquadFilter(sr:Int,fq:Double,g:Double,q:Double=1.41,type:FilterType=Filte
     fun disable(){sD=true;pEq=null;p.forEach{it.disable()}}
 }
 
-@HiltViewModel class AvidTuneEqViewModel @Inject constructor(
+@HiltViewModel class GlueTuneEqViewModel @Inject constructor(
     @ApplicationContext c:Context,
     private val s:EqualizerService
 ):ViewModel(){
-    private val p=c.getSharedPreferences("avidtune_eq_prefs",0)
+    private val p=c.getSharedPreferences("gluetune_eq_prefs",0)
     val fQ=doubleArrayOf(31.0,62.0,125.0,250.0,500.0,1000.0,2000.0,4000.0,8000.0,16000.0)
     private val _en=MutableStateFlow(p.getBoolean("enabled",false));val en=_en.asStateFlow()
     private val _bG=MutableStateFlow(FloatArray(10){p.getFloat("band_$it",0f)});val bG=_bG.asStateFlow()
@@ -135,13 +135,13 @@ class BiquadFilter(sr:Int,fq:Double,g:Double,q:Double=1.41,type:FilterType=Filte
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable 
-fun EqScreen(nav:NavController?=null,vm:AvidTuneEqViewModel=hiltViewModel()){
-    AvidTuneEqScreen(bck = { nav?.navigateUp() }, vm = vm)
+fun EqScreen(nav:NavController?=null,vm:GlueTuneEqViewModel=hiltViewModel()){
+    GlueTuneEqScreen(bck = { nav?.navigateUp() }, vm = vm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable 
-fun AvidTuneEqScreen(bck:()->Unit,vm:AvidTuneEqViewModel=hiltViewModel()){
+fun GlueTuneEqScreen(bck:()->Unit,vm:GlueTuneEqViewModel=hiltViewModel()){
     val en by vm.en.collectAsState();val bG by vm.bG.collectAsState();val m by vm.m.collectAsState();val cS=MaterialTheme.colorScheme
     val c = LocalContext.current
     val sys=rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){}
@@ -150,9 +150,9 @@ fun AvidTuneEqScreen(bck:()->Unit,vm:AvidTuneEqViewModel=hiltViewModel()){
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("AvidTune Equalizer") },
+                title = { Text("GlueTune Equalizer") },
                 navigationIcon = {
-                    com.cgens67.avidtune.ui.component.IconButton(
+                    com.cgens67.gluetune.ui.component.IconButton(
                         onClick = bck,
                         onLongClick = {}
                     ) {
@@ -203,7 +203,7 @@ fun AvidTuneEqScreen(bck:()->Unit,vm:AvidTuneEqViewModel=hiltViewModel()){
                         
                         val avidTunePresets = listOf<Pair<Int,FloatArray>>(
                             R.string.eq_preset_flat to fA(0f,0f,0f,0f,0f,0f,0f,0f,0f,0f),
-                            R.string.eq_preset_avidtune_signature to fA(150f,100f,50f,0f,-20f,0f,80f,150f,200f,150f),
+                            R.string.eq_preset_gluetune_signature to fA(150f,100f,50f,0f,-20f,0f,80f,150f,200f,150f),
                             R.string.eq_preset_acoustic to fA(150f,150f,50f,75f,100f,75f,125f,175f,150f,75f),
                             R.string.eq_preset_spatial to fA(75f,50f,25f,-50f,-25f,0f,50f,75f,100f,75f),
                             R.string.eq_preset_bass_boost to fA(500f,400f,250f,100f,0f,-50f,0f,100f,200f,300f),
@@ -217,7 +217,7 @@ fun AvidTuneEqScreen(bck:()->Unit,vm:AvidTuneEqViewModel=hiltViewModel()){
                         )
                         
                         avidTunePresets.chunked(3).forEachIndexed { i, c ->
-                            PresetSection(if(i==0) "AvidTune" else "", c, null, null, en, bG, {if(en)vm.setGs(it)})
+                            PresetSection(if(i==0) "GlueTune" else "", c, null, null, en, bG, {if(en)vm.setGs(it)})
                         }
                         
                         PresetSection("Dolby",listOf<Pair<Int,FloatArray>>(R.string.eq_preset_dolby_open to fA(150f,180f,220f,180f,160f,210f,250f,280f,180f,80f),R.string.eq_preset_dolby_rich to fA(100f,160f,200f,220f,280f,260f,240f,200f,150f,50f),R.string.eq_preset_dolby_focused to fA(-300f,-50f,130f,180f,220f,120f,140f,100f,-50f,-300f)),null,null,en,bG,{if(en)vm.setGs(it)})

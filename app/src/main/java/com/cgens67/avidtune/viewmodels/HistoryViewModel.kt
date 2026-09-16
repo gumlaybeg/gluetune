@@ -1,13 +1,13 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.pages.HistoryPage
-import com.cgens67.avidtune.constants.HistorySource
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.utils.reportException
+import com.cgens67.gluetune.constants.HistorySource
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.utils.reportException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

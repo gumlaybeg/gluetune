@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.cgens67.avidtune.ui.player
+package com.cgens67.gluetune.ui.player
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
@@ -88,22 +88,22 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.DarkModeKey
-import com.cgens67.avidtune.constants.MiniPlayerHeight
-import com.cgens67.avidtune.constants.MiniPlayerStyle
-import com.cgens67.avidtune.constants.MiniPlayerStyleKey
-import com.cgens67.avidtune.constants.PlayerBackgroundStyle
-import com.cgens67.avidtune.constants.PlayerBackgroundStyleKey
-import com.cgens67.avidtune.constants.PureBlackKey
-import com.cgens67.avidtune.constants.SwipeThumbnailKey
-import com.cgens67.avidtune.constants.ThumbnailCornerRadius
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.playback.PlayerConnection
-import com.cgens67.avidtune.ui.screens.settings.DarkMode
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.DarkModeKey
+import com.cgens67.gluetune.constants.MiniPlayerHeight
+import com.cgens67.gluetune.constants.MiniPlayerStyle
+import com.cgens67.gluetune.constants.MiniPlayerStyleKey
+import com.cgens67.gluetune.constants.PlayerBackgroundStyle
+import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
+import com.cgens67.gluetune.constants.PureBlackKey
+import com.cgens67.gluetune.constants.SwipeThumbnailKey
+import com.cgens67.gluetune.constants.ThumbnailCornerRadius
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.playback.PlayerConnection
+import com.cgens67.gluetune.ui.screens.settings.DarkMode
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue

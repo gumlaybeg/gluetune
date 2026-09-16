@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.annotation.SuppressLint
 import android.content.ClipData
@@ -73,18 +73,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.extensions.tryOrNull
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.PreferenceEntry
-import com.cgens67.avidtune.ui.component.SettingsGeneralCategory
-import com.cgens67.avidtune.ui.component.SettingsPage
-import com.cgens67.avidtune.ui.component.SwitchPreference
-import com.cgens67.avidtune.ui.menu.OnlinePlaylistAdder
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.viewmodels.BackupRestoreViewModel
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.extensions.tryOrNull
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.PreferenceEntry
+import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
+import com.cgens67.gluetune.ui.component.SettingsPage
+import com.cgens67.gluetune.ui.component.SwitchPreference
+import com.cgens67.gluetune.ui.menu.OnlinePlaylistAdder
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.viewmodels.BackupRestoreViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

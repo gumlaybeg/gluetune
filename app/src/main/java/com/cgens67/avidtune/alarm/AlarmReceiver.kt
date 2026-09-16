@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.alarm
+package com.cgens67.gluetune.alarm
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,7 +13,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.app.NotificationCompat
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 
 object AlarmAudioFallback {
     var mediaPlayer: MediaPlayer? = null
@@ -118,7 +118,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.avidtune_monochrome) 
+            .setSmallIcon(R.drawable.gluetune_monochrome) 
             .setContentTitle(context.getString(R.string.alarm_notification_title))
             .setContentText(context.getString(R.string.alarm_notification_text))
             .setPriority(NotificationCompat.PRIORITY_MAX)

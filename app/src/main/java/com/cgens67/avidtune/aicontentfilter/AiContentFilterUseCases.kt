@@ -7,7 +7,7 @@
  * Do not remove or alter this notice. - Per GPL-3.0 Section 4 & Section 5
  */
 
-package com.cgens67.avidtune.aicontentfilter
+package com.cgens67.gluetune.aicontentfilter
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

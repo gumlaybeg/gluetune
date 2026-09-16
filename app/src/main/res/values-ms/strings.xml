@@ -370,7 +370,7 @@
     <string name="restore_failed">Gagal memulihkan sandaran</string>
 
     <string name="discord_integration">Penyepaduan Discord</string>
-    <string name="discord_information">AvidTune menggunakan pustaka KizzyRPC untuk menetapkan status akaun Discord anda. Ini melibatkan penggunaan sambungan Gateway Discord, yang mungkin dianggap sebagai pelanggaran TOS Discord. Walau bagaimanapun, tiada kes yang diketahui tentang akaun pengguna yang digantung atas sebab ini. Gunakan atas risiko anda sendiri. AvidTune hanya akan mengekstrak token anda dan perkara lain disimpan secara setempat.</string>
+    <string name="discord_information">GlueTune menggunakan pustaka KizzyRPC untuk menetapkan status akaun Discord anda. Ini melibatkan penggunaan sambungan Gateway Discord, yang mungkin dianggap sebagai pelanggaran TOS Discord. Walau bagaimanapun, tiada kes yang diketahui tentang akaun pengguna yang digantung atas sebab ini. Gunakan atas risiko anda sendiri. GlueTune hanya akan mengekstrak token anda dan perkara lain disimpan secara setempat.</string>
     <string name="dismiss">Tutup</string>
     <string name="options">Pilihan</string>
     <string name="preview">Pratonton</string>
@@ -753,7 +753,7 @@
     <string name="tab_commits">Commit</string>
     <string name="pre_release">Pra-keluaran</string>
 
-    <string name="latest_version_of_avidtune">Versi terkini AvidTune</string>
+    <string name="latest_version_of_gluetune">Versi terkini GlueTune</string>
     <string name="collapse_release_notes">Runtuhkan nota keluaran</string>
     <string name="expand_release_notes">Kembangkan nota keluaran</string>
     <string name="view_on_github">Lihat di GitHub</string>
@@ -801,7 +801,7 @@
     <string name="social_paypal">PayPal</string>
     <string name="social_web">Web</string>
 
-    <string name="about_app_desc_part1">"AvidTune pada dasarnya adalah versi mudah alih bagi "</string>
+    <string name="about_app_desc_part1">"GlueTune pada dasarnya adalah versi mudah alih bagi "</string>
     <string name="about_app_desc_ganvo">Ganvo Music</string>
     <string name="about_app_desc_part2">", menawarkan pengalaman yang kemas, pantas, serta penuh dengan pelbagai ciri untuk menikmati lagu kegemaran anda semasa dalam perjalanan. Dengan mengambil kira pertimbangan prestasi, anda boleh mengakses semua lagu YouTube Music dengan mudah dari hujung jari anda."</string>
 
@@ -828,7 +828,7 @@
     <string name="hide_romanized">Sembunyikan Rumi</string>
 
     <!-- Rentetan Wawasan (Insight) -->
-    <string name="avidtune_insight">Wawasan AvidTune</string>
+    <string name="gluetune_insight">Wawasan GlueTune</string>
     <string name="insight_discover_year">Ketahui tahun muzik anda</string>
     <string name="insight_your_musical_year">Tahun muzik anda</string>
     <string name="insight_tap_to_view">Ketik untuk melihat statistik penuh anda</string>
@@ -836,9 +836,9 @@
     <string name="insight_top_artists">Artis\nteratas</string>
     <string name="insight_full_stats">Statistik\npenuh</string>
     <string name="insight_download_report">Muat turun\nlaporan</string>
-    <string name="insight_view_full">Lihat Wawasan AvidTune penuh</string>
+    <string name="insight_view_full">Lihat Wawasan GlueTune penuh</string>
     <string name="insight_minutes">Minit</string>
-    <string name="insight_playlist_name">Wawasan AvidTune %1$d</string>
+    <string name="insight_playlist_name">Wawasan GlueTune %1$d</string>
     <string name="insight_msg_tease_0">Saya sangat berharap anda tidak kecewa...</string>
     <string name="insight_msg_reveal_0">Iaitu sebanyak **%1$d minit**. Baru mula nak panas?</string>
     <string name="insight_msg_tease_1000">Nampaknya anda baru sahaja menjumpai kami...</string>
@@ -851,7 +851,7 @@
     <string name="insight_msg_reveal_40000">Anda benar-benar menghabiskan masa di sini selama **%1$d minit**.</string>
     <string name="insight_msg_tease_default">Nampaknya kami sudah hilang kiraan!</string>
     <string name="insight_msg_reveal_default">Tetapi anda sudah pasti mendengar muzik selama **%1$d minit**.</string>
-    <string name="insight_title">Wawasan AvidTune</string>
+    <string name="insight_title">Wawasan GlueTune</string>
     <string name="insight_intro_subtitle">Imbasan kembali pada tahun muzik anda.</string>
     <string name="insight_lets_go">Jom!</string>
     <string name="insight_total_songs_title">Lagu yang anda\ndengar</string>

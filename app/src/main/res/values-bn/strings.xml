@@ -370,7 +370,7 @@
     <string name="restore_failed">ব্যাকআপ রিস্টোর করতে ব্যর্থ হয়েছে</string>
 
     <string name="discord_integration">ডিসকর্ড ইন্টিগ্রেশন</string>
-    <string name="discord_information">AvidTune আপনার ডিসকর্ড অ্যাকাউন্টের স্ট্যাটাস সেট করতে KizzyRPC লাইব্রেরি ব্যবহার করে। এর সাথে ডিসকর্ড গেটওয়ে সংযোগ ব্যবহার জড়িত, যা ডিসকর্ডের TOS লঙ্ঘন হিসাবে বিবেচিত হতে পারে। তবে, এই কারণে ব্যবহারকারীর অ্যাকাউন্ট স্থগিত হওয়ার কোনও পরিচিত ঘটনা নেই। নিজ দায়িত্বে ব্যবহার করুন। AvidTune শুধুমাত্র আপনার টোকেন এক্সট্র্যাক্ট করবে, এবং বাকি সবকিছু স্থানীয়ভাবে সংরক্ষিত থাকে।</string>
+    <string name="discord_information">GlueTune আপনার ডিসকর্ড অ্যাকাউন্টের স্ট্যাটাস সেট করতে KizzyRPC লাইব্রেরি ব্যবহার করে। এর সাথে ডিসকর্ড গেটওয়ে সংযোগ ব্যবহার জড়িত, যা ডিসকর্ডের TOS লঙ্ঘন হিসাবে বিবেচিত হতে পারে। তবে, এই কারণে ব্যবহারকারীর অ্যাকাউন্ট স্থগিত হওয়ার কোনও পরিচিত ঘটনা নেই। নিজ দায়িত্বে ব্যবহার করুন। GlueTune শুধুমাত্র আপনার টোকেন এক্সট্র্যাক্ট করবে, এবং বাকি সবকিছু স্থানীয়ভাবে সংরক্ষিত থাকে।</string>
     <string name="dismiss">বাতিল করুন</string>
     <string name="options">বিকল্পসমূহ</string>
     <string name="preview">প্রিভিউ</string>
@@ -753,7 +753,7 @@
     <string name="tab_commits">কমিটগুলো</string>
     <string name="pre_release">প্রি-রিলিজ</string>
 
-    <string name="latest_version_of_avidtune">AvidTune এর সর্বশেষ সংস্করণ</string>
+    <string name="latest_version_of_gluetune">GlueTune এর সর্বশেষ সংস্করণ</string>
     <string name="collapse_release_notes">রিলিজ নোট সঙ্কুচিত করুন</string>
     <string name="expand_release_notes">রিলিজ নোট প্রসারিত করুন</string>
     <string name="view_on_github">গিটহাবে দেখুন</string>
@@ -801,7 +801,7 @@
     <string name="social_paypal">পেপ্যাল</string>
     <string name="social_web">ওয়েব</string>
     
-    <string name="about_app_desc_part1">"AvidTune হলো মূলত "</string>
+    <string name="about_app_desc_part1">"GlueTune হলো মূলত "</string>
     <string name="about_app_desc_ganvo">Ganvo Music</string>
     <string name="about_app_desc_part2">" এর একটি মোবাইল ভার্সন, যা চলতে-ফিরতে আপনার প্রিয় গানগুলো উপভোগ করতে একটি স্লিক, দ্রুত এবং ফিচার-প্যাকড অভিজ্ঞতা প্রদান করে। পারফরম্যান্সের কথা মাথায় রেখে তৈরি করা এই অ্যাপে আপনি ইউটিউব মিউজিকের সমস্ত গান সহজেই হাতের মুঠোয় পাবেন।"</string>
 
@@ -828,7 +828,7 @@
     <string name="hide_romanized">রোমানাইজড লুকান</string>
 
     <!-- Insight Strings -->
-    <string name="avidtune_insight">AvidTune ইনসাইট</string>
+    <string name="gluetune_insight">GlueTune ইনসাইট</string>
     <string name="insight_discover_year">আপনার মিউজিক্যাল বছর আবিষ্কার করুন</string>
     <string name="insight_your_musical_year">আপনার মিউজিক্যাল বছর</string>
     <string name="insight_tap_to_view">আপনার সম্পূর্ণ পরিসংখ্যান দেখতে ট্যাপ করুন</string>
@@ -836,9 +836,9 @@
     <string name="insight_top_artists">শীর্ষ\nশিল্পী</string>
     <string name="insight_full_stats">সম্পূর্ণ\nপরিসংখ্যান</string>
     <string name="insight_download_report">রিপোর্ট\nডাউনলোড করুন</string>
-    <string name="insight_view_full">সম্পূর্ণ AvidTune ইনসাইট দেখুন</string>
+    <string name="insight_view_full">সম্পূর্ণ GlueTune ইনসাইট দেখুন</string>
     <string name="insight_minutes">মিনিট</string>
-    <string name="insight_playlist_name">AvidTune ইনসাইট %1$d</string>
+    <string name="insight_playlist_name">GlueTune ইনসাইট %1$d</string>
     <string name="insight_msg_tease_0">আমি সত্যিই আশা করি আপনি হতাশ হবেন না...</string>
     <string name="insight_msg_reveal_0">এটি **%1$d মিনিট**। শুধু ওয়ার্মিং আপ?</string>
     <string name="insight_msg_tease_1000">মনে হচ্ছে আপনি সম্প্রতি আমাদের খুঁজে পেয়েছেন...</string>
@@ -851,7 +851,7 @@
     <string name="insight_msg_reveal_40000">আপনি আক্ষরিক অর্থেই **%1$d মিনিট** এখানে কাটিয়েছেন।</string>
     <string name="insight_msg_tease_default">দেখে মনে হচ্ছে আমরা গোনা ভুলে গেছি!</string>
     <string name="insight_msg_reveal_default">তবে আপনি অবশ্যই **%1$d মিনিট** মিউজিক শুনেছেন।</string>
-    <string name="insight_title">AvidTune ইনসাইট</string>
+    <string name="insight_title">GlueTune ইনসাইট</string>
     <string name="insight_intro_subtitle">মিউজিকে আপনার বছরটির একটি ফিরে দেখা।</string>
     <string name="insight_lets_go">চলুন শুরু করি!</string>
     <string name="insight_total_songs_title">আপনার শোনা\nগানগুলো</string>

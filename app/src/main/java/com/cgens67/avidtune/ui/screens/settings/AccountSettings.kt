@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -30,27 +30,27 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.utils.parseCookieString
-import com.cgens67.avidtune.App.Companion.forgetAccount
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AccountChannelHandleKey
-import com.cgens67.avidtune.constants.AccountEmailKey
-import com.cgens67.avidtune.constants.AccountNameKey
-import com.cgens67.avidtune.constants.DataSyncIdKey
-import com.cgens67.avidtune.constants.InnerTubeCookieKey
-import com.cgens67.avidtune.constants.UseLoginForBrowse
-import com.cgens67.avidtune.constants.VisitorDataKey
-import com.cgens67.avidtune.constants.YtmSyncKey
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.InfoLabel
-import com.cgens67.avidtune.ui.component.PreferenceEntry
-import com.cgens67.avidtune.ui.component.PreferenceGroupTitle
-import com.cgens67.avidtune.ui.component.SettingsGeneralCategory
-import com.cgens67.avidtune.ui.component.SettingsPage
-import com.cgens67.avidtune.ui.component.SwitchPreference
-import com.cgens67.avidtune.ui.component.TextFieldDialog
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.App.Companion.forgetAccount
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AccountChannelHandleKey
+import com.cgens67.gluetune.constants.AccountEmailKey
+import com.cgens67.gluetune.constants.AccountNameKey
+import com.cgens67.gluetune.constants.DataSyncIdKey
+import com.cgens67.gluetune.constants.InnerTubeCookieKey
+import com.cgens67.gluetune.constants.UseLoginForBrowse
+import com.cgens67.gluetune.constants.VisitorDataKey
+import com.cgens67.gluetune.constants.YtmSyncKey
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.InfoLabel
+import com.cgens67.gluetune.ui.component.PreferenceEntry
+import com.cgens67.gluetune.ui.component.PreferenceGroupTitle
+import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
+import com.cgens67.gluetune.ui.component.SettingsPage
+import com.cgens67.gluetune.ui.component.SwitchPreference
+import com.cgens67.gluetune.ui.component.TextFieldDialog
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.rememberPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

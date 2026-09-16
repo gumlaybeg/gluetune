@@ -382,7 +382,7 @@
     <string name="backup_create_failed">"Nelze vytvořit zálohu"</string>
     <string name="restore_failed">"Obnovení zálohy selhalo"</string>
     <string name="discord_integration">"Integrace s Discordem"</string>
-    <string name="discord_information">"AvidTune používá knihovnu KizzyRPC k nastavení statusu vašeho Discord účtu. To zahrnuje použití připojení Discord Gateway, což může být považováno za porušení podmínek služby Discordu. Nejsou však známy případy suspendování uživatelských účtů z tohoto důvodu. Používejte na vlastní riziko. OpenTunne pouze získá váš token, vše ostatní je uloženo lokálně."</string>
+    <string name="discord_information">"GlueTune používá knihovnu KizzyRPC k nastavení statusu vašeho Discord účtu. To zahrnuje použití připojení Discord Gateway, což může být považováno za porušení podmínek služby Discordu. Nejsou však známy případy suspendování uživatelských účtů z tohoto důvodu. Používejte na vlastní riziko. OpenTunne pouze získá váš token, vše ostatní je uloženo lokálně."</string>
     <string name="dismiss">"Zavřít"</string>
     <string name="options">"Možnosti"</string>
     <string name="preview">"Náhled"</string>

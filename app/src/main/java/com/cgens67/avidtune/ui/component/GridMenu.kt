@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -32,8 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.media3.exoplayer.offline.Download
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.utils.makeTimeString
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.utils.makeTimeString
 
 val GridMenuItemHeight = 108.dp
 

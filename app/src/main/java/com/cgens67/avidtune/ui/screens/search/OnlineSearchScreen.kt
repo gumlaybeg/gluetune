@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.search
+package com.cgens67.gluetune.ui.screens.search
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -30,16 +30,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cgens67.innertube.models.*
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.YouTubeListItem
-import com.cgens67.avidtune.ui.menu.*
-import com.cgens67.avidtune.viewmodels.OnlineSearchSuggestionViewModel
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.YouTubeListItem
+import com.cgens67.gluetune.ui.menu.*
+import com.cgens67.gluetune.viewmodels.OnlineSearchSuggestionViewModel
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 

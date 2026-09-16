@@ -1,10 +1,10 @@
-package com.cgens67.avidtune.playback.queues
+package com.cgens67.gluetune.playback.queues
 
 import androidx.media3.common.MediaItem
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.WatchEndpoint
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.models.MediaMetadata
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.models.MediaMetadata
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
@@ -47,8 +47,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.ui.screens.OptionStats
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.ui.screens.OptionStats
 
 @Composable
 fun <E> ChipsRow(

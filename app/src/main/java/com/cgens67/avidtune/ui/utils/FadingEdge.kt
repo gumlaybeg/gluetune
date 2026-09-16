@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.utils
+package com.cgens67.gluetune.ui.utils
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent

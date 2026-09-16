@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalCoilApi::class, ExperimentalMaterial3Api::class)
 
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.os.Environment
 import androidx.compose.animation.AnimatedVisibility
@@ -95,19 +95,19 @@ import androidx.navigation.NavController
 import coil.imageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.MaxImageCacheSizeKey
-import com.cgens67.avidtune.constants.MaxSongCacheSizeKey
-import com.cgens67.avidtune.constants.ThumbnailCornerRadius
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.extensions.tryOrNull
-import com.cgens67.avidtune.ui.component.IconButton as AppIconButton
-import com.cgens67.avidtune.ui.component.ListPreference
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.rememberPreference
-import com.cgens67.avidtune.viewmodels.HistoryViewModel
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.MaxImageCacheSizeKey
+import com.cgens67.gluetune.constants.MaxSongCacheSizeKey
+import com.cgens67.gluetune.constants.ThumbnailCornerRadius
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.extensions.tryOrNull
+import com.cgens67.gluetune.ui.component.IconButton as AppIconButton
+import com.cgens67.gluetune.ui.component.ListPreference
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.rememberPreference
+import com.cgens67.gluetune.viewmodels.HistoryViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive

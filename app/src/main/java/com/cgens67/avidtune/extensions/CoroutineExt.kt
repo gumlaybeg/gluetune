@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.extensions
+package com.cgens67.gluetune.extensions
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope

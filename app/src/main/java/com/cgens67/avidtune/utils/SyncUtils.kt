@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.AlbumItem
@@ -6,12 +6,12 @@ import com.cgens67.innertube.models.ArtistItem
 import com.cgens67.innertube.models.PlaylistItem
 import com.cgens67.innertube.models.SongItem
 import com.cgens67.innertube.utils.completed
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.ArtistEntity
-import com.cgens67.avidtune.db.entities.PlaylistEntity
-import com.cgens67.avidtune.db.entities.PlaylistSongMap
-import com.cgens67.avidtune.db.entities.SongEntity
-import com.cgens67.avidtune.models.toMediaMetadata
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.ArtistEntity
+import com.cgens67.gluetune.db.entities.PlaylistEntity
+import com.cgens67.gluetune.db.entities.PlaylistSongMap
+import com.cgens67.gluetune.db.entities.SongEntity
+import com.cgens67.gluetune.models.toMediaMetadata
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.LocalDateTime

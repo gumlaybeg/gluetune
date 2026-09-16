@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -62,11 +62,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.BuildConfig
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.utils.backToMain
+import com.cgens67.gluetune.BuildConfig
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.utils.backToMain
 
 // ── Shimmer brush ──────────────────────────────────────────────────────────
 
@@ -126,7 +126,7 @@ private val developers = listOf(
 
 private val supporters = listOf(
     Contributor(
-        avatarUrl = "https://raw.githubusercontent.com/cgens67/Assets/refs/heads/main/avidtunescreenshots/747643159_17944159968252146_2891069926341403652_n.jpg",
+        avatarUrl = "https://raw.githubusercontent.com/cgens67/Assets/refs/heads/main/gluetunescreenshots/747643159_17944159968252146_2891069926341403652_n.jpg",
         name = R.string.supporter, 
         role = R.string.supporter,
         profileUrl = "https://www.instagram.com/cct._.610",
@@ -204,9 +204,9 @@ fun AboutScreen(
             item {
                 SocialCard(
                     links = listOf(
-                        SocialLink(R.drawable.github,    "https://github.com/cgens67/AvidTune", R.string.social_github),
-                        SocialLink(R.drawable.telegram,  "https://t.me/avidtuneupdates",       R.string.social_telegram),
-                        SocialLink(R.drawable.resource_public, "https://avidtune.vercel.app/", R.string.social_web),
+                        SocialLink(R.drawable.github,    "https://github.com/cgens67/GlueTune", R.string.social_github),
+                        SocialLink(R.drawable.telegram,  "https://t.me/gluetuneupdates",       R.string.social_telegram),
+                        SocialLink(R.drawable.resource_public, "https://gluetune.vercel.app/", R.string.social_web),
                     ),
                     onLinkClick = { uriHandler.openUri(it) },
                 )
@@ -247,7 +247,7 @@ fun AboutScreen(
                 ContributorsCard(
                     contributors = listOf(
                         Contributor(
-                            avatarUrl = "https://raw.githubusercontent.com/cgens67/Assets/refs/heads/main/avidtunescreenshots/747643159_17944159968252146_2891069926341403652_n.jpg",
+                            avatarUrl = "https://raw.githubusercontent.com/cgens67/Assets/refs/heads/main/gluetunescreenshots/747643159_17944159968252146_2891069926341403652_n.jpg",
                             name = 0,
                             role = R.string.supporter,
                             profileUrl = "https://www.instagram.com/cct._.610",
@@ -268,7 +268,7 @@ fun AboutScreen(
             item {
                 LicenseFooter(
                     onLicenseClick = {
-                        uriHandler.openUri("https://github.com/cgens67/AvidTune/blob/master/LICENSE")
+                        uriHandler.openUri("https://github.com/cgens67/GlueTune/blob/master/LICENSE")
                     }
                 )
             }
@@ -303,7 +303,7 @@ private fun HeroCard(shimmerBrush: Brush) {
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Image(
-                        painter = painterResource(R.drawable.avidtune_monochrome),
+                        painter = painterResource(R.drawable.gluetune_monochrome),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(
                             MaterialTheme.colorScheme.onPrimaryContainer,

@@ -1,13 +1,13 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.Album
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.db.entities.LocalItem
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.db.entities.Song
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.db.entities.LocalItem
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.db.entities.Song
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

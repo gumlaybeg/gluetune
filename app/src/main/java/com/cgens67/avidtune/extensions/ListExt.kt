@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.extensions
+package com.cgens67.gluetune.extensions
 
 fun <T> List<T>.reversed(reversed: Boolean) = if (reversed) asReversed() else this
 

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.content.Context
 import android.widget.Toast
@@ -44,15 +44,15 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.alarm.AlarmManagerHelper
-import com.cgens67.avidtune.alarm.AlarmState
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.ui.component.SettingsPage
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.makeTimeString
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.alarm.AlarmManagerHelper
+import com.cgens67.gluetune.alarm.AlarmState
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.ui.component.SettingsPage
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.makeTimeString
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.SongItem
 import kotlinx.coroutines.Dispatchers

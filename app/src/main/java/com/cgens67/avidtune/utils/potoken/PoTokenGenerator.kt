@@ -1,7 +1,7 @@
-package com.cgens67.avidtune.utils.potoken
+package com.cgens67.gluetune.utils.potoken
 
 import android.webkit.CookieManager
-import com.cgens67.avidtune.App
+import com.cgens67.gluetune.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking

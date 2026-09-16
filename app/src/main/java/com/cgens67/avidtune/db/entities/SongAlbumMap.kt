@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.db.entities
+package com.cgens67.gluetune.db.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

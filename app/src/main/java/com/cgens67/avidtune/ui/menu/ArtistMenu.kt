@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.menu
+package com.cgens67.gluetune.ui.menu
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -24,18 +24,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.ArtistSongSortType
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.ui.component.ArtistListItem
-import com.cgens67.avidtune.ui.component.MenuItemData
-import com.cgens67.avidtune.ui.component.MenuGroup
-import com.cgens67.avidtune.ui.component.NewAction
-import com.cgens67.avidtune.ui.component.NewActionGrid
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.ArtistSongSortType
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.ui.component.ArtistListItem
+import com.cgens67.gluetune.ui.component.MenuItemData
+import com.cgens67.gluetune.ui.component.MenuGroup
+import com.cgens67.gluetune.ui.component.NewAction
+import com.cgens67.gluetune.ui.component.NewActionGrid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

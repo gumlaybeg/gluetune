@@ -370,7 +370,7 @@
     <string name="restore_failed">Failed to restore backup</string>
 
     <string name="discord_integration">Discord integration</string>
-    <string name="discord_information">AvidTune uses the KizzyRPC library to set your Discord account\'s status. This involves using the Discord Gateway connection, which may be considered a violation of Discord\'s TOS. However, there are no known cases of user accounts being suspended for this reason. Use at your own risk. AvidTune will only extract your token, and everything else is stored locally.</string>
+    <string name="discord_information">GlueTune uses the KizzyRPC library to set your Discord account\'s status. This involves using the Discord Gateway connection, which may be considered a violation of Discord\'s TOS. However, there are no known cases of user accounts being suspended for this reason. Use at your own risk. GlueTune will only extract your token, and everything else is stored locally.</string>
     <string name="dismiss">Dismiss</string>
     <string name="options">Options</string>
     <string name="preview">Preview</string>
@@ -757,7 +757,7 @@
     <string name="tab_commits">Commits</string>
     <string name="pre_release">Pre-release</string>
 
-    <string name="latest_version_of_avidtune">Latest version of AvidTune</string>
+    <string name="latest_version_of_gluetune">Latest version of GlueTune</string>
     <string name="collapse_release_notes">Collapse release notes</string>
     <string name="expand_release_notes">Expand release notes</string>
     <string name="view_on_github">View on GitHub</string>
@@ -805,7 +805,7 @@
     <string name="social_paypal">PayPal</string>
     <string name="social_web">Web</string>
     
-    <string name="about_app_desc_part1">"AvidTune is basically a mobile version of "</string>
+    <string name="about_app_desc_part1">"GlueTune is basically a mobile version of "</string>
     <string name="about_app_desc_ganvo">Ganvo Music</string>
     <string name="about_app_desc_part2">", offering a sleek, quick, and packed full of features experience to enjoy your favorite songs while on the go. With performance considerations in mind, you can easily access all the YouTube Music songs directly from your fingertips."</string>
 
@@ -832,7 +832,7 @@
     <string name="hide_romanized">Hide Romanized</string>
 
     <!-- Insight Strings -->
-    <string name="avidtune_insight">AvidTune Insight</string>
+    <string name="gluetune_insight">GlueTune Insight</string>
     <string name="insight_discover_year">Discover your musical year</string>
     <string name="insight_your_musical_year">Your musical year</string>
     <string name="insight_tap_to_view">Tap to view your complete stats</string>
@@ -840,9 +840,9 @@
     <string name="insight_top_artists">Top\nartists</string>
     <string name="insight_full_stats">Full\nstats</string>
     <string name="insight_download_report">Download\nreport</string>
-    <string name="insight_view_full">View full AvidTune Insight</string>
+    <string name="insight_view_full">View full GlueTune Insight</string>
     <string name="insight_minutes">Minutes</string>
-    <string name="insight_playlist_name">AvidTune Insight %1$d</string>
+    <string name="insight_playlist_name">GlueTune Insight %1$d</string>
     <string name="insight_msg_tease_0">I really hope you are not disappointed...</string>
     <string name="insight_msg_reveal_0">That\'s **%1$d minutes**. Just warming up?</string>
     <string name="insight_msg_tease_1000">It seems like you found us recently...</string>
@@ -855,7 +855,7 @@
     <string name="insight_msg_reveal_40000">You literally lived here for **%1$d minutes**.</string>
     <string name="insight_msg_tease_default">Looks like we lost count!</string>
     <string name="insight_msg_reveal_default">But you definitely listened to **%1$d minutes** of music.</string>
-    <string name="insight_title">AvidTune Insight</string>
+    <string name="insight_title">GlueTune Insight</string>
     <string name="insight_intro_subtitle">A look back at your year in music.</string>
     <string name="insight_lets_go">Let\'s go!</string>
     <string name="insight_total_songs_title">Songs you\nlistened to</string>

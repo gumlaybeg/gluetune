@@ -360,7 +360,7 @@
     <string name="restore_failed">還原備份失敗</string>
 
     <string name="discord_integration">Discord 整合</string>
-    <string name="discord_information">AvidTune 使用 KizzyRPC 庫來設定您的 Discord 帳戶狀態。這涉及使用 Discord 閘道連線，這可能被視為違反 Discord 的服務條款 (TOS)。但是，目前尚無已知使用者帳戶因此被暫停的案例。請自行承擔使用風險。AvidTune 只會擷取您的 Token，其他所有內容均儲存在本機。</string>
+    <string name="discord_information">GlueTune 使用 KizzyRPC 庫來設定您的 Discord 帳戶狀態。這涉及使用 Discord 閘道連線，這可能被視為違反 Discord 的服務條款 (TOS)。但是，目前尚無已知使用者帳戶因此被暫停的案例。請自行承擔使用風險。GlueTune 只會擷取您的 Token，其他所有內容均儲存在本機。</string>
     <string name="dismiss">忽略</string>
     <string name="options">選項</string>
     <string name="preview">預覽</string>
@@ -742,7 +742,7 @@
     <string name="tab_commits">提交</string>
     <string name="pre_release">預先發行</string>
 
-    <string name="latest_version_of_avidtune">AvidTune 的最新版本</string>
+    <string name="latest_version_of_gluetune">GlueTune 的最新版本</string>
     <string name="collapse_release_notes">收起版本資訊</string>
     <string name="expand_release_notes">展開版本資訊</string>
     <string name="view_on_github">在 GitHub 上查看</string>
@@ -790,7 +790,7 @@
     <string name="social_paypal">PayPal</string>
     <string name="social_web">網站</string>
     
-    <string name="about_app_desc_part1">"AvidTune 基本上是 "</string>
+    <string name="about_app_desc_part1">"GlueTune 基本上是 "</string>
     <string name="about_app_desc_ganvo">Ganvo Music</string>
     <string name="about_app_desc_part2">" 的行動版，提供時尚、快捷且功能豐富的體驗，讓您隨時隨地暢享最愛的歌曲。在兼顧效能的同時，讓您指尖輕觸即可輕鬆存取所有 YouTube Music 歌曲。"</string>
 
@@ -817,7 +817,7 @@
     <string name="hide_romanized">隱藏羅馬拼音</string>
     
     <!-- Insight Strings -->
-    <string name="avidtune_insight">AvidTune Insight</string>
+    <string name="gluetune_insight">GlueTune Insight</string>
     <string name="insight_discover_year">探索您的年度音樂</string>
     <string name="insight_your_musical_year">您的年度音樂</string>
     <string name="insight_tap_to_view">點擊查看完整統計資料</string>
@@ -825,9 +825,9 @@
     <string name="insight_top_artists">熱門\n歌手</string>
     <string name="insight_full_stats">完整\n統計</string>
     <string name="insight_download_report">下載\n報告</string>
-    <string name="insight_view_full">查看完整的 AvidTune Insight</string>
+    <string name="insight_view_full">查看完整的 GlueTune Insight</string>
     <string name="insight_minutes">分鐘</string>
-    <string name="insight_playlist_name">AvidTune Insight %1$d</string>
+    <string name="insight_playlist_name">GlueTune Insight %1$d</string>
     <string name="insight_msg_tease_0">希望您不會感到失望...</string>
     <string name="insight_msg_reveal_0">只有 **%1$d 分鐘**。才剛剛熱身嗎？</string>
     <string name="insight_msg_tease_1000">看來您是最近才發現我們的...</string>
@@ -840,7 +840,7 @@
     <string name="insight_msg_reveal_40000">您簡直在這裡住上了 **%1$d 分鐘**。</string>
     <string name="insight_msg_tease_default">看來我們都數不清了！</string>
     <string name="insight_msg_reveal_default">但您絕對聽了 **%1$d 分鐘** 的音樂。</string>
-    <string name="insight_title">AvidTune Insight</string>
+    <string name="insight_title">GlueTune Insight</string>
     <string name="insight_intro_subtitle">回顧您的年度音樂之旅。</string>
     <string name="insight_lets_go">出發吧！</string>
     <string name="insight_total_songs_title">您聽過的\n歌曲</string>
@@ -1145,7 +1145,7 @@
     <string name="system_equalizer">系統等化器</string>
     <string name="error_title">錯誤</string>
     <string name="error_eq_apply_failed">套用 EQ 失敗：%1$s</string>
-    <string name="avidtune_equalizer">AvidTune 等化器</string>
+    <string name="gluetune_equalizer">GlueTune 等化器</string>
     <string name="eq_enable_title">啟用等化器</string>
     <string name="eq_enable_summary">切換內建參數等化器</string>
     <string name="eq_simple">簡單</string>
@@ -1160,11 +1160,11 @@
     <string name="eq_label_bass">低音</string>
     <string name="eq_label_treble">高音</string>
     <string name="eq_label_custom">自訂</string>
-    <string name="eq_label_avidtune">AvidTune</string>
+    <string name="eq_label_gluetune">GlueTune</string>
     <string name="eq_label_dolby">杜比</string>
     <string name="eq_label_dirac">Dirac</string>
     <string name="eq_preset_flat">平坦</string>
-    <string name="eq_preset_avidtune_signature">AvidTune 標誌性</string>
+    <string name="eq_preset_gluetune_signature">GlueTune 標誌性</string>
     <string name="eq_preset_acoustic">原聲</string>
     <string name="eq_preset_spatial">空間感</string>
     <string name="eq_preset_bass_boost">低音增強</string>
@@ -1212,7 +1212,7 @@
     
     <string name="theme_creator">主題建立器</string>
     <string name="theme_saved">主題已儲存！</string>
-    <string name="theme_creator_description">AvidTune 使用 Material You。只需選擇一個種子顏色，引擎將自動計算完美匹配的次要顏色、第三顏色和中性顏色。</string>
+    <string name="theme_creator_description">GlueTune 使用 Material You。只需選擇一個種子顏色，引擎將自動計算完美匹配的次要顏色、第三顏色和中性顏色。</string>
     <string name="theme_name">主題名稱</string>
     <string name="hex_color">十六進位顏色</string>
     <string name="randomize">隨機產生</string>
@@ -1234,7 +1234,7 @@
     <string name="alarm_stop">停止</string>
     <string name="alarm_snoozed_toast">鬧鐘已貪睡 10 分鐘</string>
     <string name="alarm_channel_name">鬧鐘</string>
-    <string name="alarm_notification_title">AvidTune 鬧鐘</string>
+    <string name="alarm_notification_title">GlueTune 鬧鐘</string>
     <string name="alarm_notification_text">起床了！您的鬧鐘正在響。</string>
     <string name="set_as_alarm">設為鬧鐘</string>
     <string name="add_alarm">新增鬧鐘</string>

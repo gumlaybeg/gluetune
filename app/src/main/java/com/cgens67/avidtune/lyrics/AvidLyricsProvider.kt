@@ -1,9 +1,9 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 import android.content.Context
-import com.cgens67.avidtune.constants.EnableAvidLyricsKey
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
+import com.cgens67.gluetune.constants.EnableAvidLyricsKey
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
@@ -15,7 +15,7 @@ object AvidLyricsProvider : LyricsProvider {
     override val name = "AvidLyrics"
 
     private const val GITHUB_USERNAME = "cgens67"
-    private const val GITHUB_REPO = "avidtune-lyrics"
+    private const val GITHUB_REPO = "gluetune-lyrics"
     private const val GITHUB_BRANCH = "main"
 
     private val client by lazy {

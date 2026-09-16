@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import android.content.Context
 import android.content.res.Configuration
@@ -109,20 +109,20 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AudioQuality
-import com.cgens67.avidtune.constants.AudioQualityKey
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AudioQuality
+import com.cgens67.gluetune.constants.AudioQualityKey
 import com.cgens67.innertube.models.AccountInfo
-import com.cgens67.avidtune.db.entities.Album
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.db.entities.SongWithStats
-import com.cgens67.avidtune.utils.YTPlayerUtils
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
-import com.cgens67.avidtune.viewmodels.InsightViewModel
-import com.cgens67.avidtune.constants.DarkModeKey
-import com.cgens67.avidtune.ui.screens.settings.DarkMode
-import com.cgens67.avidtune.utils.rememberEnumPreference
+import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.db.entities.SongWithStats
+import com.cgens67.gluetune.utils.YTPlayerUtils
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
+import com.cgens67.gluetune.viewmodels.InsightViewModel
+import com.cgens67.gluetune.constants.DarkModeKey
+import com.cgens67.gluetune.ui.screens.settings.DarkMode
+import com.cgens67.gluetune.utils.rememberEnumPreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -966,7 +966,7 @@ fun WrappedIntro(textColor: Color, useDarkTheme: Boolean, onNext: () -> Unit) {
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     FadeInSlideUp(visible = visible, delayMillis = 200) {
                         Image(
-                            painter = painterResource(R.drawable.avidtune),
+                            painter = painterResource(R.drawable.gluetune),
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(textColor),
                             modifier = Modifier.size(100.dp).clip(CircleShape)
@@ -1022,7 +1022,7 @@ fun WrappedIntro(textColor: Color, useDarkTheme: Boolean, onNext: () -> Unit) {
             ) {
                 FadeInSlideUp(visible = visible, delayMillis = 200) {
                     Image(
-                        painter = painterResource(R.drawable.avidtune),
+                        painter = painterResource(R.drawable.gluetune),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(textColor),
                         modifier = Modifier.size(100.dp).clip(CircleShape)
@@ -2171,7 +2171,7 @@ fun ConclusionPage(onClose: () -> Unit, textColor: Color, useDarkTheme: Boolean)
             Row(modifier = Modifier.fillMaxSize().padding(32.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     Image(
-                        painter = painterResource(R.drawable.avidtune),
+                        painter = painterResource(R.drawable.gluetune),
                         contentDescription = null,
                         colorFilter = ColorFilter.tint(textColor),
                         modifier = Modifier.size(96.dp).clip(CircleShape)
@@ -2213,7 +2213,7 @@ fun ConclusionPage(onClose: () -> Unit, textColor: Color, useDarkTheme: Boolean)
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(R.drawable.avidtune),
+                    painter = painterResource(R.drawable.gluetune),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(textColor),
                     modifier = Modifier.size(96.dp).clip(CircleShape)

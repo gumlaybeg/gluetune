@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.Manifest
 import android.content.Context
@@ -141,18 +141,18 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cgens67.innertube.utils.parseCookieString
-import com.cgens67.avidtune.BuildConfig
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AccountEmailKey
-import com.cgens67.avidtune.constants.AccountNameKey
-import com.cgens67.avidtune.constants.InnerTubeCookieKey
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.TopSearch
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.rememberPreference
-import com.cgens67.avidtune.viewmodels.HomeViewModel
-import com.cgens67.avidtune.viewmodels.NewsViewModel
+import com.cgens67.gluetune.BuildConfig
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AccountEmailKey
+import com.cgens67.gluetune.constants.AccountNameKey
+import com.cgens67.gluetune.constants.InnerTubeCookieKey
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.TopSearch
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.rememberPreference
+import com.cgens67.gluetune.viewmodels.HomeViewModel
+import com.cgens67.gluetune.viewmodels.NewsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -323,7 +323,7 @@ fun SettingsScreen(
     var showTogetherScreen by remember { mutableStateOf(false) }
 
     if (showTogetherScreen) {
-        com.cgens67.avidtune.together.MusicTogetherScreen(
+        com.cgens67.gluetune.together.MusicTogetherScreen(
             navController = navController,
             scrollBehavior = scrollBehavior,
             onBack = { showTogetherScreen = false }
@@ -803,7 +803,7 @@ private fun buildIntegrationActions(
         SettingsIntegrationAction(
             icon = painterResource(R.drawable.github),
             label = stringResource(R.string.github),
-            onClick = { resetSearch(); uriHandler.openUri("https://github.com/cgens67/AvidTune") },
+            onClick = { resetSearch(); uriHandler.openUri("https://github.com/cgens67/GlueTune") },
             accentColor = MaterialTheme.colorScheme.onSurface
         )
     )
@@ -920,7 +920,7 @@ private fun buildSettingsGroups(
                     title = stringResource(R.string.Telegramchanel),
                     accentColor = Color(0xFF2AABEE),
                     keywords = listOf("telegram", "community", "channel"),
-                    onClick = { resetSearch(); uriHandler.openUri("https://t.me/avidtuneupdates") }
+                    onClick = { resetSearch(); uriHandler.openUri("https://t.me/gluetuneupdates") }
                 )
             )
         )
@@ -3074,7 +3074,7 @@ suspend fun downloadApk(
     onProgressUpdate: (Float) -> Unit
 ): Uri? = withContext(Dispatchers.IO) {
     try {
-        val apkUrl = "https://github.com/cgens67/AvidTune/releases/download/$version/app-universal-release.apk"
+        val apkUrl = "https://github.com/cgens67/GlueTune/releases/download/$version/app-universal-release.apk"
 
         val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         val apkFile = File(downloadDir, "app-universal-release-$version.apk")
@@ -3088,12 +3088,12 @@ suspend fun downloadApk(
         var response = client.newCall(request).execute()
 
         if (!response.isSuccessful) {
-            val altUrl = "https://github.com/cgens67/AvidTune/releases/download/$version/app-release.apk"
+            val altUrl = "https://github.com/cgens67/GlueTune/releases/download/$version/app-release.apk"
             request = Request.Builder().url(altUrl).build()
             response = client.newCall(request).execute()
             
             if (!response.isSuccessful) {
-                val altUrl2 = "https://github.com/cgens67/AvidTune/releases/download/$version/AvidTune-$version.apk"
+                val altUrl2 = "https://github.com/cgens67/GlueTune/releases/download/$version/GlueTune-$version.apk"
                 request = Request.Builder().url(altUrl2).build()
                 response = client.newCall(request).execute()
                 
@@ -3163,7 +3163,7 @@ fun installApk(context: Context, apkUri: Uri) {
 
 suspend fun checkForUpdates(): String? = withContext(Dispatchers.IO) {
     try {
-        val url = URL("https://api.github.com/repos/cgens67/AvidTune/releases/latest")
+        val url = URL("https://api.github.com/repos/cgens67/GlueTune/releases/latest")
         val connection = url.openConnection()
         connection.connect()
         val json = connection.getInputStream().bufferedReader().use { it.readText() }
@@ -3177,7 +3177,7 @@ suspend fun checkForUpdates(): String? = withContext(Dispatchers.IO) {
 
 suspend fun checkForBetaUpdates(): String? = withContext(Dispatchers.IO) {
     try {
-        val url = URL("https://api.github.com/repos/cgens67/AvidTune/releases")
+        val url = URL("https://api.github.com/repos/cgens67/GlueTune/releases")
         val connection = url.openConnection()
         connection.connect()
         val json = connection.getInputStream().bufferedReader().use { it.readText() }

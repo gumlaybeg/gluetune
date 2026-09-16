@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -164,37 +164,37 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AnimateLyricsKey
-import com.cgens67.avidtune.constants.AppleMusicLyricsBlurKey
-import com.cgens67.avidtune.constants.DarkModeKey
-import com.cgens67.avidtune.constants.DisableBlurKey
-import com.cgens67.avidtune.constants.LyricsClickKey
-import com.cgens67.avidtune.constants.LyricsScrollKey
-import com.cgens67.avidtune.constants.LyricsTextPositionKey
-import com.cgens67.avidtune.constants.PlayerBackgroundStyle
-import com.cgens67.avidtune.constants.PlayerBackgroundStyleKey
-import com.cgens67.avidtune.constants.SliderStyle
-import com.cgens67.avidtune.constants.SliderStyleKey
-import com.cgens67.avidtune.constants.SwipeThumbnailKey
-import com.cgens67.avidtune.db.entities.LyricsEntity
-import com.cgens67.avidtune.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
-import com.cgens67.avidtune.lyrics.LyricsEntry
-import com.cgens67.avidtune.lyrics.LyricsResult
-import com.cgens67.avidtune.lyrics.LyricsUtils.findCurrentLineIndex
-import com.cgens67.avidtune.lyrics.LyricsUtils.parseLyrics
-import com.cgens67.avidtune.lyrics.WordTimestamp
-import com.cgens67.avidtune.playback.PlayerConnection
-import com.cgens67.avidtune.ui.menu.LyricsMenu
-import com.cgens67.avidtune.ui.screens.settings.DarkMode
-import com.cgens67.avidtune.ui.screens.settings.LyricsPosition
-import com.cgens67.avidtune.ui.utils.fadingEdge
-import com.cgens67.avidtune.utils.ComposeToImage
-import com.cgens67.avidtune.utils.makeTimeString
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AnimateLyricsKey
+import com.cgens67.gluetune.constants.AppleMusicLyricsBlurKey
+import com.cgens67.gluetune.constants.DarkModeKey
+import com.cgens67.gluetune.constants.DisableBlurKey
+import com.cgens67.gluetune.constants.LyricsClickKey
+import com.cgens67.gluetune.constants.LyricsScrollKey
+import com.cgens67.gluetune.constants.LyricsTextPositionKey
+import com.cgens67.gluetune.constants.PlayerBackgroundStyle
+import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
+import com.cgens67.gluetune.constants.SliderStyle
+import com.cgens67.gluetune.constants.SliderStyleKey
+import com.cgens67.gluetune.constants.SwipeThumbnailKey
+import com.cgens67.gluetune.db.entities.LyricsEntity
+import com.cgens67.gluetune.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
+import com.cgens67.gluetune.lyrics.LyricsEntry
+import com.cgens67.gluetune.lyrics.LyricsResult
+import com.cgens67.gluetune.lyrics.LyricsUtils.findCurrentLineIndex
+import com.cgens67.gluetune.lyrics.LyricsUtils.parseLyrics
+import com.cgens67.gluetune.lyrics.WordTimestamp
+import com.cgens67.gluetune.playback.PlayerConnection
+import com.cgens67.gluetune.ui.menu.LyricsMenu
+import com.cgens67.gluetune.ui.screens.settings.DarkMode
+import com.cgens67.gluetune.ui.screens.settings.LyricsPosition
+import com.cgens67.gluetune.ui.utils.fadingEdge
+import com.cgens67.gluetune.utils.ComposeToImage
+import com.cgens67.gluetune.utils.makeTimeString
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -236,14 +236,14 @@ import androidx.navigation.NavController
 fun Lyrics(
     sliderPositionProvider: () -> Long?,
     onNavigateBack: (() -> Unit)? = null,
-    mediaMetadata: com.cgens67.avidtune.models.MediaMetadata? = null,
+    mediaMetadata: com.cgens67.gluetune.models.MediaMetadata? = null,
     onBackClick: () -> Unit = {},
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     backgroundAlpha: () -> Float = { 1f },
     navController: NavController? = null,
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
-    val menuState = com.cgens67.avidtune.ui.component.LocalMenuState.current
+    val menuState = com.cgens67.gluetune.ui.component.LocalMenuState.current
     val density = LocalDensity.current
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -382,7 +382,7 @@ fun Lyrics(
                 }
                 
                 val textToTranslate = itemsToTranslate.joinToString("\n")
-                val translatedText = com.cgens67.avidtune.utils.TranslationHelper.translate(textToTranslate)
+                val translatedText = com.cgens67.gluetune.utils.TranslationHelper.translate(textToTranslate)
                 
                 if (translatedText != null) {
                     val translatedSplit = translatedText.split("\n")
@@ -428,7 +428,7 @@ fun Lyrics(
         } else {
             scope.launch {
                 val linesToRomanize = lines.map { it.text }
-                val romanizedResult = com.cgens67.avidtune.utils.TranslationHelper.romanize(linesToRomanize)
+                val romanizedResult = com.cgens67.gluetune.utils.TranslationHelper.romanize(linesToRomanize)
 
                 // romanizedResult is a List<String> aligned with 'lines'
                 val finalRomanizedLines = mutableListOf<String>()
@@ -551,7 +551,7 @@ fun Lyrics(
                                 try {
                                     val entryPoint = EntryPointAccessors.fromApplication(
                                         context.applicationContext,
-                                        com.cgens67.avidtune.di.LyricsHelperEntryPoint::class.java
+                                        com.cgens67.gluetune.di.LyricsHelperEntryPoint::class.java
                                     )
                                     val lyricsHelper = entryPoint.lyricsHelper()
                                     val fetchedResult: LyricsResult? = currentMetadata?.let { lyricsHelper.getLyrics(it) }
@@ -584,7 +584,7 @@ fun Lyrics(
                         try {
                             val entryPoint = EntryPointAccessors.fromApplication(
                                 context.applicationContext,
-                                com.cgens67.avidtune.di.LyricsHelperEntryPoint::class.java
+                                com.cgens67.gluetune.di.LyricsHelperEntryPoint::class.java
                             )
                             val lyricsHelper = entryPoint.lyricsHelper()
                             val fetchedResult: LyricsResult? = currentMetadata?.let { lyricsHelper.getLyrics(it) }
@@ -647,7 +647,7 @@ fun Lyrics(
         if (lines.isNotEmpty() && originalLyrics != LYRICS_NOT_FOUND) {
             val textOnly = lines.mapNotNull { it.text }.filter { it.isNotBlank() }.joinToString("\n").take(500)
             if (textOnly.isNotBlank()) {
-                val detectedLang = com.cgens67.avidtune.utils.TranslationHelper.detectLanguage(textOnly)
+                val detectedLang = com.cgens67.gluetune.utils.TranslationHelper.detectLanguage(textOnly)
                 val systemLocale = java.util.Locale.getDefault()
                 val systemLang = systemLocale.language.lowercase()
                 val langTag = systemLocale.toLanguageTag().lowercase()
@@ -1975,7 +1975,7 @@ private fun ShareLyricsDialog(
     lyricsText: String,
     songTitle: String,
     artists: String,
-    mediaMetadata: com.cgens67.avidtune.models.MediaMetadata?,
+    mediaMetadata: com.cgens67.gluetune.models.MediaMetadata?,
     onDismiss: () -> Unit,
     onShareAsImage: (String, String, String) -> Unit = { _, _, _ -> }
 ) {

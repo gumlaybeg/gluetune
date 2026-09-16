@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.constants
+package com.cgens67.gluetune.constants
 
 import android.os.Bundle
 import androidx.media3.session.SessionCommand

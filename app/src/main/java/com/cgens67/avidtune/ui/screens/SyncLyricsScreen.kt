@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
@@ -37,13 +37,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.LyricsEntity
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.playback.PlayerConnection
-import com.cgens67.avidtune.ui.utils.fadingEdge
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.LyricsEntity
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.playback.PlayerConnection
+import com.cgens67.gluetune.ui.utils.fadingEdge
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -93,7 +93,7 @@ private fun LivePositionText(playerConnection: PlayerConnection) {
     }
 
     Text(
-        text = com.cgens67.avidtune.utils.makeTimeString(position),
+        text = com.cgens67.gluetune.utils.makeTimeString(position),
         style = MaterialTheme.typography.displayMedium,
         fontWeight = FontWeight.Bold,
         color = Color.White,

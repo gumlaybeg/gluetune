@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -10,16 +10,16 @@ import com.cgens67.innertube.models.YTItem
 import com.cgens67.innertube.pages.ExplorePage
 import com.cgens67.innertube.pages.HomePage
 import com.cgens67.innertube.utils.completed
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.Album
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.db.entities.LocalItem
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.models.SimilarRecommendation
-import com.cgens67.avidtune.utils.reportException
-import com.cgens67.avidtune.aicontentfilter.FilterAiContentUseCase
-import com.cgens67.avidtune.aicontentfilter.LoadAiContentFilterPolicyUseCase
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.db.entities.LocalItem
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.models.SimilarRecommendation
+import com.cgens67.gluetune.utils.reportException
+import com.cgens67.gluetune.aicontentfilter.FilterAiContentUseCase
+import com.cgens67.gluetune.aicontentfilter.LoadAiContentFilterPolicyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

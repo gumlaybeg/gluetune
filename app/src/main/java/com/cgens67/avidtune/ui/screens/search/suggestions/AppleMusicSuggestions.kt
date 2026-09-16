@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.search.suggestions
+package com.cgens67.gluetune.ui.screens.search.suggestions
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -48,12 +48,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.PlayerConnection
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.PlayerConnection
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.AlbumItem
 import com.cgens67.innertube.models.ArtistItem

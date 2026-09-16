@@ -16,7 +16,7 @@ plugins {
 }
 
 
-rootProject.name = "AvidTune"
+rootProject.name = "GlueTune"
 include(":app")
 include(":innertube")
 include(":kugou")

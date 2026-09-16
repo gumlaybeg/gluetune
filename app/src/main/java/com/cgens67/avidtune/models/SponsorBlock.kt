@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.models
+package com.cgens67.gluetune.models
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -36,7 +36,7 @@ object SponsorBlock {
                 parameter("videoID", videoId)
                 parameter("categories", """["sponsor","intro","outro","interaction","selfpromo","music_offtopic"]""")
                 parameter("actionTypes", """["skip","mute"]""")
-                header("User-Agent", "AvidTune/1.0")
+                header("User-Agent", "GlueTune/1.0")
             }
             if (response.status.value in 200..299) {
                 response.body()

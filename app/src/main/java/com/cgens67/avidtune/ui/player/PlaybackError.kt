@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.cgens67.avidtune.ui.player
+package com.cgens67.gluetune.ui.player
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.PlaybackException
 import androidx.media3.datasource.HttpDataSource
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 
 internal enum class PlaybackErrorKind {
     NoInternet,

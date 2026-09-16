@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
@@ -70,13 +70,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.CustomThemeColorKey
-import com.cgens67.avidtune.ui.theme.DefaultThemeColor
-import com.cgens67.avidtune.ui.theme.ThemeSeedPalette
-import com.cgens67.avidtune.ui.theme.ThemeSeedPaletteCodec
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.CustomThemeColorKey
+import com.cgens67.gluetune.ui.theme.DefaultThemeColor
+import com.cgens67.gluetune.ui.theme.ThemeSeedPalette
+import com.cgens67.gluetune.ui.theme.ThemeSeedPaletteCodec
+import com.cgens67.gluetune.utils.rememberPreference
 import com.google.material.color.hct.Hct
 import com.google.material.color.scheme.SchemeTonalSpot
 

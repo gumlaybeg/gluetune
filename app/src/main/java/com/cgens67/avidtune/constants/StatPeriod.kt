@@ -1,6 +1,6 @@
-package com.cgens67.avidtune.constants
+package com.cgens67.gluetune.constants
 
-import com.cgens67.avidtune.ui.screens.OptionStats
+import com.cgens67.gluetune.ui.screens.OptionStats
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 

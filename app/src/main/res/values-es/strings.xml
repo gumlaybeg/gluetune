@@ -377,7 +377,7 @@
     <string name="disable_screenshot">Desactivar captura de pantalla</string>
     <string name="disable_screenshot_desc">Cuando esta opción está activada, se desactivan las capturas de pantalla y la vista de la aplicación en Recientes.</string>
     <string name="discord_integration">integración con discord</string>
-    <string name="discord_information">AvidTune utiliza la biblioteca KizzyRPC para establecer el estado de su cuenta de Discord. Esto implica el uso de la conexión Discord Gateway, que puede considerarse una violación de las condiciones de servicio de Discord. Sin embargo, no se conocen casos de cuentas de usuario suspendidas por este motivo. Utilícelo bajo su propia responsabilidad.  AvidTune sólo extraerá tu token, y todo lo demás se almacena localmente.</string>
+    <string name="discord_information">GlueTune utiliza la biblioteca KizzyRPC para establecer el estado de su cuenta de Discord. Esto implica el uso de la conexión Discord Gateway, que puede considerarse una violación de las condiciones de servicio de Discord. Sin embargo, no se conocen casos de cuentas de usuario suspendidas por este motivo. Utilícelo bajo su propia responsabilidad.  GlueTune sólo extraerá tu token, y todo lo demás se almacena localmente.</string>
     <string name="dismiss">Descartar</string>
     <string name="options">Opciones</string>
     <string name="preview">"Vista previa "</string>

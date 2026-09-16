@@ -1,6 +1,6 @@
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
-package com.cgens67.avidtune.ui.utils
+package com.cgens67.gluetune.ui.utils
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,8 +29,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.PlaylistSongSortType
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.PlaylistSongSortType
 
 @Composable
 inline fun <reified T : Enum<T>> SortHeader(

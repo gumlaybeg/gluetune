@@ -378,7 +378,7 @@
     <string name="restore_failed">Falha ao restaurar backup</string>
 
     <string name="discord_integration">Integração com Discord</string>
-    <string name="discord_information">AvidTune usa a biblioteca KizzyRPC para definir o status da sua conta do Discord. Isso envolve usar a conexão Gateway do Discord, o que pode ser considerado violação dos Termos de Serviço do Discord. No entanto, não há casos conhecidos de contas de usuário suspensas por esse motivo. Use por sua conta. O OpenTunne extrairá apenas o token, e tudo o mais é armazenado localmente.</string>
+    <string name="discord_information">GlueTune usa a biblioteca KizzyRPC para definir o status da sua conta do Discord. Isso envolve usar a conexão Gateway do Discord, o que pode ser considerado violação dos Termos de Serviço do Discord. No entanto, não há casos conhecidos de contas de usuário suspensas por esse motivo. Use por sua conta. O OpenTunne extrairá apenas o token, e tudo o mais é armazenado localmente.</string>
     <string name="dismiss">Dispensar</string>
     <string name="options">Opções</string>
     <string name="preview">Pré-visualizar</string>

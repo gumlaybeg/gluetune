@@ -1,7 +1,7 @@
-package com.cgens67.avidtune.playback.queues
+package com.cgens67.gluetune.playback.queues
 
 import androidx.media3.common.MediaItem
-import com.cgens67.avidtune.models.MediaMetadata
+import com.cgens67.gluetune.models.MediaMetadata
 
 object EmptyQueue : Queue {
     override val preloadItem: MediaMetadata? = null

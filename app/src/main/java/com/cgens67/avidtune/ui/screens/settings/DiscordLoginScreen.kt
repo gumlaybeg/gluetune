@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -27,12 +27,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.DiscordTokenKey
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.DiscordTokenKey
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

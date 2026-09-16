@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -65,8 +65,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.models.MediaMetadata
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.models.MediaMetadata
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import androidx.compose.ui.res.stringResource
@@ -692,7 +692,7 @@ fun LyricsImageCardPreview(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.avidtune),
+                                    painter = painterResource(id = R.drawable.gluetune),
                                     contentDescription = null,
                                     modifier = Modifier.size((28 * logoSizeMultiplier).dp)
                                 )

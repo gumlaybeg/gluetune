@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.db
+package com.cgens67.gluetune.db
 
 import androidx.room.TypeConverter
 import java.time.Instant

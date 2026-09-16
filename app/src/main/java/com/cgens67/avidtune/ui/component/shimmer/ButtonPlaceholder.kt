@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component.shimmer
+package com.cgens67.gluetune.ui.component.shimmer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer

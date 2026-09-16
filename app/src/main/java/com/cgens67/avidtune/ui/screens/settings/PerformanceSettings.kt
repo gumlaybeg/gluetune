@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,21 +23,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AnimateLyricsKey
-import com.cgens67.avidtune.constants.AutoLoadMoreKey
-import com.cgens67.avidtune.constants.CoverResolution
-import com.cgens67.avidtune.constants.CoverResolutionKey
-import com.cgens67.avidtune.constants.DisableBlurKey
-import com.cgens67.avidtune.constants.MinimalPlayerDesignKey
-import com.cgens67.avidtune.constants.SimilarContent
-import com.cgens67.avidtune.ui.component.ListDialog
-import com.cgens67.avidtune.ui.component.PreferenceEntry
-import com.cgens67.avidtune.ui.component.SettingsGeneralCategory
-import com.cgens67.avidtune.ui.component.SettingsPage
-import com.cgens67.avidtune.ui.component.SwitchPreference
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AnimateLyricsKey
+import com.cgens67.gluetune.constants.AutoLoadMoreKey
+import com.cgens67.gluetune.constants.CoverResolution
+import com.cgens67.gluetune.constants.CoverResolutionKey
+import com.cgens67.gluetune.constants.DisableBlurKey
+import com.cgens67.gluetune.constants.MinimalPlayerDesignKey
+import com.cgens67.gluetune.constants.SimilarContent
+import com.cgens67.gluetune.ui.component.ListDialog
+import com.cgens67.gluetune.ui.component.PreferenceEntry
+import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
+import com.cgens67.gluetune.ui.component.SettingsPage
+import com.cgens67.gluetune.ui.component.SwitchPreference
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

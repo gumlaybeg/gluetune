@@ -1,10 +1,10 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 import android.content.Context
 import com.cgens67.kugou.KuGou
-import com.cgens67.avidtune.constants.EnableKugouKey
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
+import com.cgens67.gluetune.constants.EnableKugouKey
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
 
 object KuGouLyricsProvider : LyricsProvider {
     override val name = "Kugou"

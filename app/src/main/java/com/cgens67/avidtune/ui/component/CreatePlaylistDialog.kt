@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,9 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.cgens67.innertube.YouTube
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.PlaylistEntity
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.PlaylistEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

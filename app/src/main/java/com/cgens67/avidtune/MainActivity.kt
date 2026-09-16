@@ -1,4 +1,4 @@
-package com.cgens67.avidtune
+package com.cgens67.gluetune
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -160,75 +160,75 @@ import coil.request.ImageRequest
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.SongItem
 import com.cgens67.innertube.models.WatchEndpoint
-import com.cgens67.avidtune.constants.AppBarHeight
-import com.cgens67.avidtune.constants.AppFont
-import com.cgens67.avidtune.constants.AppFontKey
-import com.cgens67.avidtune.constants.AppTextSize
-import com.cgens67.avidtune.constants.AppTextSizeKey
-import com.cgens67.avidtune.constants.CustomThemeColorKey
-import com.cgens67.avidtune.constants.DarkModeKey
-import com.cgens67.avidtune.constants.DefaultOpenTabKey
-import com.cgens67.avidtune.constants.DisableScreenshotKey
-import com.cgens67.avidtune.constants.DynamicThemeKey
-import com.cgens67.avidtune.constants.LastSeenVersionCodeKey
-import com.cgens67.avidtune.constants.MiniPlayerHeight
-import com.cgens67.avidtune.constants.NavigationBarAnimationSpec
-import com.cgens67.avidtune.constants.NavigationBarHeight
-import com.cgens67.avidtune.constants.PauseSearchHistoryKey
-import com.cgens67.avidtune.constants.PlayerBackgroundStyle
-import com.cgens67.avidtune.constants.PlayerBackgroundStyleKey
-import com.cgens67.avidtune.constants.PureBlackKey
-import com.cgens67.avidtune.constants.UseSystemFontKey
-import com.cgens67.avidtune.constants.SearchSource
-import com.cgens67.avidtune.constants.SearchSourceKey
-import com.cgens67.avidtune.constants.SlimNavBarKey
-import com.cgens67.avidtune.constants.StopMusicOnTaskClearKey
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.SearchHistory
-import com.cgens67.avidtune.extensions.toEnum
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.DownloadUtil
-import com.cgens67.avidtune.playback.MusicService
-import com.cgens67.avidtune.playback.MusicService.MusicBinder
-import com.cgens67.avidtune.playback.PlayerConnection
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.ui.component.AvatarPreferenceManager
-import com.cgens67.avidtune.ui.component.AvatarSelection
-import com.cgens67.avidtune.ui.component.BottomSheetMenu
-import com.cgens67.avidtune.ui.component.FloatingNavigationToolbar
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.LocaleManager
-import com.cgens67.avidtune.ui.component.Lyrics
-import com.cgens67.avidtune.ui.component.SwitchPreference
-import com.cgens67.avidtune.ui.component.TopSearch
-import com.cgens67.avidtune.ui.component.rememberBottomSheetState
-import com.cgens67.avidtune.ui.component.shimmer.ShimmerTheme
-import com.cgens67.avidtune.ui.menu.YouTubeSongMenu
-import com.cgens67.avidtune.ui.player.BottomSheetPlayer
-import com.cgens67.avidtune.ui.screens.Screens
-import com.cgens67.avidtune.ui.screens.navigationBuilder
-import com.cgens67.avidtune.ui.screens.search.LocalSearchScreen
-import com.cgens67.avidtune.ui.screens.search.OnlineSearchScreen
-import com.cgens67.avidtune.ui.screens.settings.DarkMode
-import com.cgens67.avidtune.ui.screens.settings.NavigationTab
-import com.cgens67.avidtune.ui.screens.settings.ThemePalettes
-import com.cgens67.avidtune.ui.theme.ColorSaver
-import com.cgens67.avidtune.ui.theme.DefaultThemeColor
-import com.cgens67.avidtune.ui.theme.AvidTuneTheme
-import com.cgens67.avidtune.ui.theme.ThemeSeedPaletteCodec
-import com.cgens67.avidtune.ui.theme.extractThemeColor
-import com.cgens67.avidtune.ui.utils.appBarScrollBehavior
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.ui.utils.resetHeightOffset
-import com.cgens67.avidtune.utils.SyncUtils
-import com.cgens67.avidtune.utils.Updater
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
-import com.cgens67.avidtune.utils.reportException
-import com.cgens67.avidtune.viewmodels.NewReleaseViewModel
+import com.cgens67.gluetune.constants.AppBarHeight
+import com.cgens67.gluetune.constants.AppFont
+import com.cgens67.gluetune.constants.AppFontKey
+import com.cgens67.gluetune.constants.AppTextSize
+import com.cgens67.gluetune.constants.AppTextSizeKey
+import com.cgens67.gluetune.constants.CustomThemeColorKey
+import com.cgens67.gluetune.constants.DarkModeKey
+import com.cgens67.gluetune.constants.DefaultOpenTabKey
+import com.cgens67.gluetune.constants.DisableScreenshotKey
+import com.cgens67.gluetune.constants.DynamicThemeKey
+import com.cgens67.gluetune.constants.LastSeenVersionCodeKey
+import com.cgens67.gluetune.constants.MiniPlayerHeight
+import com.cgens67.gluetune.constants.NavigationBarAnimationSpec
+import com.cgens67.gluetune.constants.NavigationBarHeight
+import com.cgens67.gluetune.constants.PauseSearchHistoryKey
+import com.cgens67.gluetune.constants.PlayerBackgroundStyle
+import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
+import com.cgens67.gluetune.constants.PureBlackKey
+import com.cgens67.gluetune.constants.UseSystemFontKey
+import com.cgens67.gluetune.constants.SearchSource
+import com.cgens67.gluetune.constants.SearchSourceKey
+import com.cgens67.gluetune.constants.SlimNavBarKey
+import com.cgens67.gluetune.constants.StopMusicOnTaskClearKey
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.SearchHistory
+import com.cgens67.gluetune.extensions.toEnum
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.DownloadUtil
+import com.cgens67.gluetune.playback.MusicService
+import com.cgens67.gluetune.playback.MusicService.MusicBinder
+import com.cgens67.gluetune.playback.PlayerConnection
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.ui.component.AvatarPreferenceManager
+import com.cgens67.gluetune.ui.component.AvatarSelection
+import com.cgens67.gluetune.ui.component.BottomSheetMenu
+import com.cgens67.gluetune.ui.component.FloatingNavigationToolbar
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.LocaleManager
+import com.cgens67.gluetune.ui.component.Lyrics
+import com.cgens67.gluetune.ui.component.SwitchPreference
+import com.cgens67.gluetune.ui.component.TopSearch
+import com.cgens67.gluetune.ui.component.rememberBottomSheetState
+import com.cgens67.gluetune.ui.component.shimmer.ShimmerTheme
+import com.cgens67.gluetune.ui.menu.YouTubeSongMenu
+import com.cgens67.gluetune.ui.player.BottomSheetPlayer
+import com.cgens67.gluetune.ui.screens.Screens
+import com.cgens67.gluetune.ui.screens.navigationBuilder
+import com.cgens67.gluetune.ui.screens.search.LocalSearchScreen
+import com.cgens67.gluetune.ui.screens.search.OnlineSearchScreen
+import com.cgens67.gluetune.ui.screens.settings.DarkMode
+import com.cgens67.gluetune.ui.screens.settings.NavigationTab
+import com.cgens67.gluetune.ui.screens.settings.ThemePalettes
+import com.cgens67.gluetune.ui.theme.ColorSaver
+import com.cgens67.gluetune.ui.theme.DefaultThemeColor
+import com.cgens67.gluetune.ui.theme.GlueTuneTheme
+import com.cgens67.gluetune.ui.theme.ThemeSeedPaletteCodec
+import com.cgens67.gluetune.ui.theme.extractThemeColor
+import com.cgens67.gluetune.ui.utils.appBarScrollBehavior
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.ui.utils.resetHeightOffset
+import com.cgens67.gluetune.utils.SyncUtils
+import com.cgens67.gluetune.utils.Updater
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
+import com.cgens67.gluetune.utils.reportException
+import com.cgens67.gluetune.viewmodels.NewReleaseViewModel
 import com.valentinilk.shimmer.LocalShimmerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -310,12 +310,12 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        val localeContext = com.cgens67.avidtune.ui.component.LocaleManager.getInstance(newBase).applyLocaleToContext(newBase)
+        val localeContext = com.cgens67.gluetune.ui.component.LocaleManager.getInstance(newBase).applyLocaleToContext(newBase)
         
-        var appTextSizeStr = com.cgens67.avidtune.constants.AppTextSize.SYSTEM.name
+        var appTextSizeStr = com.cgens67.gluetune.constants.AppTextSize.SYSTEM.name
         try {
             val savedSize = kotlinx.coroutines.runBlocking {
-                localeContext.dataStore.data.first()[com.cgens67.avidtune.constants.AppTextSizeKey]
+                localeContext.dataStore.data.first()[com.cgens67.gluetune.constants.AppTextSizeKey]
             }
             if (savedSize != null) {
                 appTextSizeStr = savedSize
@@ -325,18 +325,18 @@ class MainActivity : ComponentActivity() {
         }
         
         val appTextSize = try { 
-            com.cgens67.avidtune.constants.AppTextSize.valueOf(appTextSizeStr) 
+            com.cgens67.gluetune.constants.AppTextSize.valueOf(appTextSizeStr) 
         } catch(e: Exception) { 
-            com.cgens67.avidtune.constants.AppTextSize.SYSTEM 
+            com.cgens67.gluetune.constants.AppTextSize.SYSTEM 
         }
         
         val config = android.content.res.Configuration(localeContext.resources.configuration)
-        if (appTextSize != com.cgens67.avidtune.constants.AppTextSize.SYSTEM) {
+        if (appTextSize != com.cgens67.gluetune.constants.AppTextSize.SYSTEM) {
             config.fontScale = when (appTextSize) {
-                com.cgens67.avidtune.constants.AppTextSize.SMALL -> 0.85f
-                com.cgens67.avidtune.constants.AppTextSize.MEDIUM -> 1.0f
-                com.cgens67.avidtune.constants.AppTextSize.LARGE -> 1.15f
-                com.cgens67.avidtune.constants.AppTextSize.EXTRA_LARGE -> 1.3f
+                com.cgens67.gluetune.constants.AppTextSize.SMALL -> 0.85f
+                com.cgens67.gluetune.constants.AppTextSize.MEDIUM -> 1.0f
+                com.cgens67.gluetune.constants.AppTextSize.LARGE -> 1.15f
+                com.cgens67.gluetune.constants.AppTextSize.EXTRA_LARGE -> 1.3f
                 else -> config.fontScale
             }
         }
@@ -452,7 +452,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            AvidTuneTheme(
+            GlueTuneTheme(
                 darkTheme = useDarkTheme,
                 pureBlack = pureBlack,
                 themeColor = themeColor,
@@ -493,7 +493,7 @@ class MainActivity : ComponentActivity() {
                                     CompositionLocalProvider(
                                         LocalPlayerAwareWindowInsets provides WindowInsets(0, 0, 0, 0)
                                     ) {
-                                        com.cgens67.avidtune.ui.screens.settings.ReleasesContent(
+                                        com.cgens67.gluetune.ui.screens.settings.ReleasesContent(
                                             versionTag = BuildConfig.VERSION_NAME,
                                             refreshTrigger = 0,
                                             isBetaTab = BuildConfig.VERSION_NAME.contains("-")
@@ -952,7 +952,7 @@ class MainActivity : ComponentActivity() {
                                                     modifier = Modifier.fillMaxWidth()
                                                 ) {
                                                     Icon(
-                                                        painter = painterResource(R.drawable.avidtune),
+                                                        painter = painterResource(R.drawable.gluetune),
                                                         contentDescription = null,
                                                         tint = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.size(28.dp)
@@ -1577,7 +1577,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             if (showTogetherScreen) {
-                                com.cgens67.avidtune.together.MusicTogetherScreen(
+                                com.cgens67.gluetune.together.MusicTogetherScreen(
                                     navController = navController,
                                     scrollBehavior = topAppBarScrollBehavior,
                                     onBack = { showTogetherScreen = false }
@@ -1687,9 +1687,9 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
-        const val ACTION_SEARCH = "com.cgens67.avidtune.action.SEARCH"
-        const val ACTION_EXPLORE = "com.cgens67.avidtune.action.EXPLORE"
-        const val ACTION_LIBRARY = "com.cgens67.avidtune.action.LIBRARY"
+        const val ACTION_SEARCH = "com.cgens67.gluetune.action.SEARCH"
+        const val ACTION_EXPLORE = "com.cgens67.gluetune.action.EXPLORE"
+        const val ACTION_LIBRARY = "com.cgens67.gluetune.action.LIBRARY"
     }
 }
 
@@ -1810,7 +1810,7 @@ private fun openNotificationSettings(context: Context) {
 
 suspend fun checkForUpdates(): String? = withContext(Dispatchers.IO) {
     try {
-        val url = URL("https://api.github.com/repos/cgens67/AvidTune/releases/latest")
+        val url = URL("https://api.github.com/repos/cgens67/GlueTune/releases/latest")
         val connection = url.openConnection()
         connection.connect()
         val json = connection.getInputStream().bufferedReader().use { it.readText() }

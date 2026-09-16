@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -85,7 +85,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

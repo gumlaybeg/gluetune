@@ -7,7 +7,7 @@
  * Do not remove or alter this notice. - Per GPL-3.0 Section 4 & Section 5
  */
 
-package com.cgens67.avidtune.aicontentfilter
+package com.cgens67.gluetune.aicontentfilter
 
 import android.content.Context
 import android.util.AtomicFile
@@ -26,10 +26,10 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import com.cgens67.avidtune.constants.AiContentFilterEnabledKey
-import com.cgens67.avidtune.constants.AiContentFilterIncludeModerateKey
-import com.cgens67.avidtune.constants.AiContentFilterLastUpdatedKey
-import com.cgens67.avidtune.utils.dataStore
+import com.cgens67.gluetune.constants.AiContentFilterEnabledKey
+import com.cgens67.gluetune.constants.AiContentFilterIncludeModerateKey
+import com.cgens67.gluetune.constants.AiContentFilterLastUpdatedKey
+import com.cgens67.gluetune.utils.dataStore
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import android.annotation.SuppressLint
 import android.webkit.CookieManager
@@ -25,17 +25,17 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.utils.parseCookieString
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AccountChannelHandleKey
-import com.cgens67.avidtune.constants.AccountEmailKey
-import com.cgens67.avidtune.constants.AccountNameKey
-import com.cgens67.avidtune.constants.InnerTubeCookieKey
-import com.cgens67.avidtune.constants.VisitorDataKey
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.rememberPreference
-import com.cgens67.avidtune.utils.reportException
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AccountChannelHandleKey
+import com.cgens67.gluetune.constants.AccountEmailKey
+import com.cgens67.gluetune.constants.AccountNameKey
+import com.cgens67.gluetune.constants.InnerTubeCookieKey
+import com.cgens67.gluetune.constants.VisitorDataKey
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.rememberPreference
+import com.cgens67.gluetune.utils.reportException
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay

@@ -1,15 +1,15 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.AlbumItem
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.utils.AppleMusicAboutAlbum
-import com.cgens67.avidtune.utils.TranslationHelper
-import com.cgens67.avidtune.utils.Wikipedia
-import com.cgens67.avidtune.utils.reportException
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.utils.AppleMusicAboutAlbum
+import com.cgens67.gluetune.utils.TranslationHelper
+import com.cgens67.gluetune.utils.Wikipedia
+import com.cgens67.gluetune.utils.reportException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

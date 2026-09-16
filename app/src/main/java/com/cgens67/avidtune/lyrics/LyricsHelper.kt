@@ -1,12 +1,12 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 import android.content.Context
 import android.util.LruCache
-import com.cgens67.avidtune.constants.LyricsProviderOrderKey
-import com.cgens67.avidtune.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.reportException
+import com.cgens67.gluetune.constants.LyricsProviderOrderKey
+import com.cgens67.gluetune.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.reportException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map

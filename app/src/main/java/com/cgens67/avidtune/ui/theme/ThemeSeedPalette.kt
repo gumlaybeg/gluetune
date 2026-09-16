@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.theme
+package com.cgens67.gluetune.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb

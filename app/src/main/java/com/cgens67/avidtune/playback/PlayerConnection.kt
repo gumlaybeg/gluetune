@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.playback
+package com.cgens67.gluetune.playback
 
 import android.content.Context
 import android.content.Intent
@@ -14,19 +14,19 @@ import androidx.media3.common.Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM
 import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.STATE_READY
 import androidx.media3.common.Timeline
-import com.cgens67.avidtune.MusicWidget.Companion.ACTION_STATE_CHANGED
-import com.cgens67.avidtune.MusicWidget.Companion.ACTION_UPDATE_PROGRESS
-import com.cgens67.avidtune.constants.AudioFadingKey
-import com.cgens67.avidtune.constants.SeekIncrementKey
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.extensions.currentMetadata
-import com.cgens67.avidtune.extensions.getCurrentQueueIndex
-import com.cgens67.avidtune.extensions.getQueueWindows
-import com.cgens67.avidtune.extensions.metadata
-import com.cgens67.avidtune.playback.MusicService.MusicBinder
-import com.cgens67.avidtune.playback.queues.Queue
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.reportException
+import com.cgens67.gluetune.MusicWidget.Companion.ACTION_STATE_CHANGED
+import com.cgens67.gluetune.MusicWidget.Companion.ACTION_UPDATE_PROGRESS
+import com.cgens67.gluetune.constants.AudioFadingKey
+import com.cgens67.gluetune.constants.SeekIncrementKey
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.extensions.currentMetadata
+import com.cgens67.gluetune.extensions.getCurrentQueueIndex
+import com.cgens67.gluetune.extensions.getQueueWindows
+import com.cgens67.gluetune.extensions.metadata
+import com.cgens67.gluetune.playback.MusicService.MusicBinder
+import com.cgens67.gluetune.playback.queues.Queue
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.reportException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -96,7 +96,7 @@ class PlayerConnection(
 
     // Metadatos y información de la canción actual
     private val _mediaMetadata = MutableStateFlow(player.currentMetadata)
-    val mediaMetadata: StateFlow<com.cgens67.avidtune.models.MediaMetadata?> =
+    val mediaMetadata: StateFlow<com.cgens67.gluetune.models.MediaMetadata?> =
         _mediaMetadata.asStateFlow()
 
     val currentSong = mediaMetadata.flatMapLatest { metadata ->

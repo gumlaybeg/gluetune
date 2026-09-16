@@ -1,9 +1,9 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 import android.content.Context
-import com.cgens67.avidtune.constants.EnableNetEaseKey
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
+import com.cgens67.gluetune.constants.EnableNetEaseKey
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO

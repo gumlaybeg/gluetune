@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.content.Context
 import android.content.Intent
@@ -103,9 +103,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.BuildConfig
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.BuildConfig
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -530,7 +530,7 @@ fun ReleasesContent(
                     }
                 } else {
                     val urlToFetch = release?.changelogUrl 
-                        ?: "https://github.com/cgens67/AvidTune/releases/download/$tag/changelog.json"
+                        ?: "https://github.com/cgens67/GlueTune/releases/download/$tag/changelog.json"
 
                     val request = Request.Builder()
                         .url(urlToFetch)
@@ -615,7 +615,7 @@ fun ReleasesContent(
                     cachedJson
                 } else {
                     val request = Request.Builder()
-                        .url("https://api.github.com/repos/cgens67/AvidTune/releases?per_page=50")
+                        .url("https://api.github.com/repos/cgens67/GlueTune/releases?per_page=50")
                         .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                         .header("Accept", "application/vnd.github.v3+json")
                         .build()
@@ -1125,7 +1125,7 @@ fun CommitsContent(
                     cachedJson
                 } else {
                     val request = Request.Builder()
-                        .url("https://api.github.com/repos/cgens67/AvidTune/commits?branch=main&per_page=50")
+                        .url("https://api.github.com/repos/cgens67/GlueTune/commits?branch=main&per_page=50")
                         .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                         .header("Accept", "application/vnd.github.v3+json")
                         .build()

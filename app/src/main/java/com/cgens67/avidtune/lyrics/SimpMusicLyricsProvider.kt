@@ -1,9 +1,9 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 import android.content.Context
-import com.cgens67.avidtune.constants.EnableSimpMusicKey
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
+import com.cgens67.gluetune.constants.EnableSimpMusicKey
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
 import com.music.simpmusic.SimpMusicLyrics
 
 object SimpMusicLyricsProvider : LyricsProvider {

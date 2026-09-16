@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.constants
+package com.cgens67.gluetune.constants
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey

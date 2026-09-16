@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import android.content.ContentValues
 import android.content.Context
@@ -28,7 +28,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.withTranslation
 import coil.ImageLoader
 import coil.request.ImageRequest
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -61,7 +61,7 @@ object ComposeToImage {
     private fun buildContentValues(fileName: String): ContentValues = ContentValues().apply {
         put(MediaStore.MediaColumns.DISPLAY_NAME, "$fileName.png")
         put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/AvidTune")
+        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/GlueTune")
     }
 
     private fun saveToCache(context: Context, bitmap: Bitmap, fileName: String): Uri {
@@ -572,7 +572,7 @@ object ComposeToImage {
         logoSizeMultiplier: Float
     ) {
         val logoBitmap = getBitmapFromVectorDrawable(
-            context, R.drawable.avidtune, logoSize.toInt(), logoSize.toInt()
+            context, R.drawable.gluetune, logoSize.toInt(), logoSize.toInt()
         ) ?: return
 
         val appName = context.getString(R.string.app_name)

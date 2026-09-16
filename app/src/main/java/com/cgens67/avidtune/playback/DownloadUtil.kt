@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.playback
+package com.cgens67.gluetune.playback
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -13,14 +13,14 @@ import androidx.media3.exoplayer.offline.Download
 import androidx.media3.exoplayer.offline.DownloadManager
 import androidx.media3.exoplayer.offline.DownloadNotificationHelper
 import com.cgens67.innertube.YouTube
-import com.cgens67.avidtune.constants.AudioQuality
-import com.cgens67.avidtune.constants.AudioQualityKey
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.FormatEntity
-import com.cgens67.avidtune.di.DownloadCache
-import com.cgens67.avidtune.di.PlayerCache
-import com.cgens67.avidtune.utils.YTPlayerUtils
-import com.cgens67.avidtune.utils.enumPreference
+import com.cgens67.gluetune.constants.AudioQuality
+import com.cgens67.gluetune.constants.AudioQualityKey
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.FormatEntity
+import com.cgens67.gluetune.di.DownloadCache
+import com.cgens67.gluetune.di.PlayerCache
+import com.cgens67.gluetune.utils.YTPlayerUtils
+import com.cgens67.gluetune.utils.enumPreference
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

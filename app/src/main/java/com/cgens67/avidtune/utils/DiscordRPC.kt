@@ -1,8 +1,8 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import android.content.Context
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.Song
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.Song
 import com.my.kizzy.rpc.KizzyRPC
 import com.my.kizzy.rpc.RpcImage
 
@@ -36,7 +36,7 @@ class DiscordRPC(
             smallText = song.artists.firstOrNull()?.name,
             buttons = listOf(
                 "Listen on YouTube Music" to "https://music.youtube.com/watch?v=${song.song.id}",
-                "Visit AvidTune" to "https://github.com/cgens67/AvidTune"
+                "Visit GlueTune" to "https://github.com/cgens67/GlueTune"
             ),
             type = Type.LISTENING,
             statusDisplayType = if (useDetails) StatusDisplayType.DETAILS else StatusDisplayType.STATE,

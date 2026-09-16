@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.settings
+package com.cgens67.gluetune.ui.screens.settings
 
 import android.content.Context
 import android.content.Intent
@@ -25,10 +25,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.ui.component.PreferenceEntry
-import com.cgens67.avidtune.ui.component.SettingsGeneralCategory
-import com.cgens67.avidtune.ui.component.SettingsPage
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.ui.component.PreferenceEntry
+import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
+import com.cgens67.gluetune.ui.component.SettingsPage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,8 +63,8 @@ fun OpenLinksSettings(
             items = listOf(
                 {
                     PreferenceEntry(
-                        title = { Text(if (isVerified) "Links are opening in AvidTune" else "Links are not opening in AvidTune") },
-                        description = if (isVerified) "AvidTune is set as the default app for supported links." else "Tap to open system settings and allow AvidTune to open supported links. Be sure to add all supported links.",
+                        title = { Text(if (isVerified) "Links are opening in GlueTune" else "Links are not opening in GlueTune") },
+                        description = if (isVerified) "GlueTune is set as the default app for supported links." else "Tap to open system settings and allow GlueTune to open supported links. Be sure to add all supported links.",
                         icon = {
                             Icon(
                                 painter = painterResource(if (isVerified) R.drawable.check_circle else R.drawable.info),

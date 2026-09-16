@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -7,16 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.AccountInfo
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.Album
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.db.entities.PlaylistEntity
-import com.cgens67.avidtune.db.entities.SongWithStats
-import com.cgens67.avidtune.ui.screens.PlaylistCreationState
-import com.cgens67.avidtune.ui.screens.WrappedConstants
-import com.cgens67.avidtune.ui.screens.WrappedScreenType
-import com.cgens67.avidtune.ui.screens.WrappedState
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.db.entities.PlaylistEntity
+import com.cgens67.gluetune.db.entities.SongWithStats
+import com.cgens67.gluetune.ui.screens.PlaylistCreationState
+import com.cgens67.gluetune.ui.screens.WrappedConstants
+import com.cgens67.gluetune.ui.screens.WrappedScreenType
+import com.cgens67.gluetune.ui.screens.WrappedState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -84,7 +84,7 @@ class InsightViewModel @Inject constructor(
                     if (createdPlaylist != null) {
                         val songIds = allSongs.map { it.id }
                         databaseDao.addSongToPlaylist(createdPlaylist, songIds)
-                        com.cgens67.avidtune.utils.saveCustomPlaylistImage(context, playlistId, android.net.Uri.fromFile(file))
+                        com.cgens67.gluetune.utils.saveCustomPlaylistImage(context, playlistId, android.net.Uri.fromFile(file))
                     }
                 }
                 _state.update { it.copy(playlistCreationState = PlaylistCreationState.Success) }

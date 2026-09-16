@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.lyrics
+package com.cgens67.gluetune.lyrics
 
 import android.text.format.DateUtils
 
@@ -121,7 +121,7 @@ object LyricsUtils {
         position: Long,
     ): Int {
         for (index in lines.indices) {
-            if (lines[index].time >= position + com.cgens67.avidtune.ui.component.ANIMATE_SCROLL_DURATION) {
+            if (lines[index].time >= position + com.cgens67.gluetune.ui.component.ANIMATE_SCROLL_DURATION) {
                 return index - 1
             }
         }

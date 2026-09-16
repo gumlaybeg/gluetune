@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -18,36 +18,36 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.cgens67.avidtune.BuildConfig
-import com.cgens67.avidtune.playback.AvidTuneEqScreen
-import com.cgens67.avidtune.playback.EqScreen
-import com.cgens67.avidtune.ui.screens.settings.ChangelogScreen
-import com.cgens67.avidtune.ui.screens.artist.ArtistItemsScreen
-import com.cgens67.avidtune.ui.screens.artist.ArtistScreen
-import com.cgens67.avidtune.ui.screens.artist.ArtistSongsScreen
-import com.cgens67.avidtune.ui.screens.library.CachePlaylistScreen
-import com.cgens67.avidtune.ui.screens.library.LibraryScreen
-import com.cgens67.avidtune.ui.screens.playlist.AutoPlaylistScreen
-import com.cgens67.avidtune.ui.screens.playlist.LocalPlaylistScreen
-import com.cgens67.avidtune.ui.screens.playlist.OnlinePlaylistScreen
-import com.cgens67.avidtune.ui.screens.playlist.TopPlaylistScreen
-import com.cgens67.avidtune.ui.screens.search.OnlineSearchResult
-import com.cgens67.avidtune.ui.screens.search.suggestions.AppleMusicTrendingScreen
-import com.cgens67.avidtune.ui.screens.settings.AboutScreen
-import com.cgens67.avidtune.ui.screens.settings.AccountSettings
-import com.cgens67.avidtune.ui.screens.settings.AppearanceSettings
-import com.cgens67.avidtune.ui.screens.settings.BackupAndRestore
-import com.cgens67.avidtune.ui.screens.settings.ContentSettings
-import com.cgens67.avidtune.ui.screens.settings.DiscordLoginScreen
-import com.cgens67.avidtune.ui.screens.settings.DiscordSettings
-import com.cgens67.avidtune.ui.screens.settings.PalettePickerScreen
-import com.cgens67.avidtune.ui.screens.settings.PerformanceSettings
-import com.cgens67.avidtune.ui.screens.settings.PlayerSettings
-import com.cgens67.avidtune.ui.screens.settings.PrivacySettings
-import com.cgens67.avidtune.ui.screens.settings.SettingsScreen
-import com.cgens67.avidtune.ui.screens.settings.StorageSettings
-import com.cgens67.avidtune.ui.screens.settings.ThemeCreatorScreen
-import com.cgens67.avidtune.ui.screens.settings.AlarmSettingsScreen
+import com.cgens67.gluetune.BuildConfig
+import com.cgens67.gluetune.playback.GlueTuneEqScreen
+import com.cgens67.gluetune.playback.EqScreen
+import com.cgens67.gluetune.ui.screens.settings.ChangelogScreen
+import com.cgens67.gluetune.ui.screens.artist.ArtistItemsScreen
+import com.cgens67.gluetune.ui.screens.artist.ArtistScreen
+import com.cgens67.gluetune.ui.screens.artist.ArtistSongsScreen
+import com.cgens67.gluetune.ui.screens.library.CachePlaylistScreen
+import com.cgens67.gluetune.ui.screens.library.LibraryScreen
+import com.cgens67.gluetune.ui.screens.playlist.AutoPlaylistScreen
+import com.cgens67.gluetune.ui.screens.playlist.LocalPlaylistScreen
+import com.cgens67.gluetune.ui.screens.playlist.OnlinePlaylistScreen
+import com.cgens67.gluetune.ui.screens.playlist.TopPlaylistScreen
+import com.cgens67.gluetune.ui.screens.search.OnlineSearchResult
+import com.cgens67.gluetune.ui.screens.search.suggestions.AppleMusicTrendingScreen
+import com.cgens67.gluetune.ui.screens.settings.AboutScreen
+import com.cgens67.gluetune.ui.screens.settings.AccountSettings
+import com.cgens67.gluetune.ui.screens.settings.AppearanceSettings
+import com.cgens67.gluetune.ui.screens.settings.BackupAndRestore
+import com.cgens67.gluetune.ui.screens.settings.ContentSettings
+import com.cgens67.gluetune.ui.screens.settings.DiscordLoginScreen
+import com.cgens67.gluetune.ui.screens.settings.DiscordSettings
+import com.cgens67.gluetune.ui.screens.settings.PalettePickerScreen
+import com.cgens67.gluetune.ui.screens.settings.PerformanceSettings
+import com.cgens67.gluetune.ui.screens.settings.PlayerSettings
+import com.cgens67.gluetune.ui.screens.settings.PrivacySettings
+import com.cgens67.gluetune.ui.screens.settings.SettingsScreen
+import com.cgens67.gluetune.ui.screens.settings.StorageSettings
+import com.cgens67.gluetune.ui.screens.settings.ThemeCreatorScreen
+import com.cgens67.gluetune.ui.screens.settings.AlarmSettingsScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnrememberedMutableState")
@@ -104,7 +104,7 @@ fun NavGraphBuilder.navigationBuilder(
         EqScreen(navController)
     }
     composable("settings/equalizer") {
-        AvidTuneEqScreen(bck = { navController.popBackStack() })
+        GlueTuneEqScreen(bck = { navController.popBackStack() })
     }
 
     composable(

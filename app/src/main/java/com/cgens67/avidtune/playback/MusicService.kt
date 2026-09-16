@@ -1,5 +1,5 @@
 @file:Suppress("DEPRECATION")
-package com.cgens67.avidtune.playback
+package com.cgens67.gluetune.playback
 
 import android.app.PendingIntent
 import android.content.ComponentName
@@ -56,64 +56,64 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
-import com.cgens67.avidtune.MainActivity
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AudioNormalizationKey
-import com.cgens67.avidtune.constants.AudioQualityKey
-import com.cgens67.avidtune.constants.AutoLoadMoreKey
-import com.cgens67.avidtune.constants.AutoSkipNextOnErrorKey
-import com.cgens67.avidtune.constants.DisableLoadMoreWhenRepeatAllKey
-import com.cgens67.avidtune.constants.DiscordTokenKey
-import com.cgens67.avidtune.constants.DiscordUseDetailsKey
-import com.cgens67.avidtune.constants.EnableDiscordRPCKey
-import com.cgens67.avidtune.constants.HideExplicitKey
-import com.cgens67.avidtune.constants.HistoryDuration
-import com.cgens67.avidtune.constants.MediaSessionConstants.CommandToggleLike
-import com.cgens67.avidtune.constants.MediaSessionConstants.CommandToggleRepeatMode
-import com.cgens67.avidtune.constants.MediaSessionConstants.CommandToggleShuffle
-import com.cgens67.avidtune.constants.PauseListenHistoryKey
-import com.cgens67.avidtune.constants.PersistentQueueKey
-import com.cgens67.avidtune.constants.PlayerVolumeKey
-import com.cgens67.avidtune.constants.RepeatModeKey
-import com.cgens67.avidtune.constants.SeekIncrementKey
-import com.cgens67.avidtune.constants.ShowLyricsKey
-import com.cgens67.avidtune.constants.SimilarContent
-import com.cgens67.avidtune.constants.SkipSilenceKey
-import com.cgens67.avidtune.constants.SponsorBlockEnabledKey
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.Event
-import com.cgens67.avidtune.db.entities.FormatEntity
-import com.cgens67.avidtune.db.entities.LyricsEntity
-import com.cgens67.avidtune.db.entities.RelatedSongMap
-import com.cgens67.avidtune.di.DownloadCache
-import com.cgens67.avidtune.di.PlayerCache
-import com.cgens67.avidtune.extensions.SilentHandler
-import com.cgens67.avidtune.extensions.collect
-import com.cgens67.avidtune.extensions.collectLatest
-import com.cgens67.avidtune.extensions.currentMetadata
-import com.cgens67.avidtune.extensions.findNextMediaItemById
-import com.cgens67.avidtune.extensions.mediaItems
-import com.cgens67.avidtune.extensions.metadata
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.extensions.toQueue
-import com.cgens67.avidtune.lyrics.LyricsHelper
-import com.cgens67.avidtune.models.PersistPlayerState
-import com.cgens67.avidtune.models.PersistQueue
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.queues.EmptyQueue
-import com.cgens67.avidtune.playback.queues.Queue
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.playback.queues.filterExplicit
-import com.cgens67.avidtune.together.TogetherManager
-import com.cgens67.avidtune.together.TogetherRoomSettings
-import com.cgens67.avidtune.utils.CoilBitmapLoader
-import com.cgens67.avidtune.utils.DiscordRPC
-import com.cgens67.avidtune.utils.NetworkConnectivityObserver
-import com.cgens67.avidtune.utils.YTPlayerUtils
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.enumPreference
-import com.cgens67.avidtune.utils.get
-import com.cgens67.avidtune.utils.reportException
+import com.cgens67.gluetune.MainActivity
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AudioNormalizationKey
+import com.cgens67.gluetune.constants.AudioQualityKey
+import com.cgens67.gluetune.constants.AutoLoadMoreKey
+import com.cgens67.gluetune.constants.AutoSkipNextOnErrorKey
+import com.cgens67.gluetune.constants.DisableLoadMoreWhenRepeatAllKey
+import com.cgens67.gluetune.constants.DiscordTokenKey
+import com.cgens67.gluetune.constants.DiscordUseDetailsKey
+import com.cgens67.gluetune.constants.EnableDiscordRPCKey
+import com.cgens67.gluetune.constants.HideExplicitKey
+import com.cgens67.gluetune.constants.HistoryDuration
+import com.cgens67.gluetune.constants.MediaSessionConstants.CommandToggleLike
+import com.cgens67.gluetune.constants.MediaSessionConstants.CommandToggleRepeatMode
+import com.cgens67.gluetune.constants.MediaSessionConstants.CommandToggleShuffle
+import com.cgens67.gluetune.constants.PauseListenHistoryKey
+import com.cgens67.gluetune.constants.PersistentQueueKey
+import com.cgens67.gluetune.constants.PlayerVolumeKey
+import com.cgens67.gluetune.constants.RepeatModeKey
+import com.cgens67.gluetune.constants.SeekIncrementKey
+import com.cgens67.gluetune.constants.ShowLyricsKey
+import com.cgens67.gluetune.constants.SimilarContent
+import com.cgens67.gluetune.constants.SkipSilenceKey
+import com.cgens67.gluetune.constants.SponsorBlockEnabledKey
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.Event
+import com.cgens67.gluetune.db.entities.FormatEntity
+import com.cgens67.gluetune.db.entities.LyricsEntity
+import com.cgens67.gluetune.db.entities.RelatedSongMap
+import com.cgens67.gluetune.di.DownloadCache
+import com.cgens67.gluetune.di.PlayerCache
+import com.cgens67.gluetune.extensions.SilentHandler
+import com.cgens67.gluetune.extensions.collect
+import com.cgens67.gluetune.extensions.collectLatest
+import com.cgens67.gluetune.extensions.currentMetadata
+import com.cgens67.gluetune.extensions.findNextMediaItemById
+import com.cgens67.gluetune.extensions.mediaItems
+import com.cgens67.gluetune.extensions.metadata
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.extensions.toQueue
+import com.cgens67.gluetune.lyrics.LyricsHelper
+import com.cgens67.gluetune.models.PersistPlayerState
+import com.cgens67.gluetune.models.PersistQueue
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.queues.EmptyQueue
+import com.cgens67.gluetune.playback.queues.Queue
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.playback.queues.filterExplicit
+import com.cgens67.gluetune.together.TogetherManager
+import com.cgens67.gluetune.together.TogetherRoomSettings
+import com.cgens67.gluetune.utils.CoilBitmapLoader
+import com.cgens67.gluetune.utils.DiscordRPC
+import com.cgens67.gluetune.utils.NetworkConnectivityObserver
+import com.cgens67.gluetune.utils.YTPlayerUtils
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.enumPreference
+import com.cgens67.gluetune.utils.get
+import com.cgens67.gluetune.utils.reportException
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.SongItem
 import com.cgens67.innertube.models.WatchEndpoint
@@ -201,12 +201,12 @@ class MusicService : MediaLibraryService(), Player.Listener, PlaybackStatsListen
     private val audioQuality by enumPreference(
         this,
         AudioQualityKey,
-        com.cgens67.avidtune.constants.AudioQuality.AUTO
+        com.cgens67.gluetune.constants.AudioQuality.AUTO
     )
 
     private var currentQueue: Queue = EmptyQueue
     var queueTitle: String? = null
-    val currentMediaMetadata = MutableStateFlow<com.cgens67.avidtune.models.MediaMetadata?>(null)
+    val currentMediaMetadata = MutableStateFlow<com.cgens67.gluetune.models.MediaMetadata?>(null)
 
     private val currentSong = currentMediaMetadata
         .flatMapLatest { mediaMetadata ->
@@ -254,7 +254,7 @@ class MusicService : MediaLibraryService(), Player.Listener, PlaybackStatsListen
                 CHANNEL_ID,
                 R.string.music_player
             ).apply {
-                setSmallIcon(R.drawable.avidtune_monochrome)
+                setSmallIcon(R.drawable.gluetune_monochrome)
             }
         )
 
@@ -384,7 +384,7 @@ class MusicService : MediaLibraryService(), Player.Listener, PlaybackStatsListen
             lastSkippedSegment = null
             if (metadata != null && sponsorBlockEnabled.value && metadata.isVideo) {
                 val segments = withContext(Dispatchers.IO) {
-                    com.cgens67.avidtune.models.SponsorBlock.getSkipSegments(metadata.id)
+                    com.cgens67.gluetune.models.SponsorBlock.getSkipSegments(metadata.id)
                 }
                 if (segments != null) {
                     currentSkipSegments.value = segments.filter {

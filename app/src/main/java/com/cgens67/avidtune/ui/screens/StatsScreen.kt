@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -63,30 +63,30 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cgens67.innertube.models.WatchEndpoint
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.StatPeriod
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.ui.component.ChoiceChipsRow
-import com.cgens67.avidtune.ui.component.HideOnScrollFAB
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.LocalAlbumsGrid
-import com.cgens67.avidtune.ui.component.LocalArtistsGrid
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.LocalSongsGrid
-import com.cgens67.avidtune.ui.component.NavigationTitle
-import com.cgens67.avidtune.ui.menu.AlbumMenu
-import com.cgens67.avidtune.ui.menu.ArtistMenu
-import com.cgens67.avidtune.ui.menu.SongMenu
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.joinByBullet
-import com.cgens67.avidtune.utils.makeTimeString
-import com.cgens67.avidtune.viewmodels.StatsViewModel
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.StatPeriod
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.ui.component.ChoiceChipsRow
+import com.cgens67.gluetune.ui.component.HideOnScrollFAB
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.LocalAlbumsGrid
+import com.cgens67.gluetune.ui.component.LocalArtistsGrid
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.LocalSongsGrid
+import com.cgens67.gluetune.ui.component.NavigationTitle
+import com.cgens67.gluetune.ui.menu.AlbumMenu
+import com.cgens67.gluetune.ui.menu.ArtistMenu
+import com.cgens67.gluetune.ui.menu.SongMenu
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.joinByBullet
+import com.cgens67.gluetune.utils.makeTimeString
+import com.cgens67.gluetune.viewmodels.StatsViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -461,7 +461,7 @@ fun StatsScreen(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.auto_awesome),
-                        contentDescription = stringResource(R.string.avidtune_insight),
+                        contentDescription = stringResource(R.string.gluetune_insight),
                         tint = Color(0xFF1DB954)
                     )
                 }
@@ -546,7 +546,7 @@ fun InsightBottomSheetContent(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(R.string.avidtune_insight),
+                    text = stringResource(R.string.gluetune_insight),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )

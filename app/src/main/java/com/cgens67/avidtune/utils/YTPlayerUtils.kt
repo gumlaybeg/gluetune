@@ -1,10 +1,10 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import android.net.ConnectivityManager
 import androidx.media3.common.PlaybackException
 import com.cgens67.innertube.models.response.PlayerResponse
 import com.cgens67.innertube.pages.NewPipeUtils
-import com.cgens67.avidtune.constants.AudioQuality
+import com.cgens67.gluetune.constants.AudioQuality
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.YouTubeClient
 import com.cgens67.innertube.models.YouTubeClient.Companion.ANDROID_NO_SDK
@@ -16,7 +16,7 @@ import com.cgens67.innertube.models.YouTubeClient.Companion.WEB_CREATOR
 import com.cgens67.innertube.models.YouTubeClient.Companion.WEB_REMIX
 import com.cgens67.innertube.strategy.ContentAwareFallbackStrategy
 import com.cgens67.innertube.strategy.ContentHints
-import com.cgens67.avidtune.utils.potoken.PoTokenGenerator
+import com.cgens67.gluetune.utils.potoken.PoTokenGenerator
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber

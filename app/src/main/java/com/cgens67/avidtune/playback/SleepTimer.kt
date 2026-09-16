@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.playback
+package com.cgens67.gluetune.playback
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

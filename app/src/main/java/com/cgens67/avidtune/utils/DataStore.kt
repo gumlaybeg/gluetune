@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import com.cgens67.avidtune.extensions.toEnum
+import com.cgens67.gluetune.extensions.toEnum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.content.ContentValues
 import android.content.Context
@@ -29,11 +29,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AudioQuality
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.utils.YTPlayerUtils
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AudioQuality
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.utils.YTPlayerUtils
 import com.cgens67.innertube.YouTube
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
@@ -188,7 +188,7 @@ fun ExportAudioBottomSheet(song: Song, onDismiss: () -> Unit) {
                         song.album?.title?.let { put(MediaStore.Audio.Media.ALBUM, it) }
                         put(MediaStore.Audio.Media.MIME_TYPE, mimeType)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            put(MediaStore.Audio.Media.RELATIVE_PATH, Environment.DIRECTORY_MUSIC + "/AvidTune")
+                            put(MediaStore.Audio.Media.RELATIVE_PATH, Environment.DIRECTORY_MUSIC + "/GlueTune")
                             put(MediaStore.Audio.Media.IS_PENDING, 1)
                         }
                     }

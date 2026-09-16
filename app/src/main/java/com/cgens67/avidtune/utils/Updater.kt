@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -13,7 +13,7 @@ object Updater {
     suspend fun getLatestVersionName(): Result<String> =
         runCatching {
             val response =
-                client.get("https://api.github.com/repos/cgens67/AvidTune/releases/latest")
+                client.get("https://api.github.com/repos/cgens67/GlueTune/releases/latest")
                     .bodyAsText()
             val json = JSONObject(response)
             val versionName = json.getString("name")

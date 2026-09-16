@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import android.content.Context
 import androidx.compose.runtime.Immutable
@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cgens67.avidtune.constants.NewsLastReadTimestampKey
-import com.cgens67.avidtune.utils.dataStore
+import com.cgens67.gluetune.constants.NewsLastReadTimestampKey
+import com.cgens67.gluetune.utils.dataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
@@ -142,9 +142,9 @@ class NewsRepository @Inject constructor() {
 
     private companion object {
         const val METADATA_URL =
-            "https://raw.githubusercontent.com/cgens67/avidtune-news/main/metadata.json"
+            "https://raw.githubusercontent.com/cgens67/gluetune-news/main/metadata.json"
         const val CONTENT_BASE_URL =
-            "https://raw.githubusercontent.com/cgens67/avidtune-news/main/content/"
+            "https://raw.githubusercontent.com/cgens67/gluetune-news/main/content/"
     }
 }
 

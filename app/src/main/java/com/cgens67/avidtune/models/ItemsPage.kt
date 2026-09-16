@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.models
+package com.cgens67.gluetune.models
 
 import com.cgens67.innertube.models.YTItem
 

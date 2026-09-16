@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.menu
+package com.cgens67.gluetune.ui.menu
 
 import android.annotation.SuppressLint
 import android.app.SearchManager
@@ -57,17 +57,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.LyricsEntity
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.ui.component.DefaultDialog
-import com.cgens67.avidtune.ui.component.ListDialog
-import com.cgens67.avidtune.ui.component.NewAction
-import com.cgens67.avidtune.ui.component.NewActionGrid
-import com.cgens67.avidtune.ui.component.TextFieldDialog
-import com.cgens67.avidtune.ui.screens.SyncLyricsScreen
-import com.cgens67.avidtune.viewmodels.LyricsMenuViewModel
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.LyricsEntity
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.ui.component.DefaultDialog
+import com.cgens67.gluetune.ui.component.ListDialog
+import com.cgens67.gluetune.ui.component.NewAction
+import com.cgens67.gluetune.ui.component.NewActionGrid
+import com.cgens67.gluetune.ui.component.TextFieldDialog
+import com.cgens67.gluetune.ui.screens.SyncLyricsScreen
+import com.cgens67.gluetune.viewmodels.LyricsMenuViewModel
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -86,7 +86,7 @@ fun LyricsMenu(
 ) {
     val context = LocalContext.current
     val database = LocalDatabase.current
-    val playerConnection = com.cgens67.avidtune.LocalPlayerConnection.current ?: return
+    val playerConnection = com.cgens67.gluetune.LocalPlayerConnection.current ?: return
 
     val rawLyrics = lyricsEntity?.lyrics.orEmpty()
     

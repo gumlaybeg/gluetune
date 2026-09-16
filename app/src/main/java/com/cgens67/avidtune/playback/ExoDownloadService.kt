@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.playback
+package com.cgens67.gluetune.playback
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -13,7 +13,7 @@ import androidx.media3.exoplayer.offline.DownloadNotificationHelper
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.media3.exoplayer.scheduler.PlatformScheduler
 import androidx.media3.exoplayer.scheduler.Scheduler
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

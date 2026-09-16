@@ -1,6 +1,6 @@
-package com.cgens67.avidtune.di
+package com.cgens67.gluetune.di
 
-import com.cgens67.avidtune.lyrics.LyricsHelper
+import com.cgens67.gluetune.lyrics.LyricsHelper
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

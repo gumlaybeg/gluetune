@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalFoundationApi::class)
 
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.content.Context
 import android.widget.Toast
@@ -103,21 +103,21 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalDownloadUtil
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.GridThumbnailHeight
-import com.cgens67.avidtune.constants.ListItemHeight
-import com.cgens67.avidtune.constants.ListThumbnailSize
-import com.cgens67.avidtune.constants.SwipeToSongKey
-import com.cgens67.avidtune.constants.ThumbnailCornerRadius
-import com.cgens67.avidtune.constants.SmallGridThumbnailHeight
-import com.cgens67.avidtune.db.entities.Album
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.extensions.toMediaItem
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalDownloadUtil
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.GridThumbnailHeight
+import com.cgens67.gluetune.constants.ListItemHeight
+import com.cgens67.gluetune.constants.ListThumbnailSize
+import com.cgens67.gluetune.constants.SwipeToSongKey
+import com.cgens67.gluetune.constants.ThumbnailCornerRadius
+import com.cgens67.gluetune.constants.SmallGridThumbnailHeight
+import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.extensions.toMediaItem
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.AlbumItem
 import com.cgens67.innertube.models.ArtistItem
@@ -126,15 +126,15 @@ import com.cgens67.innertube.models.PlaylistItem
 import com.cgens67.innertube.models.PodcastItem
 import com.cgens67.innertube.models.SongItem
 import com.cgens67.innertube.models.YTItem
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.playback.queues.LocalAlbumRadio
-import com.cgens67.avidtune.ui.theme.extractThemeColor
-import com.cgens67.avidtune.ui.utils.resize
-import com.cgens67.avidtune.utils.joinByBullet
-import com.cgens67.avidtune.utils.makeTimeString
-import com.cgens67.avidtune.utils.rememberPreference
-import com.cgens67.avidtune.utils.getPlaylistImageUri
-import com.cgens67.avidtune.utils.reportException
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.playback.queues.LocalAlbumRadio
+import com.cgens67.gluetune.ui.theme.extractThemeColor
+import com.cgens67.gluetune.ui.utils.resize
+import com.cgens67.gluetune.utils.joinByBullet
+import com.cgens67.gluetune.utils.makeTimeString
+import com.cgens67.gluetune.utils.rememberPreference
+import com.cgens67.gluetune.utils.getPlaylistImageUri
+import com.cgens67.gluetune.utils.reportException
 import kotlin.math.roundToInt
 
 const val ActiveBoxAlpha = 0.6f

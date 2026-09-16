@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.cgens67.avidtune.ui.screens.playlist
+package com.cgens67.gluetune.ui.screens.playlist
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -86,38 +86,38 @@ import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalDownloadUtil
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.ListItemHeight
-import com.cgens67.avidtune.constants.SongSortDescendingKey
-import com.cgens67.avidtune.constants.SongSortType
-import com.cgens67.avidtune.constants.SongSortTypeKey
-import com.cgens67.avidtune.constants.YtmSyncKey
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.db.entities.PlaylistEntity
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.playback.ExoDownloadService
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.ui.component.DefaultDialog
-import com.cgens67.avidtune.ui.component.EmptyPlaceholder
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.SongListItem
-import com.cgens67.avidtune.ui.component.SortHeader
-import com.cgens67.avidtune.ui.component.VerticalFastScroller
-import com.cgens67.avidtune.ui.menu.PlaylistMenu
-import com.cgens67.avidtune.ui.menu.SelectionSongMenu
-import com.cgens67.avidtune.ui.menu.SongMenu
-import com.cgens67.avidtune.ui.utils.ItemWrapper
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.makeTimeString
-import com.cgens67.avidtune.utils.rememberEnumPreference
-import com.cgens67.avidtune.utils.rememberPreference
-import com.cgens67.avidtune.viewmodels.AutoPlaylistViewModel
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalDownloadUtil
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.ListItemHeight
+import com.cgens67.gluetune.constants.SongSortDescendingKey
+import com.cgens67.gluetune.constants.SongSortType
+import com.cgens67.gluetune.constants.SongSortTypeKey
+import com.cgens67.gluetune.constants.YtmSyncKey
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.db.entities.PlaylistEntity
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.playback.ExoDownloadService
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.ui.component.DefaultDialog
+import com.cgens67.gluetune.ui.component.EmptyPlaceholder
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.SongListItem
+import com.cgens67.gluetune.ui.component.SortHeader
+import com.cgens67.gluetune.ui.component.VerticalFastScroller
+import com.cgens67.gluetune.ui.menu.PlaylistMenu
+import com.cgens67.gluetune.ui.menu.SelectionSongMenu
+import com.cgens67.gluetune.ui.menu.SongMenu
+import com.cgens67.gluetune.ui.utils.ItemWrapper
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.makeTimeString
+import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
+import com.cgens67.gluetune.viewmodels.AutoPlaylistViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -770,7 +770,7 @@ fun AutoPlaylistScreen(
                 }
             },
             navigationIcon = {
-                com.cgens67.avidtune.ui.component.IconButton(
+                com.cgens67.gluetune.ui.component.IconButton(
                     onClick = {
                         if (isSearching) {
                             isSearching = false

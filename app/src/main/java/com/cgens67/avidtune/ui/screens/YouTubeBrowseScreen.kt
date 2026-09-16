@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -47,27 +47,27 @@ import com.cgens67.innertube.models.PodcastItem
 import com.cgens67.innertube.models.SongItem
 import com.cgens67.innertube.models.WatchEndpoint
 import com.cgens67.innertube.models.YTItem
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.ListItemHeight
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.NavigationTitle
-import com.cgens67.avidtune.ui.component.YouTubeGridItem
-import com.cgens67.avidtune.ui.component.YouTubeListItem
-import com.cgens67.avidtune.ui.component.shimmer.ListItemPlaceHolder
-import com.cgens67.avidtune.ui.component.shimmer.ShimmerHost
-import com.cgens67.avidtune.ui.menu.YouTubeAlbumMenu
-import com.cgens67.avidtune.ui.menu.YouTubeArtistMenu
-import com.cgens67.avidtune.ui.menu.YouTubePlaylistMenu
-import com.cgens67.avidtune.ui.menu.YouTubeSongMenu
-import com.cgens67.avidtune.ui.utils.SnapLayoutInfoProvider
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.viewmodels.YouTubeBrowseViewModel
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.ListItemHeight
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.NavigationTitle
+import com.cgens67.gluetune.ui.component.YouTubeGridItem
+import com.cgens67.gluetune.ui.component.YouTubeListItem
+import com.cgens67.gluetune.ui.component.shimmer.ListItemPlaceHolder
+import com.cgens67.gluetune.ui.component.shimmer.ShimmerHost
+import com.cgens67.gluetune.ui.menu.YouTubeAlbumMenu
+import com.cgens67.gluetune.ui.menu.YouTubeArtistMenu
+import com.cgens67.gluetune.ui.menu.YouTubePlaylistMenu
+import com.cgens67.gluetune.ui.menu.YouTubeSongMenu
+import com.cgens67.gluetune.ui.utils.SnapLayoutInfoProvider
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.viewmodels.YouTubeBrowseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable

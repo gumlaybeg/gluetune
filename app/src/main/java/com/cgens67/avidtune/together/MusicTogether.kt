@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.together
+package com.cgens67.gluetune.together
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -68,16 +68,16 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
-import com.cgens67.avidtune.App
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.ui.component.AvatarPreferenceManager
-import com.cgens67.avidtune.ui.component.AvatarSelection
-import com.cgens67.avidtune.ui.component.AvatarUtils
-import com.cgens67.avidtune.ui.component.IconButton as AtIconButton
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.App
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.ui.component.AvatarPreferenceManager
+import com.cgens67.gluetune.ui.component.AvatarSelection
+import com.cgens67.gluetune.ui.component.AvatarUtils
+import com.cgens67.gluetune.ui.component.IconButton as AtIconButton
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.utils.rememberPreference
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.SongItem
 import io.ktor.client.HttpClient
@@ -192,14 +192,14 @@ const val TogetherProtocolVersion: Int = 1
 object TogetherJson { val json = Json { ignoreUnknownKeys = true; explicitNulls = false; encodeDefaults = true; classDiscriminator = "type" } }
 @Serializable data class TogetherJoinInfo(val host: String, val port: Int, val sessionId: String, val sessionKey: String) {
     fun toWebSocketUrl() = "ws://$host:$port/together"
-    fun toDeepLink() = "AvidTune://together?host=$host&port=$port&sid=$sessionId&key=$sessionKey"
+    fun toDeepLink() = "GlueTune://together?host=$host&port=$port&sid=$sessionId&key=$sessionKey"
 }
 object TogetherLink {
     fun encode(info: TogetherJoinInfo) = info.toDeepLink()
     fun decode(raw: String): TogetherJoinInfo? {
         val trimmed = raw.trim().replace("\\s+".toRegex(), "")
         runCatching { URI(trimmed) }.getOrNull()?.let { uri ->
-            if (uri.scheme?.lowercase() == "avidtune" && uri.authority?.lowercase() == "together") {
+            if (uri.scheme?.lowercase() == "gluetune" && uri.authority?.lowercase() == "together") {
                 val params = uri.rawQuery?.split("&")?.associate { val p = it.split("="); p[0] to URLDecoder.decode(p[1], "UTF-8") } ?: emptyMap()
                 return TogetherJoinInfo(params["host"] ?: return null, params["port"]?.toIntOrNull() ?: return null, params["sid"] ?: return null, params["key"] ?: return null)
             }
@@ -404,7 +404,7 @@ class TogetherManager(
             val currentState = sessionState.value as? TogetherSessionState.Joined ?: return@launch
             if (!currentState.roomState.settings.allowGuestsToAddTracks) return@launch
 
-            val customMeta = mediaItem.localConfiguration?.tag as? com.cgens67.avidtune.models.MediaMetadata
+            val customMeta = mediaItem.localConfiguration?.tag as? com.cgens67.gluetune.models.MediaMetadata
             val trackId = mediaItem.mediaId
             val trackTitle = customMeta?.title ?: mediaItem.mediaMetadata.title?.toString() ?: ""
             val trackArtists = customMeta?.artists?.map { it.name } ?: listOf(mediaItem.mediaMetadata.artist?.toString() ?: "")
@@ -425,7 +425,7 @@ class TogetherManager(
 
     private fun getCurrentRoomState(sId: String): TogetherRoomState {
         val currentItem = player.currentMediaItem
-        val customMeta = currentItem?.localConfiguration?.tag as? com.cgens67.avidtune.models.MediaMetadata
+        val customMeta = currentItem?.localConfiguration?.tag as? com.cgens67.gluetune.models.MediaMetadata
 
         val trackId = currentItem?.mediaId ?: ""
         val trackTitle = customMeta?.title ?: currentItem?.mediaMetadata?.title?.toString() ?: ""
@@ -804,10 +804,10 @@ class TogetherManager(
     }
 
     private fun playTrackInternal(track: TogetherTrack) {
-        val customMetadata = com.cgens67.avidtune.models.MediaMetadata(
+        val customMetadata = com.cgens67.gluetune.models.MediaMetadata(
             id = track.id,
             title = track.title,
-            artists = track.artists.map { com.cgens67.avidtune.models.MediaMetadata.Artist(id = null, name = it) },
+            artists = track.artists.map { com.cgens67.gluetune.models.MediaMetadata.Artist(id = null, name = it) },
             duration = track.durationSec,
             thumbnailUrl = track.thumbnailUrl,
             album = null,
@@ -1337,11 +1337,11 @@ fun MusicTogetherScreen(
     val setRequireApproval: (Boolean) -> Unit = { v -> setRequireApprovalRaw(v); pushSettingsToActiveSession(approval = v) }
 
     if (showNameDialog) {
-        com.cgens67.avidtune.ui.component.TextFieldDialog(title = { Text(stringResource(R.string.together_display_name)) }, placeholder = { Text(stringResource(R.string.together_display_name_placeholder)) }, isInputValid = { it.trim().isNotBlank() }, onDone = { setDisplayName(it.trim()) }, onDismiss = { showNameDialog = false })
+        com.cgens67.gluetune.ui.component.TextFieldDialog(title = { Text(stringResource(R.string.together_display_name)) }, placeholder = { Text(stringResource(R.string.together_display_name_placeholder)) }, isInputValid = { it.trim().isNotBlank() }, onDone = { setDisplayName(it.trim()) }, onDismiss = { showNameDialog = false })
     }
 
     if (showPortDialog) {
-        com.cgens67.avidtune.ui.component.TextFieldDialog(title = { Text(stringResource(R.string.together_port)) }, placeholder = { Text("42117") }, isInputValid = { it.trim().toIntOrNull() in 1..65535 }, onDone = { setPort(it.trim().toInt()) }, onDismiss = { showPortDialog = false })
+        com.cgens67.gluetune.ui.component.TextFieldDialog(title = { Text(stringResource(R.string.together_port)) }, placeholder = { Text("42117") }, isInputValid = { it.trim().toIntOrNull() in 1..65535 }, onDone = { setPort(it.trim().toInt()) }, onDismiss = { showPortDialog = false })
     }
 
     var joinInput by rememberSaveable { mutableStateOf(lastJoinLink) }

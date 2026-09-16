@@ -1,17 +1,17 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cgens67.avidtune.constants.PlaylistSongSortDescendingKey
-import com.cgens67.avidtune.constants.PlaylistSongSortType
-import com.cgens67.avidtune.constants.PlaylistSongSortTypeKey
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.PlaylistSong
-import com.cgens67.avidtune.extensions.reversed
-import com.cgens67.avidtune.extensions.toEnum
-import com.cgens67.avidtune.utils.dataStore
+import com.cgens67.gluetune.constants.PlaylistSongSortDescendingKey
+import com.cgens67.gluetune.constants.PlaylistSongSortType
+import com.cgens67.gluetune.constants.PlaylistSongSortTypeKey
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.PlaylistSong
+import com.cgens67.gluetune.extensions.reversed
+import com.cgens67.gluetune.extensions.toEnum
+import com.cgens67.gluetune.utils.dataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted

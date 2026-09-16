@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,14 +13,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.cgens67.innertube.models.PlaylistItem
 import com.cgens67.innertube.models.WatchEndpoint
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.Album
-import com.cgens67.avidtune.db.entities.Artist
-import com.cgens67.avidtune.db.entities.Playlist
-import com.cgens67.avidtune.ui.menu.AlbumMenu
-import com.cgens67.avidtune.ui.menu.ArtistMenu
-import com.cgens67.avidtune.ui.menu.PlaylistMenu
-import com.cgens67.avidtune.ui.menu.YouTubePlaylistMenu
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Artist
+import com.cgens67.gluetune.db.entities.Playlist
+import com.cgens67.gluetune.ui.menu.AlbumMenu
+import com.cgens67.gluetune.ui.menu.ArtistMenu
+import com.cgens67.gluetune.ui.menu.PlaylistMenu
+import com.cgens67.gluetune.ui.menu.YouTubePlaylistMenu
 import kotlinx.coroutines.CoroutineScope
 
 @Composable

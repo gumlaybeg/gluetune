@@ -61,7 +61,7 @@ object NetworkConfig {
                 
                 // Cache configuration
                 if (enableCache) {
-                    val cacheDirectory = cacheDir ?: File(System.getProperty("java.io.tmpdir"), "avidtune_http_cache")
+                    val cacheDirectory = cacheDir ?: File(System.getProperty("java.io.tmpdir"), "gluetune_http_cache")
                     cache(okhttp3.Cache(cacheDirectory, CACHE_SIZE_MB))
                 }
             }

@@ -11,12 +11,12 @@ plugins {
 }
 
 android {
-    namespace = "com.cgens67.avidtune"
+    namespace = "com.cgens67.gluetune"
     //noinspection GradleDependency
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.cgens67.avidtune"
+        applicationId = "com.cgens67.gluetune"
         minSdk = 24
         targetSdk = 35
         versionCode = 9

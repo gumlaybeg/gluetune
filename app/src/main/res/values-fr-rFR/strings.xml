@@ -371,7 +371,7 @@
     <string name="restore_failed">Échec de la restauration de la sauvegarde</string>
 
     <string name="discord_integration">Intégration Discord</string>
-    <string name="discord_information">AvidTune utilise la bibliothèque KizzyRPC pour définir le statut de votre compte Discord. Cela implique l\'utilisation de la connexion Discord Gateway, ce qui peut être considéré comme une violation des CGU de Discord. Cependant, il n\'y a aucun cas connu de suspension de compte pour cette raison. À utiliser à vos risques et périls. L\'application n\'extraira que votre jeton, et tout le reste est stocké localement.</string>
+    <string name="discord_information">GlueTune utilise la bibliothèque KizzyRPC pour définir le statut de votre compte Discord. Cela implique l\'utilisation de la connexion Discord Gateway, ce qui peut être considéré comme une violation des CGU de Discord. Cependant, il n\'y a aucun cas connu de suspension de compte pour cette raison. À utiliser à vos risques et périls. L\'application n\'extraira que votre jeton, et tout le reste est stocké localement.</string>
     <string name="dismiss">Ignorer</string>
     <string name="options">Options</string>
     <string name="preview">Aperçu</string>
@@ -758,7 +758,7 @@
     <string name="tab_commits">Commits</string>
     <string name="pre_release">Pré-version</string>
 
-    <string name="latest_version_of_avidtune">Dernière version d\'AvidTune</string>
+    <string name="latest_version_of_gluetune">Dernière version d\'GlueTune</string>
     <string name="collapse_release_notes">Réduire les notes de version</string>
     <string name="expand_release_notes">Développer les notes de version</string>
     <string name="view_on_github">Voir sur GitHub</string>
@@ -806,7 +806,7 @@
     <string name="social_paypal">PayPal</string>
     <string name="social_web">Site Web</string>
     
-    <string name="about_app_desc_part1">"AvidTune est essentiellement une version mobile de "</string>
+    <string name="about_app_desc_part1">"GlueTune est essentiellement une version mobile de "</string>
     <string name="about_app_desc_ganvo">Ganvo Music</string>
     <string name="about_app_desc_part2">", offrant une expérience élégante, rapide et riche en fonctionnalités pour profiter de vos chansons préférées lors de vos déplacements. Conçu en gardant les performances à l\'esprit, il vous permet d\'accéder facilement à toutes les chansons de YouTube Music du bout des doigts."</string>
 
@@ -833,7 +833,7 @@
     <string name="hide_romanized">Masquer la romanisation</string>
     
     <!-- Insight Strings -->
-    <string name="avidtune_insight">AvidTune Insight</string>
+    <string name="gluetune_insight">GlueTune Insight</string>
     <string name="insight_discover_year">Découvrez votre année en musique</string>
     <string name="insight_your_musical_year">Votre année en musique</string>
     <string name="insight_tap_to_view">Appuyez pour voir vos statistiques complètes</string>
@@ -841,9 +841,9 @@
     <string name="insight_top_artists">Top\nartistes</string>
     <string name="insight_full_stats">Stats\ncomplètes</string>
     <string name="insight_download_report">Télécharger\nle rapport</string>
-    <string name="insight_view_full">Voir tout AvidTune Insight</string>
+    <string name="insight_view_full">Voir tout GlueTune Insight</string>
     <string name="insight_minutes">Minutes</string>
-    <string name="insight_playlist_name">AvidTune Insight %1$d</string>
+    <string name="insight_playlist_name">GlueTune Insight %1$d</string>
     <string name="insight_msg_tease_0">J\'espère vraiment que vous n\'êtes pas déçu...</string>
     <string name="insight_msg_reveal_0">Ça fait **%1$d minutes**. Un simple échauffement ?</string>
     <string name="insight_msg_tease_1000">On dirait que vous nous avez découverts récemment...</string>
@@ -856,7 +856,7 @@
     <string name="insight_msg_reveal_40000">Vous avez littéralement vécu ici pendant **%1$d minutes**.</string>
     <string name="insight_msg_tease_default">On dirait qu\'on a perdu le fil !</string>
     <string name="insight_msg_reveal_default">Mais vous avez définitivement écouté **%1$d minutes** de musique.</string>
-    <string name="insight_title">AvidTune Insight</string>
+    <string name="insight_title">GlueTune Insight</string>
     <string name="insight_intro_subtitle">Un regard sur votre année en musique.</string>
     <string name="insight_lets_go">C\'est parti !</string>
     <string name="insight_total_songs_title">Chansons que\nvous avez écoutées</string>
@@ -1144,7 +1144,7 @@
     <string name="system_equalizer">Égaliseur système</string>
     <string name="error_title">Erreur</string>
     <string name="error_eq_apply_failed">Échec de l\'application de l\'EQ : %1$s</string>
-    <string name="avidtune_equalizer">Égaliseur AvidTune</string>
+    <string name="gluetune_equalizer">Égaliseur GlueTune</string>
     <string name="eq_enable_title">Activer l\'égaliseur</string>
     <string name="eq_enable_summary">Basculer l\'égaliseur paramétrique intégré</string>
     <string name="eq_simple">Simple</string>
@@ -1159,11 +1159,11 @@
     <string name="eq_label_bass">Basses</string>
     <string name="eq_label_treble">Aigus</string>
     <string name="eq_label_custom">Personnalisé</string>
-    <string name="eq_label_avidtune">AvidTune</string>
+    <string name="eq_label_gluetune">GlueTune</string>
     <string name="eq_label_dolby">Dolby</string>
     <string name="eq_label_dirac">Dirac</string>
     <string name="eq_preset_flat">Plat</string>
-    <string name="eq_preset_avidtune_signature">Signature AvidTune</string>
+    <string name="eq_preset_gluetune_signature">Signature GlueTune</string>
     <string name="eq_preset_acoustic">Acoustique</string>
     <string name="eq_preset_spatial">Spatial</string>
     <string name="eq_preset_bass_boost">Amplification des basses</string>
@@ -1211,7 +1211,7 @@
     
     <string name="theme_creator">Créateur de thème</string>
     <string name="theme_saved">Thème enregistré !</string>
-    <string name="theme_creator_description">AvidTune utilise Material You. Choisissez une couleur de base et le moteur calculera automatiquement les couleurs secondaires, tertiaires et neutres parfaites.</string>
+    <string name="theme_creator_description">GlueTune utilise Material You. Choisissez une couleur de base et le moteur calculera automatiquement les couleurs secondaires, tertiaires et neutres parfaites.</string>
     <string name="theme_name">Nom du thème</string>
     <string name="hex_color">Couleur Hex</string>
     <string name="randomize">Aléatoire</string>
@@ -1233,7 +1233,7 @@
     <string name="alarm_stop">Arrêter</string>
     <string name="alarm_snoozed_toast">Alarme répétée dans 10 minutes</string>
     <string name="alarm_channel_name">Alarmes</string>
-    <string name="alarm_notification_title">Alarme AvidTune</string>
+    <string name="alarm_notification_title">Alarme GlueTune</string>
     <string name="alarm_notification_text">Réveillez-vous ! Votre alarme sonne.</string>
     <string name="set_as_alarm">Définir comme alarme</string>
     <string name="add_alarm">Ajouter une alarme</string>

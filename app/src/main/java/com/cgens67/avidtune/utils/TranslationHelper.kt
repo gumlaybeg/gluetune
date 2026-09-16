@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO

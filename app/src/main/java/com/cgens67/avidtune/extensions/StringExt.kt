@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.extensions
+package com.cgens67.gluetune.extensions
 
 import androidx.sqlite.db.SimpleSQLiteQuery
 import java.net.InetSocketAddress

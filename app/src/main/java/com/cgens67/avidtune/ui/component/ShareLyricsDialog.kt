@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -52,9 +52,9 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
 import coil.request.ImageRequest
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.utils.ComposeToImage
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.utils.ComposeToImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

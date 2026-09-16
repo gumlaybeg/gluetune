@@ -6,9 +6,9 @@
         android:shortcutId="search"
         android:shortcutShortLabel="@string/search">
         <intent
-            android:action="com.cgens67.avidtune.action.SEARCH"
-            android:targetClass="com.cgens67.avidtune.MainActivity"
-            android:targetPackage="com.cgens67.avidtune" />
+            android:action="com.cgens67.gluetune.action.SEARCH"
+            android:targetClass="com.cgens67.gluetune.MainActivity"
+            android:targetPackage="com.cgens67.gluetune" />
     </shortcut>
     <shortcut
         android:enabled="true"
@@ -16,9 +16,9 @@
         android:shortcutId="explore"
         android:shortcutShortLabel="@string/explore">
         <intent
-            android:action="com.cgens67.avidtune.action.EXPLORE"
-            android:targetClass="com.cgens67.avidtune.MainActivity"
-            android:targetPackage="com.cgens67.avidtune" />
+            android:action="com.cgens67.gluetune.action.EXPLORE"
+            android:targetClass="com.cgens67.gluetune.MainActivity"
+            android:targetPackage="com.cgens67.gluetune" />
     </shortcut>
     <shortcut
         android:enabled="true"
@@ -26,8 +26,8 @@
         android:shortcutId="library"
         android:shortcutShortLabel="@string/filter_library">
         <intent
-            android:action="com.cgens67.avidtune.action.LIBRARY"
-            android:targetClass="com.cgens67.avidtune.MainActivity"
-            android:targetPackage="com.cgens67.avidtune" />
+            android:action="com.cgens67.gluetune.action.LIBRARY"
+            android:targetClass="com.cgens67.gluetune.MainActivity"
+            android:targetPackage="com.cgens67.gluetune" />
     </shortcut>
 </shortcuts>

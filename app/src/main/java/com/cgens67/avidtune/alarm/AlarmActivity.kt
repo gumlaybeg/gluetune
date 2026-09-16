@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.alarm
+package com.cgens67.gluetune.alarm
 
 import android.app.KeyguardManager
 import android.app.NotificationManager
@@ -22,15 +22,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.playback.MusicService
-import com.cgens67.avidtune.playback.PlayerConnection
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.ui.theme.AvidTuneTheme
-import com.cgens67.avidtune.utils.isInternetAvailable
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.playback.MusicService
+import com.cgens67.gluetune.playback.PlayerConnection
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.ui.theme.GlueTuneTheme
+import com.cgens67.gluetune.utils.isInternetAvailable
 import com.cgens67.innertube.models.WatchEndpoint
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.firstOrNull
@@ -108,7 +108,7 @@ class AlarmActivity : ComponentActivity() {
         bindService(Intent(this, MusicService::class.java), serviceConnection, Context.BIND_AUTO_CREATE)
 
         setContent {
-            AvidTuneTheme {
+            GlueTuneTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

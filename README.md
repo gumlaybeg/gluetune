@@ -1,12 +1,12 @@
-# AvidTune
+# GlueTune
 
   ### Advanced YouTube Music Client with Material Design 3 for Android
   
-  [![Latest Version](https://img.shields.io/github/v/release/cgens67/AvidTune?style=flat-square&logo=github&color=0D1117&labelColor=161B22)](https://github.com/cgens67/AvidTune/releases)
-  [![License](https://img.shields.io/github/license/cgens67/AvidTune?style=flat-square&logo=gnu&color=2B3137&labelColor=161B22)](https://github.com/cgens67/AvidTune/blob/main/LICENSE)
+  [![Latest Version](https://img.shields.io/github/v/release/cgens67/GlueTune?style=flat-square&logo=github&color=0D1117&labelColor=161B22)](https://github.com/cgens67/GlueTune/releases)
+  [![License](https://img.shields.io/github/license/cgens67/GlueTune?style=flat-square&logo=gnu&color=2B3137&labelColor=161B22)](https://github.com/cgens67/GlueTune/blob/main/LICENSE)
   [![Android](https://img.shields.io/badge/Platform-Android%206.0+-3DDC84.svg?style=flat-square&logo=android&logoColor=white&labelColor=161B22)](https://www.android.com)
-  [![Stars](https://img.shields.io/github/stars/cgens67/AvidTune?style=flat-square&logo=github&color=yellow&labelColor=161B22)](https://github.com/cgens67/AvidTune/stargazers)
-  [![Forks](https://img.shields.io/github/forks/cgens67/AvidTune?style=flat-square&logo=github&color=blue&labelColor=161B22)](https://github.com/cgens67/AvidTune/network/members)
+  [![Stars](https://img.shields.io/github/stars/cgens67/GlueTune?style=flat-square&logo=github&color=yellow&labelColor=161B22)](https://github.com/cgens67/GlueTune/stargazers)
+  [![Forks](https://img.shields.io/github/forks/cgens67/GlueTune?style=flat-square&logo=github&color=blue&labelColor=161B22)](https://github.com/cgens67/GlueTune/network/members)
 </div>
 
 ---
@@ -27,7 +27,7 @@
 
 ## Overview
 
-**AvidTune** is an open-source YouTube Music client designed for Android devices. It offers a superior user experience with a modern interface implementing Material Design 3, providing advanced features to browse, play, and manage music content without the limitations of the official app.
+**GlueTune** is an open-source YouTube Music client designed for Android devices. It offers a superior user experience with a modern interface implementing Material Design 3, providing advanced features to browse, play, and manage music content without the limitations of the official app.
 
 ### Key Benefits
 
@@ -37,7 +37,7 @@
 - **Customizable Interface**: Personalize your music experience
 - **Offline Capabilities**: Download and play music without an internet connection
 
-> **Note**: AvidTune is an independent project and is not affiliated with, sponsored, or endorsed by YouTube or Google.
+> **Note**: GlueTune is an independent project and is not affiliated with, sponsored, or endorsed by YouTube or Google.
 
 ---
 
@@ -149,7 +149,7 @@ For detailed information about configuration, advanced features, and usage guide
 
 <div align="center">
   
-[![Documentation](https://img.shields.io/badge/Documentation-GitBook-4285F4?style=for-the-badge&logo=gitbook&logoColor=white)](https://avidtune.gitbook.io/)
+[![Documentation](https://img.shields.io/badge/Documentation-GitBook-4285F4?style=for-the-badge&logo=gitbook&logoColor=white)](https://gluetune.gitbook.io/)
 
 </div>
 
@@ -170,14 +170,14 @@ For detailed information about configuration, advanced features, and usage guide
 
 #### Option 1: GitHub Releases (Recommended)
 
-1. Navigate to the [Releases](https://github.com/cgens67/AvidTune/releases) section on GitHub
+1. Navigate to the [Releases](https://github.com/cgens67/GlueTune/releases) section on GitHub
 2. Download the APK file of the latest stable version
 3. Enable "Install from unknown sources" in your device's security settings
 4. Open the downloaded APK file to complete the installation
 
 #### Option 2: Official Website
 
-1. Visit the [official AvidTune website](https://avidtune.vercel.app/)
+1. Visit the [official GlueTune website](https://gluetune.vercel.app/)
 2. Select the download option for Android
 3. Follow the provided installation instructions
 
@@ -227,10 +227,10 @@ For detailed information about configuration, advanced features, and usage guide
 
 ```bash
 # Clone the repository
-git clone https://github.com/cgens67/AvidTune.git
+git clone https://github.com/cgens67/GlueTune.git
 
 # Navigate to the project directory
-cd AvidTune
+cd GlueTune
 
 # Update submodules (if any)
 git submodule update --init --recursive
@@ -242,7 +242,7 @@ git submodule update --init --recursive
 
 1. Open Android Studio
 2. Select "Open an existing Android Studio project"
-3. Navigate to and select the AvidTune directory
+3. Navigate to and select the GlueTune directory
 4. Wait for the project synchronization and indexing to complete
 5. Select Build → Build Bundle(s) / APK(s) → Build APK(s)
 
@@ -273,16 +273,16 @@ git submodule update --init --recursive
 
 ### Code of Conduct
 
-All participants in this project are expected to adhere to our code of conduct, which promotes an inclusive, respectful, and constructive environment. Please review the [full Code of Conduct](https://github.com/cgens67/AvidTune/blob/master/CODE_OF_CONDUCT.md) before contributing.
+All participants in this project are expected to adhere to our code of conduct, which promotes an inclusive, respectful, and constructive environment. Please review the [full Code of Conduct](https://github.com/cgens67/GlueTune/blob/master/CODE_OF_CONDUCT.md) before contributing.
 
 ### Translation
 
-Help translate AvidTune into your language or improve existing translations:
+Help translate GlueTune into your language or improve existing translations:
 
 <div align="center">
   
 [![POEditor](https://img.shields.io/badge/POEditor-2196F3?style=for-the-badge&logo=translate&logoColor=white)](https://poeditor.com/join/project/208BwCVazA)
-[![Crowdin](https://img.shields.io/badge/Crowdin-2E3440?style=for-the-badge&logo=crowdin&logoColor=white)](https://crowdin.com/project/avidtune)
+[![Crowdin](https://img.shields.io/badge/Crowdin-2E3440?style=for-the-badge&logo=crowdin&logoColor=white)](https://crowdin.com/project/gluetune)
 
 </div>
 
@@ -290,13 +290,13 @@ Help translate AvidTune into your language or improve existing translations:
 
 <div align="center">
   
-[![Telegram Updates](https://img.shields.io/badge/Telegram-Updates-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/avidtuneupdates)
+[![Telegram Updates](https://img.shields.io/badge/Telegram-Updates-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/gluetuneupdates)
 
 </div>
 
 ### Development Workflow
 
-1. **Review Issues**: Check [open issues](https://github.com/cgens67/AvidTune/issues) or create a new one describing the bug or feature
+1. **Review Issues**: Check [open issues](https://github.com/cgens67/GlueTune/issues) or create a new one describing the bug or feature
 2. **Fork the Repository**: Create a personal fork of the repository
 3. **Feature Branch**: Create a branch for your feature (`git checkout -b feature/new-feature`)
 4. **Implementation**: Implement changes following the project's coding conventions
@@ -305,7 +305,7 @@ Help translate AvidTune into your language or improve existing translations:
 7. **Push Changes**: Push changes to your fork (`git push origin feature/new-feature`)
 8. **Pull Request**: Open a PR detailing the changes and referencing the corresponding issue
 
-> **Development Guidelines**: Review our [contribution guidelines](https://github.com/cgens67/AvidTune/blob/master/CONTRIBUTING.md) for detailed information on the development process, code standards, and workflow.
+> **Development Guidelines**: Review our [contribution guidelines](https://github.com/cgens67/GlueTune/blob/master/CONTRIBUTING.md) for detailed information on the development process, code standards, and workflow.
 
 ---
 
@@ -325,7 +325,7 @@ Special thanks to the following contributors and collaborators:
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but **WITHOUT ANY WARRANTY**; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [GNU General Public License](https://github.com/cgens67/AvidTune/blob/main/LICENSE) for more details.
+This program is distributed in the hope that it will be useful, but **WITHOUT ANY WARRANTY**; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [GNU General Public License](https://github.com/cgens67/GlueTune/blob/main/LICENSE) for more details.
 
 <div align="center">
   

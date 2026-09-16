@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
-package com.cgens67.avidtune.ui.menu
+package com.cgens67.gluetune.ui.menu
 
 import android.content.*
 import android.text.format.Formatter
@@ -26,9 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
 import kotlinx.coroutines.launch
 
 @Composable

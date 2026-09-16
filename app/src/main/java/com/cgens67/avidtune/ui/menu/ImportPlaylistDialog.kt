@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.menu
+package com.cgens67.gluetune.ui.menu
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -11,10 +11,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.db.entities.PlaylistEntity
-import com.cgens67.avidtune.ui.component.TextFieldDialog
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.db.entities.PlaylistEntity
+import com.cgens67.gluetune.ui.component.TextFieldDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch

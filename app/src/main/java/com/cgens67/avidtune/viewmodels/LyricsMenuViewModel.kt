@@ -1,12 +1,12 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.db.entities.LyricsEntity
-import com.cgens67.avidtune.lyrics.LyricsHelper
-import com.cgens67.avidtune.lyrics.LyricsResult
-import com.cgens67.avidtune.models.MediaMetadata
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.db.entities.LyricsEntity
+import com.cgens67.gluetune.lyrics.LyricsHelper
+import com.cgens67.gluetune.lyrics.LyricsResult
+import com.cgens67.gluetune.models.MediaMetadata
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

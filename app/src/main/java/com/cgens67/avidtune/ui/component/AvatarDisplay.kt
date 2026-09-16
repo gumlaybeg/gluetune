@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 
 /**
  * Componente para mostrar el avatar del usuario en cualquier parte de la

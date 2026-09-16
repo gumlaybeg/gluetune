@@ -1,14 +1,14 @@
-package com.cgens67.avidtune.extensions
+package com.cgens67.gluetune.extensions
 
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.models.PersistQueue
-import com.cgens67.avidtune.models.QueueData
-import com.cgens67.avidtune.models.QueueType
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.playback.queues.LocalAlbumRadio
-import com.cgens67.avidtune.playback.queues.Queue
-import com.cgens67.avidtune.playback.queues.YouTubeAlbumRadio
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.models.PersistQueue
+import com.cgens67.gluetune.models.QueueData
+import com.cgens67.gluetune.models.QueueType
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.playback.queues.LocalAlbumRadio
+import com.cgens67.gluetune.playback.queues.Queue
+import com.cgens67.gluetune.playback.queues.YouTubeAlbumRadio
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
 
 
 fun Queue.toPersistQueue(

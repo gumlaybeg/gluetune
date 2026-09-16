@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils
+package com.cgens67.gluetune.utils
 
 import android.util.Base64
 import io.ktor.client.HttpClient

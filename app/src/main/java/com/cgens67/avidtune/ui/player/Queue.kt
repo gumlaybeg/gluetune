@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-package com.cgens67.avidtune.ui.player
+package com.cgens67.gluetune.ui.player
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.BitmapDrawable
@@ -43,16 +43,16 @@ import androidx.palette.graphics.Palette
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.*
-import com.cgens67.avidtune.extensions.*
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.ui.component.*
-import com.cgens67.avidtune.ui.menu.*
-import com.cgens67.avidtune.ui.screens.settings.DarkMode
-import com.cgens67.avidtune.ui.theme.PlayerColorExtractor
-import com.cgens67.avidtune.utils.*
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.*
+import com.cgens67.gluetune.extensions.*
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.ui.component.*
+import com.cgens67.gluetune.ui.menu.*
+import com.cgens67.gluetune.ui.screens.settings.DarkMode
+import com.cgens67.gluetune.ui.theme.PlayerColorExtractor
+import com.cgens67.gluetune.utils.*
 import kotlinx.coroutines.*
 import sh.calvin.reorderable.*
 

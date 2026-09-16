@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -47,7 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -138,7 +138,7 @@ fun ReleaseNotesCard() {
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = stringResource(R.string.latest_version_of_avidtune),
+                            text = stringResource(R.string.latest_version_of_gluetune),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -465,7 +465,7 @@ enum class ReleaseNoteType(
 suspend fun fetchReleaseNotes(): List<ReleaseNoteItem> {
     return withContext(Dispatchers.IO) {
         try {
-            val document = Jsoup.connect("https://github.com/cgens67/AvidTune/releases/latest").get()
+            val document = Jsoup.connect("https://github.com/cgens67/GlueTune/releases/latest").get()
             val changelogElement = document.selectFirst(".markdown-body")
             val htmlContent = changelogElement?.html() ?: "No release notes found"
 

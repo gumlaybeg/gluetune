@@ -1,10 +1,10 @@
-package com.cgens67.avidtune.models
+package com.cgens67.gluetune.models
 
 import androidx.compose.runtime.Immutable
 import com.cgens67.innertube.models.SongItem
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.db.entities.SongEntity
-import com.cgens67.avidtune.ui.utils.resize
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.db.entities.SongEntity
+import com.cgens67.gluetune.ui.utils.resize
 import java.io.Serializable
 
 @Immutable

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.viewmodels
+package com.cgens67.gluetune.viewmodels
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -7,15 +7,15 @@ import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.AlbumItem
 import com.cgens67.innertube.models.filterExplicit
 import com.cgens67.innertube.models.filterVideoSongs
-import com.cgens67.avidtune.constants.HideExplicitKey
-import com.cgens67.avidtune.constants.HideMusicVideosKey
-import com.cgens67.avidtune.constants.LastNewReleaseCheckKey
-import com.cgens67.avidtune.db.MusicDatabase
-import com.cgens67.avidtune.utils.dataStore
-import com.cgens67.avidtune.utils.get
-import com.cgens67.avidtune.utils.reportException
-import com.cgens67.avidtune.aicontentfilter.FilterAiContentUseCase
-import com.cgens67.avidtune.aicontentfilter.LoadAiContentFilterPolicyUseCase
+import com.cgens67.gluetune.constants.HideExplicitKey
+import com.cgens67.gluetune.constants.HideMusicVideosKey
+import com.cgens67.gluetune.constants.LastNewReleaseCheckKey
+import com.cgens67.gluetune.db.MusicDatabase
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
+import com.cgens67.gluetune.utils.reportException
+import com.cgens67.gluetune.aicontentfilter.FilterAiContentUseCase
+import com.cgens67.gluetune.aicontentfilter.LoadAiContentFilterPolicyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

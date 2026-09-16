@@ -370,7 +370,7 @@
     <string name="restore_failed">Nabigong i-restore ang backup</string>
 
     <string name="discord_integration">Discord integration</string>
-    <string name="discord_information">Ginagamit ng AvidTune ang KizzyRPC library upang i-set ang status ng iyong Discord account. Kabilang dito ang paggamit sa koneksyon ng Discord Gateway, na maaaring ituring na paglabag sa TOS ng Discord. Gayunpaman, walang kilalang kaso ng mga user account na nasuspinde dahil dito. Gamitin sa sariling peligro (Use at your own risk). Kukunin lang ng AvidTune ang iyong token, at ang lahat ng iba pa ay lokal na mase-save.</string>
+    <string name="discord_information">Ginagamit ng GlueTune ang KizzyRPC library upang i-set ang status ng iyong Discord account. Kabilang dito ang paggamit sa koneksyon ng Discord Gateway, na maaaring ituring na paglabag sa TOS ng Discord. Gayunpaman, walang kilalang kaso ng mga user account na nasuspinde dahil dito. Gamitin sa sariling peligro (Use at your own risk). Kukunin lang ng GlueTune ang iyong token, at ang lahat ng iba pa ay lokal na mase-save.</string>
     <string name="dismiss">I-dismiss</string>
     <string name="options">Mga Opsyon</string>
     <string name="preview">Preview</string>
@@ -757,7 +757,7 @@
     <string name="tab_commits">Mga Commit</string>
     <string name="pre_release">Pre-release</string>
 
-    <string name="latest_version_of_avidtune">Pinakabagong bersyon ng AvidTune</string>
+    <string name="latest_version_of_gluetune">Pinakabagong bersyon ng GlueTune</string>
     <string name="collapse_release_notes">I-collapse ang mga release notes</string>
     <string name="expand_release_notes">I-expand ang mga release notes</string>
     <string name="view_on_github">Tingnan sa GitHub</string>
@@ -805,7 +805,7 @@
     <string name="social_paypal">PayPal</string>
     <string name="social_web">Web</string>
     
-    <string name="about_app_desc_part1">"Ang AvidTune ay karaniwang mobile na bersyon ng "</string>
+    <string name="about_app_desc_part1">"Ang GlueTune ay karaniwang mobile na bersyon ng "</string>
     <string name="about_app_desc_ganvo">Ganvo Music</string>
     <string name="about_app_desc_part2">", na nag-aalok ng makinis, mabilis, at puno ng feature na karanasan para ma-enjoy mo ang iyong mga paboritong kanta habang nasa labas. Dahil isinaalang-alang ang performance, madali mong maa-access ang lahat ng kanta sa YouTube Music nang direkta mula sa iyong mga kamay."</string>
 
@@ -832,7 +832,7 @@
     <string name="hide_romanized">Itago ang na-romanize</string>
 
     <!-- Insight Strings -->
-    <string name="avidtune_insight">AvidTune Insight</string>
+    <string name="gluetune_insight">GlueTune Insight</string>
     <string name="insight_discover_year">Tuklasin ang iyong musikal na taon</string>
     <string name="insight_your_musical_year">Ang iyong musikal na taon</string>
     <string name="insight_tap_to_view">I-tap para makita ang kumpleto mong stats</string>
@@ -840,9 +840,9 @@
     <string name="insight_top_artists">Mga nangungunang\nartist</string>
     <string name="insight_full_stats">Buong\nstats</string>
     <string name="insight_download_report">I-download\nang ulat</string>
-    <string name="insight_view_full">Tingnan ang buong AvidTune Insight</string>
+    <string name="insight_view_full">Tingnan ang buong GlueTune Insight</string>
     <string name="insight_minutes">Mga Minuto</string>
-    <string name="insight_playlist_name">AvidTune Insight %1$d</string>
+    <string name="insight_playlist_name">GlueTune Insight %1$d</string>
     <string name="insight_msg_tease_0">Sana talaga hindi ka madismaya...</string>
     <string name="insight_msg_reveal_0">Iyon ay **%1$d na minuto**. Nag-uumpisa pa lang?</string>
     <string name="insight_msg_tease_1000">Mukhang kamakailan mo lang kami natagpuan...</string>
@@ -855,7 +855,7 @@
     <string name="insight_msg_reveal_40000">Literal na tumira ka rito nang **%1$d na minuto**.</string>
     <string name="insight_msg_tease_default">Mukhang hindi na namin mabilang!</string>
     <string name="insight_msg_reveal_default">Ngunit sigurado kaming nakinig ka ng **%1$d na minuto** ng musika.</string>
-    <string name="insight_title">AvidTune Insight</string>
+    <string name="insight_title">GlueTune Insight</string>
     <string name="insight_intro_subtitle">Isang pagbabalik-tanaw sa iyong musikal na taon.</string>
     <string name="insight_lets_go">Tara na!</string>
     <string name="insight_total_songs_title">Mga kantang\npinakinggan mo</string>

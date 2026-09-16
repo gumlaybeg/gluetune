@@ -1,6 +1,6 @@
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
-package com.cgens67.avidtune.ui.component
+package com.cgens67.gluetune.ui.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -76,7 +76,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.util.lerp
-import com.cgens67.avidtune.constants.AppBarHeight
+import com.cgens67.gluetune.constants.AppBarHeight
 import kotlin.math.max
 
 @ExperimentalMaterial3Api

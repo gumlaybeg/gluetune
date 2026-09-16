@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
-package com.cgens67.avidtune.ui.screens.library
+package com.cgens67.gluetune.ui.screens.library
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -26,18 +26,18 @@ import androidx.hilt.navigation.compose.*
 import androidx.navigation.*
 import androidx.navigation.compose.*
 import coil.compose.*
-import com.cgens67.avidtune.*
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.*
-import com.cgens67.avidtune.db.entities.*
-import com.cgens67.avidtune.extensions.*
-import com.cgens67.avidtune.playback.queues.*
-import com.cgens67.avidtune.ui.component.*
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.menu.*
-import com.cgens67.avidtune.ui.utils.*
-import com.cgens67.avidtune.utils.*
-import com.cgens67.avidtune.viewmodels.*
+import com.cgens67.gluetune.*
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.*
+import com.cgens67.gluetune.db.entities.*
+import com.cgens67.gluetune.extensions.*
+import com.cgens67.gluetune.playback.queues.*
+import com.cgens67.gluetune.ui.component.*
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.menu.*
+import com.cgens67.gluetune.ui.utils.*
+import com.cgens67.gluetune.utils.*
+import com.cgens67.gluetune.viewmodels.*
 import com.cgens67.innertube.utils.*
 import kotlinx.coroutines.*
 import java.text.Collator

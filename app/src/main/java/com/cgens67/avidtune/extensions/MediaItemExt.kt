@@ -1,12 +1,12 @@
-package com.cgens67.avidtune.extensions
+package com.cgens67.gluetune.extensions
 
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata.MEDIA_TYPE_MUSIC
 import com.cgens67.innertube.models.SongItem
-import com.cgens67.avidtune.db.entities.Song
-import com.cgens67.avidtune.models.MediaMetadata
-import com.cgens67.avidtune.models.toMediaMetadata
+import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.models.MediaMetadata
+import com.cgens67.gluetune.models.toMediaMetadata
 
 val MediaItem.metadata: MediaMetadata?
     get() = localConfiguration?.tag as? MediaMetadata

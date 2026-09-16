@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -31,18 +31,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.GridThumbnailHeight
-import com.cgens67.avidtune.ui.component.IconButton
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.YouTubeGridItem
-import com.cgens67.avidtune.ui.component.shimmer.GridItemPlaceHolder
-import com.cgens67.avidtune.ui.component.shimmer.ShimmerHost
-import com.cgens67.avidtune.ui.menu.YouTubeAlbumMenu
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.viewmodels.NewReleaseViewModel
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.GridThumbnailHeight
+import com.cgens67.gluetune.ui.component.IconButton
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.YouTubeGridItem
+import com.cgens67.gluetune.ui.component.shimmer.GridItemPlaceHolder
+import com.cgens67.gluetune.ui.component.shimmer.ShimmerHost
+import com.cgens67.gluetune.ui.menu.YouTubeAlbumMenu
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.viewmodels.NewReleaseViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.ui.screens.artist
+package com.cgens67.gluetune.ui.screens.artist
 
 import android.annotation.SuppressLint
 import android.content.ClipData
@@ -91,34 +91,34 @@ import com.cgens67.innertube.models.PlaylistItem
 import com.cgens67.innertube.models.PodcastItem
 import com.cgens67.innertube.models.SongItem
 import com.cgens67.innertube.models.WatchEndpoint
-import com.cgens67.avidtune.LocalDatabase
-import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
-import com.cgens67.avidtune.LocalPlayerConnection
-import com.cgens67.avidtune.R
-import com.cgens67.avidtune.constants.AppBarHeight
-import com.cgens67.avidtune.db.entities.ArtistEntity
-import com.cgens67.avidtune.extensions.toMediaItem
-import com.cgens67.avidtune.extensions.togglePlayPause
-import com.cgens67.avidtune.models.toMediaMetadata
-import com.cgens67.avidtune.playback.queues.YouTubeQueue
-import com.cgens67.avidtune.ui.component.LocalMenuState
-import com.cgens67.avidtune.ui.component.NavigationTitle
-import com.cgens67.avidtune.ui.component.SongListItem
-import com.cgens67.avidtune.ui.component.YouTubeGridItem
-import com.cgens67.avidtune.ui.component.YouTubeListItem
-import com.cgens67.avidtune.ui.component.shimmer.ButtonPlaceholder
-import com.cgens67.avidtune.ui.component.shimmer.ListItemPlaceHolder
-import com.cgens67.avidtune.ui.component.shimmer.ShimmerHost
-import com.cgens67.avidtune.ui.component.shimmer.TextPlaceholder
-import com.cgens67.avidtune.ui.menu.SongMenu
-import com.cgens67.avidtune.ui.menu.YouTubeAlbumMenu
-import com.cgens67.avidtune.ui.menu.YouTubeArtistMenu
-import com.cgens67.avidtune.ui.menu.YouTubePlaylistMenu
-import com.cgens67.avidtune.ui.menu.YouTubeSongMenu
-import com.cgens67.avidtune.ui.utils.backToMain
-import com.cgens67.avidtune.ui.utils.fadingEdge
-import com.cgens67.avidtune.ui.utils.resize
-import com.cgens67.avidtune.viewmodels.ArtistViewModel
+import com.cgens67.gluetune.LocalDatabase
+import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
+import com.cgens67.gluetune.LocalPlayerConnection
+import com.cgens67.gluetune.R
+import com.cgens67.gluetune.constants.AppBarHeight
+import com.cgens67.gluetune.db.entities.ArtistEntity
+import com.cgens67.gluetune.extensions.toMediaItem
+import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.models.toMediaMetadata
+import com.cgens67.gluetune.playback.queues.YouTubeQueue
+import com.cgens67.gluetune.ui.component.LocalMenuState
+import com.cgens67.gluetune.ui.component.NavigationTitle
+import com.cgens67.gluetune.ui.component.SongListItem
+import com.cgens67.gluetune.ui.component.YouTubeGridItem
+import com.cgens67.gluetune.ui.component.YouTubeListItem
+import com.cgens67.gluetune.ui.component.shimmer.ButtonPlaceholder
+import com.cgens67.gluetune.ui.component.shimmer.ListItemPlaceHolder
+import com.cgens67.gluetune.ui.component.shimmer.ShimmerHost
+import com.cgens67.gluetune.ui.component.shimmer.TextPlaceholder
+import com.cgens67.gluetune.ui.menu.SongMenu
+import com.cgens67.gluetune.ui.menu.YouTubeAlbumMenu
+import com.cgens67.gluetune.ui.menu.YouTubeArtistMenu
+import com.cgens67.gluetune.ui.menu.YouTubePlaylistMenu
+import com.cgens67.gluetune.ui.menu.YouTubeSongMenu
+import com.cgens67.gluetune.ui.utils.backToMain
+import com.cgens67.gluetune.ui.utils.fadingEdge
+import com.cgens67.gluetune.ui.utils.resize
+import com.cgens67.gluetune.viewmodels.ArtistViewModel
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -134,13 +134,13 @@ import androidx.compose.ui.zIndex
 import androidx.palette.graphics.Palette
 import coil.imageLoader
 import coil.request.ImageRequest
-import com.cgens67.avidtune.constants.EnableArtistCanvasKey
-import com.cgens67.avidtune.playback.queues.ListQueue
-import com.cgens67.avidtune.ui.component.ArtistCanvasHelper
-import com.cgens67.avidtune.ui.component.ArtistVideo
-import com.cgens67.avidtune.ui.theme.PlayerColorExtractor
+import com.cgens67.gluetune.constants.EnableArtistCanvasKey
+import com.cgens67.gluetune.playback.queues.ListQueue
+import com.cgens67.gluetune.ui.component.ArtistCanvasHelper
+import com.cgens67.gluetune.ui.component.ArtistVideo
+import com.cgens67.gluetune.ui.theme.PlayerColorExtractor
 import com.cgens67.innertube.YouTube
-import com.cgens67.avidtune.utils.rememberPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -1032,7 +1032,7 @@ fun ArtistScreen(
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
-                    com.cgens67.avidtune.ui.component.IconButton(
+                    com.cgens67.gluetune.ui.component.IconButton(
                         onClick = navController::navigateUp,
                         onLongClick = navController::backToMain,
                     ) {

@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.utils.potoken
+package com.cgens67.gluetune.utils.potoken
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull

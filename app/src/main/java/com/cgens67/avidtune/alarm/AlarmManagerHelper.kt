@@ -1,4 +1,4 @@
-package com.cgens67.avidtune.alarm
+package com.cgens67.gluetune.alarm
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.Toast
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -28,7 +28,7 @@ data class AlarmState(
 )
 
 object AlarmManagerHelper {
-    private const val PREFS_NAME = "avidtune_alarms_prefs"
+    private const val PREFS_NAME = "gluetune_alarms_prefs"
     private const val ALARMS_KEY = "alarms_list_v1"
 
     fun getAlarms(context: Context): List<AlarmState> {

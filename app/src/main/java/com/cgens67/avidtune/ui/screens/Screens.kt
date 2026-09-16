@@ -1,9 +1,9 @@
-package com.cgens67.avidtune.ui.screens
+package com.cgens67.gluetune.ui.screens
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
-import com.cgens67.avidtune.R
+import com.cgens67.gluetune.R
 
 @Immutable
 sealed class Screens(
