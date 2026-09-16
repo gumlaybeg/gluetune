@@ -178,7 +178,7 @@ inline fun ListItem(
     val subtitleContentColor = when {
         isActive -> MaterialTheme.colorScheme.onSurfaceVariant
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-        else -> defaultContentColor.copy(alpha = 0.7f)
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     val trailingContentColor = when {
         isActive -> MaterialTheme.colorScheme.primary
@@ -186,40 +186,41 @@ inline fun ListItem(
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-    val itemCornerRadius = 16.dp
+    val itemCornerRadius = rememberItemCornerRadius()
 
-    val backgroundModifier = when {
+    val containerModifier = when {
         isActive -> Modifier
             .clip(RoundedCornerShape(itemCornerRadius))
-            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.32f))
+            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f))
             .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                shape = RoundedCornerShape(itemCornerRadius)
+                BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+                RoundedCornerShape(itemCornerRadius)
             )
         isSelected -> Modifier
             .clip(RoundedCornerShape(itemCornerRadius))
-            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f))
+            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f))
+            .border(
+                BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
+                RoundedCornerShape(itemCornerRadius)
+            )
         else -> Modifier
             .clip(RoundedCornerShape(itemCornerRadius))
     }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            modifier
-                .focusable()
-                .height(ListItemHeight)
-                .padding(horizontal = 8.dp, vertical = 2.dp)
-                .then(backgroundModifier)
-                .padding(horizontal = 4.dp),
+        modifier = modifier
+            .focusable()
+            .height(ListItemHeight)
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .then(containerModifier)
+            .padding(horizontal = 6.dp),
     ) {
-        Box(Modifier.padding(6.dp), contentAlignment = Alignment.Center) { thumbnailContent() }
+        Box(Modifier.padding(4.dp), contentAlignment = Alignment.Center) { thumbnailContent() }
         Column(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp),
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
@@ -234,7 +235,7 @@ inline fun ListItem(
                 CompositionLocalProvider(LocalContentColor provides subtitleContentColor) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) { subtitle() }
                 }
             }
@@ -269,7 +270,7 @@ fun ListItem(
                 color = when {
                     isActive -> MaterialTheme.colorScheme.onSurfaceVariant
                     isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                    else -> defaultSubtitleColor.copy(alpha = 0.7f)
+                    else -> defaultSubtitleColor.copy(alpha = 0.75f)
                 },
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
@@ -497,7 +498,7 @@ fun SongListItem(
 ) {
     val swipeEnabled by rememberPreference(SwipeToSongKey, defaultValue = false)
     val resolvedSwipeContentBackgroundColor = swipeContentBackgroundColor ?: MaterialTheme.colorScheme.surface
-    val itemCornerRadius = 12.dp
+    val itemCornerRadius = rememberItemCornerRadius()
 
     val content: @Composable () -> Unit = {
         ListItem(
@@ -600,15 +601,7 @@ fun ArtistListItem(
     modifier: Modifier = Modifier,
     badges: @Composable RowScope.() -> Unit = {
         if (artist.artist.bookmarkedAt != null) {
-            Icon(
-                painter = painterResource(R.drawable.favorite),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.error,
-                modifier =
-                    Modifier
-                        .size(15.dp)
-                        .padding(end = 2.dp),
-            )
+            Icon.Favorite()
         }
     },
     trailingContent: @Composable RowScope.() -> Unit = {},
@@ -715,7 +708,7 @@ fun AlbumListItem(
     isPlaying: Boolean = false,
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val itemCornerRadius = 12.dp
+    val itemCornerRadius = rememberItemCornerRadius()
     ListItem(
         title = album.album.title,
         subtitle =
@@ -828,7 +821,7 @@ fun PlaylistListItem(
     badges: @Composable RowScope.() -> Unit = {},
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val itemCornerRadius = 12.dp
+    val itemCornerRadius = rememberItemCornerRadius()
     ListItem(
         title = playlist.playlist.name,
         subtitle =
@@ -1305,39 +1298,34 @@ fun ItemThumbnail(
             }
         }
 
-        // Active playing indicator
-        if (isActive) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.42f), shape)
-            ) {
-                if (isPlaying) {
-                    PlayingIndicator(
-                        color = Color.White,
-                        modifier = Modifier.height(18.dp),
-                        bars = 3,
-                        barWidth = 3.dp
-                    )
-                } else {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.play),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(16.dp)
-                        )
+        val showCircularPlay = (isActive && !isPlaying && albumIndex == null)
+
+        PlayingIndicatorBox(
+            isActive = isActive,
+            playWhenReady = isPlaying,
+            color =
+                if (albumIndex != null) {
+                    if (isActive) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
                     }
-                }
-            }
-        }
+                } else {
+                    Color.White
+                },
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        color =
+                            if (albumIndex != null || showCircularPlay) {
+                                Color.Transparent
+                            } else {
+                                Color.Black.copy(alpha = ActiveBoxAlpha)
+                            },
+                        shape = shape,
+                    ),
+        )
     }
 }
 
@@ -1730,31 +1718,53 @@ data class Quadruple<A, B, C, D>(
     val fourth: D,
 )
 
+// ─────────────────────────────────────────────────────────────────────────────
+// BADGES (REDESIGNED PILL STYLE MATCHING REFERENCE IMAGE)
+// ─────────────────────────────────────────────────────────────────────────────
+
 private object Icon {
     @Composable
     fun Favorite() {
-        Icon(
-            painter = painterResource(R.drawable.favorite),
-            contentDescription = null,
-            tint = Color(0xFFE53935),
-            modifier =
-                Modifier
-                    .size(14.dp)
-                    .padding(end = 2.dp),
-        )
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = MaterialTheme.colorScheme.error.copy(alpha = 0.16f),
+            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.35f)),
+            modifier = Modifier.padding(end = 4.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.favorite),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(11.dp),
+                )
+            }
+        }
     }
 
     @Composable
     fun Library() {
-        Icon(
-            painter = painterResource(R.drawable.library_add_check),
-            contentDescription = null,
-            tint = LocalContentColor.current.copy(alpha = 0.85f),
-            modifier =
-                Modifier
-                    .size(14.dp)
-                    .padding(end = 2.dp),
-        )
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f),
+            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+            modifier = Modifier.padding(end = 4.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.library_add_check),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(11.dp),
+                )
+            }
+        }
     }
 
     @Composable
@@ -1764,42 +1774,52 @@ private object Icon {
     ) {
         when (state) {
             STATE_COMPLETED -> {
-                Icon(
-                    painter = painterResource(R.drawable.offline),
-                    contentDescription = null,
-                    tint = LocalContentColor.current.copy(alpha = 0.85f),
-                    modifier =
-                        Modifier
-                            .size(14.dp)
-                            .padding(end = 2.dp),
-                )
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.16f),
+                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)),
+                    modifier = Modifier.padding(end = 4.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.offline),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.size(11.dp),
+                        )
+                    }
+                }
             }
 
             STATE_QUEUED, STATE_DOWNLOADING -> {
-                if (percent > 0f) {
-                    Box(contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(
-                            progress = { percent / 100f },
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                            trackColor = LocalContentColor.current.copy(alpha = 0.2f),
-                            color = LocalContentColor.current
-                        )
-                        Text(
-                            text = "${percent.toInt()}%",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontSize = 8.sp,
-                            color = LocalContentColor.current,
-                        )
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f),
+                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                    modifier = Modifier.padding(end = 4.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                    ) {
+                        if (percent > 0f) {
+                            Text(
+                                text = "${percent.toInt()}%",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        } else {
+                            CircularWavyProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(11.dp),
+                            )
+                        }
                     }
-                } else {
-                    CircularWavyProgressIndicator(
-                        color = LocalContentColor.current,
-                        modifier =
-                            Modifier
-                                .size(14.dp)
-                                .padding(end = 2.dp),
-                    )
                 }
             }
 
@@ -1809,15 +1829,21 @@ private object Icon {
 
     @Composable
     fun Explicit() {
-        Icon(
-            painter = painterResource(R.drawable.explicit),
-            contentDescription = null,
-            tint = LocalContentColor.current.copy(alpha = 0.7f),
-            modifier =
-                Modifier
-                    .size(14.dp)
-                    .padding(end = 2.dp),
-        )
+        Surface(
+            shape = RoundedCornerShape(4.dp),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+            modifier = Modifier.padding(end = 4.dp)
+        ) {
+            Text(
+                text = "E",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                ),
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+            )
+        }
     }
 }
 
@@ -2527,7 +2553,7 @@ fun MediaMetadataListItem(
     shouldLoadImage: Boolean = true,
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val itemCornerRadius = 12.dp
+    val itemCornerRadius = rememberItemCornerRadius()
     ListItem(
         title = mediaMetadata.title,
         subtitle =
@@ -2589,7 +2615,7 @@ fun YouTubeListItem(
     },
 ) {
     val swipeEnabled by rememberPreference(SwipeToSongKey, defaultValue = false)
-    val itemCornerRadius = 12.dp
+    val itemCornerRadius = rememberItemCornerRadius()
 
     val content: @Composable () -> Unit = {
         ListItem(
