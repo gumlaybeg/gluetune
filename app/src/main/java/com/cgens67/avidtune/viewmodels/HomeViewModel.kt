@@ -10,13 +10,18 @@ import com.cgens67.innertube.models.YTItem
 import com.cgens67.innertube.pages.ExplorePage
 import com.cgens67.innertube.pages.HomePage
 import com.cgens67.innertube.utils.completed
+import com.cgens67.gluetune.constants.QuickPicks
+import com.cgens67.gluetune.constants.QuickPicksKey
 import com.cgens67.gluetune.db.MusicDatabase
 import com.cgens67.gluetune.db.entities.Album
 import com.cgens67.gluetune.db.entities.Artist
 import com.cgens67.gluetune.db.entities.LocalItem
 import com.cgens67.gluetune.db.entities.Playlist
 import com.cgens67.gluetune.db.entities.Song
+import com.cgens67.gluetune.extensions.toEnum
 import com.cgens67.gluetune.models.SimilarRecommendation
+import com.cgens67.gluetune.utils.dataStore
+import com.cgens67.gluetune.utils.get
 import com.cgens67.gluetune.utils.reportException
 import com.cgens67.gluetune.aicontentfilter.FilterAiContentUseCase
 import com.cgens67.gluetune.aicontentfilter.LoadAiContentFilterPolicyUseCase
@@ -30,7 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    @ApplicationContext context: Context,
+    @ApplicationContext val context: Context,
     val database: MusicDatabase,
     private val loadAiContentFilterPolicy: LoadAiContentFilterPolicyUseCase,
     private val filterAiContent: FilterAiContentUseCase
@@ -58,8 +63,26 @@ class HomeViewModel @Inject constructor(
         isLoading.value = true
         val policy = loadAiContentFilterPolicy()
 
-        quickPicks.value = database.quickPicks()
-            .first().shuffled().take(20)
+        val recentEvents = database.events().first()
+        val listenedSongsCount = recentEvents.distinctBy { it.song.id }.size
+
+        if (listenedSongsCount >= 7) {
+            val quickPicksPref = context.dataStore.data.first()[QuickPicksKey].toEnum(QuickPicks.QUICK_PICKS)
+
+            var qp = if (quickPicksPref == QuickPicks.LAST_LISTEN) {
+                recentEvents.map { it.song }.distinctBy { it.id }.take(20)
+            } else {
+                database.quickPicks().first().shuffled().take(20)
+            }
+
+            if (qp.isEmpty()) {
+                qp = database.allSongs().first().shuffled().take(20)
+            }
+
+            quickPicks.value = qp
+        } else {
+            quickPicks.value = emptyList()
+        }
 
         forgottenFavorites.value = database.forgottenFavorites()
             .first().shuffled().take(20)
