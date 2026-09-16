@@ -127,6 +127,9 @@ import com.cgens67.gluetune.constants.GridThumbnailHeight
 import com.cgens67.gluetune.constants.InnerTubeCookieKey
 import com.cgens67.gluetune.constants.ListItemHeight
 import com.cgens67.gluetune.constants.ListThumbnailSize
+import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
+import com.cgens67.gluetune.constants.PureBlackKey
+import com.cgens67.gluetune.constants.SwipeThumbnailKey
 import com.cgens67.gluetune.constants.ThumbnailCornerRadius
 import com.cgens67.gluetune.db.entities.Album
 import com.cgens67.gluetune.db.entities.Artist
