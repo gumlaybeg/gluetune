@@ -719,7 +719,7 @@ private fun ThemePreviewCard(
     val backgroundColor = if (isDarkTheme) {
         Color(0xFF1C1C1E)
     } else {
-        animatedTertiary.copy(alpha = 0.3f)
+        animatedTertiary.copy(alpha = 0.15f)
     }
 
     Card(
@@ -733,136 +733,168 @@ private fun ThemePreviewCard(
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Canvas(modifier = Modifier.fillMaxSize()) {
+                val w = size.width
+                val h = size.height
+
                 val gradientBrush = Brush.radialGradient(
                     colors = listOf(
-                        animatedPrimary.copy(alpha = 0.3f),
+                        animatedPrimary.copy(alpha = 0.2f),
                         Color.Transparent
                     ),
-                    center = Offset(size.width * 0.7f, size.height * 0.3f),
-                    radius = size.width * 0.8f
+                    center = Offset(w * 0.5f, h * 0.5f),
+                    radius = w * 0.7f
                 )
                 drawRect(brush = gradientBrush)
+
+                val stroke = h * 0.025f
+                val strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+
+                // Ground Line
+                drawLine(
+                    color = animatedNeutral.copy(alpha = 0.6f),
+                    start = Offset(w * 0.1f, h * 0.85f),
+                    end = Offset(w * 0.9f, h * 0.85f),
+                    strokeWidth = stroke * 1.5f,
+                    cap = strokeCap
+                )
+
+                // LEFT STICKMAN (Attacker) - Primary Color
+                // Head
+                drawCircle(
+                    color = animatedPrimary,
+                    radius = h * 0.08f,
+                    center = Offset(w * 0.35f, h * 0.35f)
+                )
+                // Torso
+                drawLine(
+                    color = animatedPrimary,
+                    start = Offset(w * 0.35f, h * 0.43f),
+                    end = Offset(w * 0.35f, h * 0.65f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Planted Leg
+                drawLine(
+                    color = animatedPrimary,
+                    start = Offset(w * 0.35f, h * 0.65f),
+                    end = Offset(w * 0.25f, h * 0.85f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Kicking Leg
+                drawLine(
+                    color = animatedPrimary,
+                    start = Offset(w * 0.35f, h * 0.65f),
+                    end = Offset(w * 0.5f, h * 0.55f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Punching Arm
+                drawLine(
+                    color = animatedPrimary,
+                    start = Offset(w * 0.35f, h * 0.5f),
+                    end = Offset(w * 0.55f, h * 0.4f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Back Arm
+                drawLine(
+                    color = animatedPrimary,
+                    start = Offset(w * 0.35f, h * 0.5f),
+                    end = Offset(w * 0.2f, h * 0.55f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+
+                // RIGHT STICKMAN (Defender) - Secondary Color
+                // Head (tilted back)
+                drawCircle(
+                    color = animatedSecondary,
+                    radius = h * 0.08f,
+                    center = Offset(w * 0.68f, h * 0.3f)
+                )
+                // Torso (leaning back)
+                drawLine(
+                    color = animatedSecondary,
+                    start = Offset(w * 0.66f, h * 0.38f),
+                    end = Offset(w * 0.72f, h * 0.6f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Planted Leg
+                drawLine(
+                    color = animatedSecondary,
+                    start = Offset(w * 0.72f, h * 0.6f),
+                    end = Offset(w * 0.68f, h * 0.85f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Lifted Leg
+                drawLine(
+                    color = animatedSecondary,
+                    start = Offset(w * 0.72f, h * 0.6f),
+                    end = Offset(w * 0.85f, h * 0.7f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Blocking Arm
+                drawLine(
+                    color = animatedSecondary,
+                    start = Offset(w * 0.69f, h * 0.45f),
+                    end = Offset(w * 0.58f, h * 0.37f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+                // Flailing Arm
+                drawLine(
+                    color = animatedSecondary,
+                    start = Offset(w * 0.69f, h * 0.45f),
+                    end = Offset(w * 0.8f, h * 0.35f),
+                    strokeWidth = stroke,
+                    cap = strokeCap
+                )
+
+                // IMPACT BURST - Tertiary Color
+                val impactCenter = Offset(w * 0.56f, h * 0.39f)
+                val burstRadius = h * 0.08f
+                for (i in 0 until 8) {
+                    val angle = (i * Math.PI / 4).toFloat()
+                    val startX = impactCenter.x + kotlin.math.cos(angle) * (burstRadius * 0.4f)
+                    val startY = impactCenter.y + kotlin.math.sin(angle) * (burstRadius * 0.4f)
+                    val endX = impactCenter.x + kotlin.math.cos(angle) * burstRadius
+                    val endY = impactCenter.y + kotlin.math.sin(angle) * burstRadius
+                    drawLine(
+                        color = animatedTertiary,
+                        start = Offset(startX, startY),
+                        end = Offset(endX, endY),
+                        strokeWidth = stroke * 0.8f,
+                        cap = strokeCap
+                    )
+                }
             }
 
-            Column(
+            // Top left palette dots
+            Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .align(Alignment.TopStart)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .width(if (isLandscape) 120.dp else 140.dp)
-                            .height(if (isLandscape) 80.dp else 100.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = animatedPrimary.copy(alpha = 0.15f)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(12.dp),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(if (isLandscape) 32.dp else 40.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(
-                                        Brush.linearGradient(
-                                            colors = listOf(animatedPrimary, animatedSecondary)
-                                        )
-                                    )
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(4.dp)
-                                    .clip(RoundedCornerShape(2.dp))
-                                    .background(animatedNeutral.copy(alpha = 0.3f))
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.6f)
-                                        .height(4.dp)
-                                        .clip(RoundedCornerShape(2.dp))
-                                        .background(animatedPrimary)
-                                )
-                            }
-                        }
-                    }
+                listOf(animatedPrimary, animatedSecondary, animatedTertiary, animatedNeutral).forEach { color ->
                     Box(
                         modifier = Modifier
-                            .size(if (isLandscape) 48.dp else 56.dp)
-                            .shadow(8.dp, CircleShape)
+                            .size(16.dp)
+                            .shadow(2.dp, CircleShape)
                             .clip(CircleShape)
-                            .background(animatedPrimary),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.play),
-                            contentDescription = null,
-                            tint = palette.onPrimary,
-                            modifier = Modifier.size(if (isLandscape) 24.dp else 28.dp)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    val dotsSizes = if (isLandscape) listOf(40.dp, 30.dp, 22.dp) else listOf(48.dp, 36.dp, 28.dp)
-                    listOf(
-                        animatedPrimary to dotsSizes[0],
-                        animatedSecondary to dotsSizes[1],
-                        animatedTertiary to dotsSizes[2]
-                    ).forEachIndexed { index, (color, size) ->
-                        Box(
-                            modifier = Modifier
-                                .offset(x = (-12 * index).dp)
-                                .size(size)
-                                .shadow(4.dp, CircleShape)
-                                .clip(CircleShape)
-                                .background(color)
-                                .border(2.dp, Color.White.copy(alpha = 0.3f), CircleShape)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    listOf(animatedPrimary, animatedSecondary, animatedNeutral).forEach { color ->
-                        Box(
-                            modifier = Modifier
-                                .height(if (isLandscape) 28.dp else 32.dp)
-                                .width(if (isLandscape) 64.dp else 72.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(color.copy(alpha = 0.2f))
-                                .border(1.dp, color.copy(alpha = 0.5f), RoundedCornerShape(16.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(color)
-                            )
-                        }
-                    }
+                            .background(color)
+                            .border(1.dp, Color.White.copy(alpha = 0.3f), CircleShape)
+                    )
                 }
             }
+
+            // Bottom right palette name
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
