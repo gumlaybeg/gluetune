@@ -904,7 +904,6 @@ fun PlaylistGridItem(
         badges = badges,
         typeTag = "Playlist",
         thumbnailContent = {
-            val width = this.maxWidth
             val thumbnailUri = getPlaylistImageUri(context, playlist.playlist.id)
             if (thumbnailUri != null) {
                 AsyncImage(
@@ -918,7 +917,7 @@ fun PlaylistGridItem(
             } else {
                 PlaylistThumbnail(
                     thumbnails = playlist.thumbnails,
-                    size = width,
+                    size = 140.dp,
                     placeHolder = {
                         val painter =
                             when (playlist.playlist.name) {
@@ -935,7 +934,7 @@ fun PlaylistGridItem(
                                 painter = painterResource(painter),
                                 contentDescription = null,
                                 tint = LocalContentColor.current.copy(alpha = 0.8f),
-                                modifier = Modifier.size(width / 2),
+                                modifier = Modifier.size(48.dp),
                             )
                         }
                     },
@@ -1206,9 +1205,8 @@ fun ItemThumbnail(
     thumbnailRatio: Float = 1f,
 ) {
     val context = LocalContext.current
-    val density = LocalDensity.current
 
-    BoxWithConstraints(
+    Box(
         contentAlignment = Alignment.Center,
         modifier =
             modifier
@@ -1216,9 +1214,6 @@ fun ItemThumbnail(
                 .aspectRatio(thumbnailRatio)
                 .clip(shape),
     ) {
-        val widthPx = if (this.maxWidth == Dp.Infinity) null else with(density) { this.maxWidth.roundToPx().coerceAtLeast(1) }
-        val heightPx = if (this.maxHeight == Dp.Infinity) null else with(density) { this.maxHeight.roundToPx().coerceAtLeast(1) }
-
         if (albumIndex == null) {
             if (placeholderIconRes != null) {
                 Box(
@@ -1239,16 +1234,12 @@ fun ItemThumbnail(
 
             if (shouldLoadImage && !thumbnailUrl.isNullOrBlank()) {
                 val request =
-                    remember(thumbnailUrl, widthPx, heightPx) {
+                    remember(thumbnailUrl) {
                         ImageRequest
                             .Builder(context)
                             .data(thumbnailUrl.resize(544, 544))
                             .allowHardware(true)
-                            .apply {
-                                if (widthPx != null && heightPx != null) {
-                                    size(widthPx, heightPx)
-                                }
-                            }.build()
+                            .build()
                     }
                 AsyncImage(
                     model = request,
@@ -1349,28 +1340,21 @@ fun LocalThumbnail(
     thumbnailRatio: Float = 1f,
 ) {
     val context = LocalContext.current
-    val density = LocalDensity.current
 
-    BoxWithConstraints(
+    Box(
         contentAlignment = Alignment.Center,
         modifier =
             modifier
                 .aspectRatio(thumbnailRatio)
                 .clip(shape),
     ) {
-        val widthPx = if (this.maxWidth == Dp.Infinity) null else with(density) { this.maxWidth.roundToPx().coerceAtLeast(1) }
-        val heightPx = if (this.maxHeight == Dp.Infinity) null else with(density) { this.maxHeight.roundToPx().coerceAtLeast(1) }
         val request =
-            remember(thumbnailUrl, widthPx, heightPx) {
+            remember(thumbnailUrl) {
                 ImageRequest
                     .Builder(context)
                     .data(thumbnailUrl)
                     .allowHardware(true)
-                    .apply {
-                        if (widthPx != null && heightPx != null) {
-                            size(widthPx, heightPx)
-                        }
-                    }.build()
+                    .build()
             }
         AsyncImage(
             model = request,
@@ -1476,13 +1460,11 @@ fun LocalThumbnail(
 @Composable
 fun PlaylistThumbnail(
     thumbnails: List<String>,
-    size: Dp,
+    size: Dp = 120.dp,
     placeHolder: @Composable () -> Unit,
     shape: Shape,
 ) {
     val context = LocalContext.current
-    val density = LocalDensity.current
-    val sizePx = with(density) { size.roundToPx().coerceAtLeast(1) }
 
     when (thumbnails.size) {
         0 -> {
@@ -1500,11 +1482,10 @@ fun PlaylistThumbnail(
 
         1 -> {
             val request =
-                remember(thumbnails, sizePx) {
+                remember(thumbnails) {
                     ImageRequest
                         .Builder(context)
-                        .data(thumbnails[0].resize((sizePx * 1.5).toInt(), (sizePx * 1.5).toInt()))
-                        .size(sizePx, sizePx)
+                        .data(thumbnails[0].resize(544, 544))
                         .allowHardware(true)
                         .build()
                 }
@@ -1532,14 +1513,12 @@ fun PlaylistThumbnail(
                     Alignment.BottomStart,
                     Alignment.BottomEnd,
                 ).fastForEachIndexed { index, alignment ->
-                    val halfPx = (sizePx / 2).coerceAtLeast(1)
                     val url = thumbnails.getOrNull(index)
                     val request =
-                        remember(url, halfPx) {
+                        remember(url) {
                             ImageRequest
                                 .Builder(context)
-                                .data(url?.resize((halfPx * 1.5).toInt(), (halfPx * 1.5).toInt()))
-                                .size(halfPx, halfPx)
+                                .data(url?.resize(256, 256))
                                 .allowHardware(true)
                                 .build()
                         }
@@ -2072,7 +2051,7 @@ fun YouTubeSmallGridItem(
                 ?.replace(" plays", " $playsStr", ignoreCase = true)
             joinByBullet(item.author?.name, item.publishDateText, views)
         }
-        is PodcastItem -> item.episodeCountText ?: item.author?.name
+        is PodcastItem -> joinByBullet(item.author?.name, item.episodeCountText)
     }
 
     SmallGridItem(
