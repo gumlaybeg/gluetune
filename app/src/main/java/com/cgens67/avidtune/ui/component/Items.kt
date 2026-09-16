@@ -320,14 +320,10 @@ fun GridItem(
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.15f),
-                                Color.Black.copy(alpha = 0.7f),
-                                Color.Black.copy(alpha = 0.94f)
-                            ),
-                            startY = constraints.maxHeight * 0.35f,
-                            endY = constraints.maxHeight.toFloat()
+                            0.0f to Color.Transparent,
+                            0.35f to Color.Transparent,
+                            0.7f to Color.Black.copy(alpha = 0.65f),
+                            1.0f to Color.Black.copy(alpha = 0.94f)
                         )
                     )
             )
@@ -908,6 +904,7 @@ fun PlaylistGridItem(
         badges = badges,
         typeTag = "Playlist",
         thumbnailContent = {
+            val width = this.maxWidth
             val thumbnailUri = getPlaylistImageUri(context, playlist.playlist.id)
             if (thumbnailUri != null) {
                 AsyncImage(
@@ -921,7 +918,7 @@ fun PlaylistGridItem(
             } else {
                 PlaylistThumbnail(
                     thumbnails = playlist.thumbnails,
-                    size = maxWidth,
+                    size = width,
                     placeHolder = {
                         val painter =
                             when (playlist.playlist.name) {
@@ -938,7 +935,7 @@ fun PlaylistGridItem(
                                 painter = painterResource(painter),
                                 contentDescription = null,
                                 tint = LocalContentColor.current.copy(alpha = 0.8f),
-                                modifier = Modifier.size(maxWidth / 2),
+                                modifier = Modifier.size(width / 2),
                             )
                         }
                     },
@@ -1219,8 +1216,8 @@ fun ItemThumbnail(
                 .aspectRatio(thumbnailRatio)
                 .clip(shape),
     ) {
-        val widthPx = if (maxWidth == Dp.Infinity) null else with(density) { maxWidth.roundToPx().coerceAtLeast(1) }
-        val heightPx = if (maxHeight == Dp.Infinity) null else with(density) { maxHeight.roundToPx().coerceAtLeast(1) }
+        val widthPx = if (this.maxWidth == Dp.Infinity) null else with(density) { this.maxWidth.roundToPx().coerceAtLeast(1) }
+        val heightPx = if (this.maxHeight == Dp.Infinity) null else with(density) { this.maxHeight.roundToPx().coerceAtLeast(1) }
 
         if (albumIndex == null) {
             if (placeholderIconRes != null) {
@@ -1361,8 +1358,8 @@ fun LocalThumbnail(
                 .aspectRatio(thumbnailRatio)
                 .clip(shape),
     ) {
-        val widthPx = if (maxWidth == Dp.Infinity) null else with(density) { maxWidth.roundToPx().coerceAtLeast(1) }
-        val heightPx = if (maxHeight == Dp.Infinity) null else with(density) { maxHeight.roundToPx().coerceAtLeast(1) }
+        val widthPx = if (this.maxWidth == Dp.Infinity) null else with(density) { this.maxWidth.roundToPx().coerceAtLeast(1) }
+        val heightPx = if (this.maxHeight == Dp.Infinity) null else with(density) { this.maxHeight.roundToPx().coerceAtLeast(1) }
         val request =
             remember(thumbnailUrl, widthPx, heightPx) {
                 ImageRequest
@@ -1871,14 +1868,10 @@ fun SmallGridItem(
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.2f),
-                                Color.Black.copy(alpha = 0.7f),
-                                Color.Black.copy(alpha = 0.95f)
-                            ),
-                            startY = constraints.maxHeight * 0.35f,
-                            endY = constraints.maxHeight.toFloat()
+                            0.0f to Color.Transparent,
+                            0.35f to Color.Transparent,
+                            0.7f to Color.Black.copy(alpha = 0.65f),
+                            1.0f to Color.Black.copy(alpha = 0.94f)
                         )
                     )
             )
