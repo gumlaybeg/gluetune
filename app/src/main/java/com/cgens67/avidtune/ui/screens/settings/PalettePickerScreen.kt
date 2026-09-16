@@ -102,11 +102,13 @@ import androidx.navigation.NavController
 import com.cgens67.avidtune.LocalPlayerAwareWindowInsets
 import com.cgens67.avidtune.R
 import com.cgens67.avidtune.constants.CustomThemeColorKey
+import com.cgens67.avidtune.constants.DarkModeKey
 import com.cgens67.avidtune.ui.component.IconButton as AppIconButton
 import com.cgens67.avidtune.ui.theme.DefaultThemeColor
 import com.cgens67.avidtune.ui.theme.ThemeSeedPalette
 import com.cgens67.avidtune.ui.theme.ThemeSeedPaletteCodec
 import com.cgens67.avidtune.ui.utils.backToMain
+import com.cgens67.avidtune.utils.rememberEnumPreference
 import com.cgens67.avidtune.utils.rememberPreference
 import com.google.material.color.hct.Hct
 import com.google.material.color.scheme.SchemeTonalSpot
@@ -384,8 +386,13 @@ fun PalettePickerScreen(
         defaultValue = "default"
     )
 
+    val (darkMode) = rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.AUTO)
+    val isSystemDark = isSystemInDarkTheme()
+    val isDarkTheme = remember(darkMode, isSystemDark) {
+        if (darkMode == DarkMode.AUTO) isSystemDark else darkMode == DarkMode.ON
+    }
+
     val customThemeDefaultName = stringResource(R.string.custom_theme)
-    val isDarkTheme = isSystemInDarkTheme()
 
     val selectedPalette = remember(customThemeColor, customThemeDefaultName, isDarkTheme) {
         val custom = ThemeSeedPaletteCodec.decodeFromPreference(customThemeColor)
@@ -722,7 +729,7 @@ private fun ThemePreviewCard(
 
                 if (isDarkTheme) {
                     // ==========================================
-                    // DARK MODE: Night Ride (Moon, Stars, Headlight)
+                    // DARK MODE: Night Ride
                     // ==========================================
                     drawRect(
                         brush = Brush.verticalGradient(
@@ -747,7 +754,7 @@ private fun ThemePreviewCard(
                     }
                     drawPath(mountainPath, color = animatedSecondary.copy(alpha = 0.12f))
 
-                    // Luminous Moon in sky
+                    // Luminous Moon
                     val moonCenter = Offset(w * 0.76f, h * 0.26f)
                     drawCircle(
                         brush = Brush.radialGradient(
@@ -780,7 +787,7 @@ private fun ThemePreviewCard(
                         drawCircle(color = animatedTertiary.copy(alpha = 0.6f), radius = 2.5f, center = pos)
                     }
 
-                    // Road & Ground
+                    // Road
                     val groundY = h * 0.81f
                     drawLine(
                         color = animatedNeutral.copy(alpha = 0.45f),
@@ -790,7 +797,7 @@ private fun ThemePreviewCard(
                         cap = StrokeCap.Round
                     )
 
-                    // Bike & Rider Geometry
+                    // Accurate Bike Geometry
                     val wheelRadius = h * 0.12f
                     val rearHub = Offset(w * 0.36f, groundY - wheelRadius)
                     val frontHub = Offset(w * 0.65f, groundY - wheelRadius)
@@ -832,6 +839,9 @@ private fun ThemePreviewCard(
                             center = hub,
                             style = Stroke(width = frameStroke * 1.1f)
                         )
+                        // Spoke cross lines for solid visual anchoring
+                        drawLine(animatedSecondary.copy(alpha = 0.35f), Offset(hub.x - wheelRadius * 0.85f, hub.y), Offset(hub.x + wheelRadius * 0.85f, hub.y), frameStroke * 0.4f, StrokeCap.Round)
+                        drawLine(animatedSecondary.copy(alpha = 0.35f), Offset(hub.x, hub.y - wheelRadius * 0.85f), Offset(hub.x, hub.y + wheelRadius * 0.85f), frameStroke * 0.4f, StrokeCap.Round)
                         drawCircle(
                             color = animatedPrimary,
                             radius = wheelRadius * 0.2f,
@@ -850,10 +860,10 @@ private fun ThemePreviewCard(
                     drawLine(frameColor, seatCluster, saddle, frameStroke * 1.2f, StrokeCap.Round)
                     drawLine(animatedNeutral, Offset(saddle.x - h * 0.035f, saddle.y), Offset(saddle.x + h * 0.035f, saddle.y), frameStroke * 1.3f, StrokeCap.Round)
 
-                    // Red taillight
+                    // Red LED taillight
                     drawCircle(color = Color(0xFFFF334B), radius = h * 0.012f, center = Offset(saddle.x - h * 0.03f, saddle.y + h * 0.012f))
 
-                    // Cyclist Silhouette
+                    // Cyclist Body
                     val riderColor = Color(0xFFF1F5F9)
                     val riderStroke = h * 0.024f
                     val hip = Offset(saddle.x + h * 0.02f, saddle.y - h * 0.025f)
@@ -861,13 +871,13 @@ private fun ThemePreviewCard(
                     val headCenter = Offset(w * 0.56f, groundY - wheelRadius * 3.58f)
                     val headRadius = h * 0.052f
 
-                    // Spine / Torso
+                    // Torso
                     drawLine(riderColor, hip, shoulder, riderStroke * 1.25f, StrokeCap.Round)
 
                     // Head
                     drawCircle(riderColor, radius = headRadius, center = headCenter)
 
-                    // Clean, aerodynamic cycling helmet
+                    // Aerodynamic Road Helmet
                     val helmetPath = Path().apply {
                         moveTo(headCenter.x - headRadius * 1.25f, headCenter.y - headRadius * 0.05f)
                         cubicTo(
@@ -889,14 +899,14 @@ private fun ThemePreviewCard(
                     drawLine(riderColor, shoulder, elbow, riderStroke, StrokeCap.Round)
                     drawLine(riderColor, elbow, handlebar, riderStroke, StrokeCap.Round)
 
-                    // Legs (Pedaling dynamic pose)
+                    // Legs
                     val knee = Offset(w * 0.50f, groundY - wheelRadius * 1.55f)
                     drawLine(riderColor, hip, knee, riderStroke * 1.15f, StrokeCap.Round)
                     drawLine(riderColor, knee, bb, riderStroke, StrokeCap.Round)
 
                 } else {
                     // ==========================================
-                    // LIGHT MODE: Scenic Day Ride (Sun, Clouds, Hills)
+                    // LIGHT MODE: Scenic Day Ride
                     // ==========================================
                     drawRect(
                         brush = Brush.verticalGradient(
@@ -947,7 +957,7 @@ private fun ThemePreviewCard(
                     }
                     drawPath(hill2, color = animatedSecondary.copy(alpha = 0.28f))
 
-                    // Stylized Birds in Flight
+                    // Birds in Flight
                     val bird1 = Path().apply {
                         moveTo(w * 0.22f, h * 0.22f)
                         cubicTo(w * 0.24f, h * 0.19f, w * 0.26f, h * 0.21f, w * 0.27f, h * 0.23f)
@@ -1004,6 +1014,9 @@ private fun ThemePreviewCard(
                             center = hub,
                             style = Stroke(width = frameStroke * 1.15f)
                         )
+                        // Spoke cross lines
+                        drawLine(animatedSecondary.copy(alpha = 0.35f), Offset(hub.x - wheelRadius * 0.85f, hub.y), Offset(hub.x + wheelRadius * 0.85f, hub.y), frameStroke * 0.4f, StrokeCap.Round)
+                        drawLine(animatedSecondary.copy(alpha = 0.35f), Offset(hub.x, hub.y - wheelRadius * 0.85f), Offset(hub.x, hub.y + wheelRadius * 0.85f), frameStroke * 0.4f, StrokeCap.Round)
                         drawCircle(
                             color = animatedPrimary,
                             radius = wheelRadius * 0.2f,
@@ -1030,7 +1043,7 @@ private fun ThemePreviewCard(
                     val headCenter = Offset(w * 0.56f, groundY - wheelRadius * 3.58f)
                     val headRadius = h * 0.052f
 
-                    // Spine / Torso
+                    // Torso
                     drawLine(riderColor, hip, shoulder, riderStroke * 1.25f, StrokeCap.Round)
 
                     // Head
