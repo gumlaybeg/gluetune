@@ -169,7 +169,7 @@ fun ArtistScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    // Dynamic responsive heights based on orientation
+    // Responsive dimensions so landscape mode doesn't break
     val headerHeight = if (isLandscape) 220.dp else 420.dp
     val spacerHeight = if (isLandscape) 150.dp else 300.dp
     val headerThresholdDp = if (isLandscape) 180.dp else 380.dp
@@ -197,7 +197,7 @@ fun ArtistScreen(
         }
     }
 
-    // Skeleton loading state: don't flash shimmer if data is already available
+    // Do not show placeholder if artist page was already fetched before orientation change
     var isFetching by rememberSaveable(artistPage != null) {
         mutableStateOf(artistPage == null)
     }
@@ -246,8 +246,8 @@ fun ArtistScreen(
         }
     }
 
-    // Reactive scroll progress tracking
-    val scrollOffset by remember {
+    // --- ACCURATE REACTIVE SCROLL TRACKING ---
+    val scrollOffset by remember(headerHeightPx) {
         derivedStateOf {
             if (lazyListState.firstVisibleItemIndex > 0) {
                 headerHeightPx
@@ -257,19 +257,20 @@ fun ArtistScreen(
         }
     }
 
-    // Parallax & Fade transitions
-    val imageTranslationY by remember {
+    // Smooth upward parallax: translation is 0 at top (NO black gap)
+    val imageTranslationY by remember(headerHeightPx) {
         derivedStateOf {
             -scrollOffset * 0.4f
         }
     }
-    val imageAlpha by remember {
+
+    val imageAlpha by remember(headerHeightPx) {
         derivedStateOf {
             (1f - (scrollOffset / (headerHeightPx * 0.85f))).coerceIn(0f, 1f)
         }
     }
 
-    val topBarProgress by remember {
+    val topBarProgress by remember(headerHeightPx) {
         derivedStateOf {
             if (lazyListState.firstVisibleItemIndex > 0) {
                 1f
@@ -357,7 +358,7 @@ fun ArtistScreen(
                 .asPaddingValues(),
             modifier = Modifier.fillMaxSize()
         ) {
-            // Transparent spacer to push content below parallax header
+            // Push content below header
             item {
                 Spacer(modifier = Modifier.height(spacerHeight))
             }
