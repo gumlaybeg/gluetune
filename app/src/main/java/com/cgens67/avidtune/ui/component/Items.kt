@@ -13,6 +13,7 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -50,7 +51,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -79,6 +80,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -110,9 +112,9 @@ import com.cgens67.gluetune.R
 import com.cgens67.gluetune.constants.GridThumbnailHeight
 import com.cgens67.gluetune.constants.ListItemHeight
 import com.cgens67.gluetune.constants.ListThumbnailSize
+import com.cgens67.gluetune.constants.SmallGridThumbnailHeight
 import com.cgens67.gluetune.constants.SwipeToSongKey
 import com.cgens67.gluetune.constants.ThumbnailCornerRadius
-import com.cgens67.gluetune.constants.SmallGridThumbnailHeight
 import com.cgens67.gluetune.db.entities.Album
 import com.cgens67.gluetune.db.entities.Artist
 import com.cgens67.gluetune.db.entities.Playlist
@@ -130,27 +132,31 @@ import com.cgens67.gluetune.models.MediaMetadata
 import com.cgens67.gluetune.playback.queues.LocalAlbumRadio
 import com.cgens67.gluetune.ui.theme.extractThemeColor
 import com.cgens67.gluetune.ui.utils.resize
+import com.cgens67.gluetune.utils.getPlaylistImageUri
 import com.cgens67.gluetune.utils.joinByBullet
 import com.cgens67.gluetune.utils.makeTimeString
 import com.cgens67.gluetune.utils.rememberPreference
-import com.cgens67.gluetune.utils.getPlaylistImageUri
 import com.cgens67.gluetune.utils.reportException
 import kotlin.math.roundToInt
 
 const val ActiveBoxAlpha = 0.6f
-private var cachedItemCornerRadius = 16f
+private var cachedItemCornerRadius = 18f
 
 @Composable
 fun rememberItemCornerRadius(): Dp {
     val context = LocalContext.current
     var radius by remember { mutableFloatStateOf(cachedItemCornerRadius) }
     LaunchedEffect(Unit) {
-        val fetched = AppConfig.getThumbnailCornerRadius(context, 16f)
+        val fetched = AppConfig.getThumbnailCornerRadius(context, 18f)
         radius = fetched
         cachedItemCornerRadius = fetched
     }
     return radius.dp
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LIST ITEM
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 inline fun ListItem(
@@ -164,17 +170,17 @@ inline fun ListItem(
 ) {
     val defaultContentColor = LocalContentColor.current.takeOrElse { MaterialTheme.colorScheme.onSurface }
     val titleColor = when {
-        isActive -> MaterialTheme.colorScheme.onSecondaryContainer
+        isActive -> MaterialTheme.colorScheme.primary
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
         else -> defaultContentColor
     }
     val subtitleContentColor = when {
-        isActive -> MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+        isActive -> MaterialTheme.colorScheme.primary.copy(alpha = 0.75f)
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
         else -> defaultContentColor.copy(alpha = 0.7f)
     }
     val trailingContentColor = when {
-        isActive -> MaterialTheme.colorScheme.onSecondaryContainer
+        isActive -> MaterialTheme.colorScheme.primary
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
         else -> defaultContentColor
     }
@@ -187,12 +193,12 @@ inline fun ListItem(
             modifier
                 .focusable()
                 .height(ListItemHeight)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 8.dp, vertical = 2.dp)
                 .then(
                     when {
                         isActive -> Modifier
                             .clip(RoundedCornerShape(itemCornerRadius))
-                            .background(MaterialTheme.colorScheme.secondaryContainer)
+                            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f))
                         isSelected -> Modifier
                             .clip(RoundedCornerShape(itemCornerRadius))
                             .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
@@ -200,18 +206,18 @@ inline fun ListItem(
                     }
                 ),
     ) {
-        Box(Modifier.padding(8.dp), contentAlignment = Alignment.Center) { thumbnailContent() }
+        Box(Modifier.padding(6.dp), contentAlignment = Alignment.Center) { thumbnailContent() }
         Column(
             modifier =
                 Modifier
                     .weight(1f)
-                    .padding(horizontal = 6.dp),
+                    .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = titleColor,
@@ -253,7 +259,7 @@ fun ListItem(
             Text(
                 text = subtitle,
                 color = when {
-                    isActive -> MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                    isActive -> MaterialTheme.colorScheme.primary.copy(alpha = 0.75f)
                     isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
                     else -> defaultSubtitleColor.copy(alpha = 0.7f)
                 },
@@ -267,6 +273,10 @@ fun ListItem(
     trailingContent = trailingContent,
 )
 
+// ─────────────────────────────────────────────────────────────────────────────
+// POSTER CARD GRID ITEM (Matches Reference Image)
+// ─────────────────────────────────────────────────────────────────────────────
+
 @Composable
 fun GridItem(
     modifier: Modifier = Modifier,
@@ -276,44 +286,125 @@ fun GridItem(
     thumbnailContent: @Composable BoxWithConstraintsScope.() -> Unit,
     thumbnailRatio: Float = 1f,
     fillMaxWidth: Boolean = false,
+    typeTag: String? = null,
 ) {
     val itemCornerRadius = rememberItemCornerRadius()
-    
-    Column(
-        modifier =
-            if (fillMaxWidth) {
-                modifier
-                    .focusable()
-                    .padding(12.dp)
-                    .fillMaxWidth()
-            } else {
-                modifier
-                    .focusable()
-                    .padding(12.dp)
-                    .width(GridThumbnailHeight * thumbnailRatio)
-            },
-    ) {
-        BoxWithConstraints(
-            contentAlignment = Alignment.Center,
-            modifier =
-                if (fillMaxWidth) {
-                    Modifier.fillMaxWidth()
-                } else {
-                    Modifier.height(GridThumbnailHeight)
-                }.aspectRatio(thumbnailRatio)
-                 .clip(RoundedCornerShape(itemCornerRadius)),
-        ) {
-            thumbnailContent()
+
+    Card(
+        shape = RoundedCornerShape(itemCornerRadius),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        modifier = if (fillMaxWidth) {
+            modifier
+                .focusable()
+                .padding(6.dp)
+                .fillMaxWidth()
+                .aspectRatio(thumbnailRatio)
+        } else {
+            modifier
+                .focusable()
+                .padding(6.dp)
+                .width(GridThumbnailHeight * 1.35f * thumbnailRatio)
+                .aspectRatio(thumbnailRatio)
         }
+    ) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            // 1. Full-bleed Artwork Background
+            thumbnailContent()
 
-        Spacer(modifier = Modifier.height(6.dp))
+            // 2. Smooth, Rich Bottom Gradient Scrim for Readability
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.15f),
+                                Color.Black.copy(alpha = 0.7f),
+                                Color.Black.copy(alpha = 0.94f)
+                            ),
+                            startY = constraints.maxHeight * 0.35f,
+                            endY = constraints.maxHeight.toFloat()
+                        )
+                    )
+            )
 
-        title()
+            // 3. Top-Left Translucent Category Badge (e.g. ♪ Album)
+            if (!typeTag.isNullOrBlank()) {
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.Black.copy(alpha = 0.65f),
+                    border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(10.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.music_note),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Text(
+                            text = typeTag,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 11.5.sp,
+                                color = Color.White
+                            )
+                        )
+                    }
+                }
+            }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            badges()
+            // 4. Bottom Title, Subtitle, and Metadata Badges
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                ProvideTextStyle(
+                    TextStyle(
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 19.sp,
+                        lineHeight = 23.sp
+                    )
+                ) {
+                    title()
+                }
 
-            subtitle()
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    badges()
+
+                    CompositionLocalProvider(LocalContentColor provides Color.White.copy(alpha = 0.8f)) {
+                        ProvideTextStyle(
+                            TextStyle(
+                                color = Color.White.copy(alpha = 0.8f),
+                                fontSize = 13.5.sp,
+                                fontWeight = FontWeight.Normal,
+                                lineHeight = 17.sp
+                            )
+                        ) {
+                            subtitle()
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -328,15 +419,19 @@ fun GridItem(
     thumbnailContent: @Composable BoxWithConstraintsScope.() -> Unit,
     thumbnailRatio: Float = 1f,
     fillMaxWidth: Boolean = false,
+    typeTag: String? = null,
 ) = GridItem(
     modifier = modifier,
     title = {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-            color = if (isActive) MaterialTheme.colorScheme.primary else Color.Unspecified,
-            maxLines = 1,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontSize = 19.sp,
+                lineHeight = 23.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            color = if (isActive) MaterialTheme.colorScheme.primary else Color.White,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth(),
@@ -345,16 +440,25 @@ fun GridItem(
     subtitle = {
         Text(
             text = subtitle,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.Normal
+            ),
+            color = Color.White.copy(alpha = 0.8f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
     },
+    badges = badges,
     thumbnailContent = thumbnailContent,
     thumbnailRatio = thumbnailRatio,
     fillMaxWidth = fillMaxWidth,
+    typeTag = typeTag,
 )
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TYPED ITEMS (SONG, ALBUM, ARTIST, PLAYLIST)
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun SongListItem(
@@ -459,44 +563,26 @@ fun SongGridItem(
 ) {
     val itemCornerRadius = rememberItemCornerRadius()
     GridItem(
-        title = {
-            Text(
-                text = song.song.title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = if (isActive) MaterialTheme.colorScheme.primary else Color.Unspecified,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee().fillMaxWidth(),
-            )
-        },
-        subtitle = {
-            Text(
-                text =
-                    joinByBullet(
-                        song.artists.joinToString { it.name },
-                        makeTimeString(song.song.duration * 1000L),
-                        viewCountText,
-                    ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
+        title = song.song.title,
+        subtitle =
+            joinByBullet(
+                song.artists.joinToString { it.name },
+                makeTimeString(song.song.duration * 1000L),
+                viewCountText,
+            ),
         badges = badges,
+        isActive = isActive,
+        typeTag = "Song",
         thumbnailContent = {
             ItemThumbnail(
                 thumbnailUrl = song.song.thumbnailUrl,
                 isActive = isActive,
                 isPlaying = isPlaying,
                 shape = RoundedCornerShape(itemCornerRadius),
-                modifier = Modifier.size(GridThumbnailHeight),
+                modifier = Modifier.fillMaxSize(),
             )
             if (!isActive) {
-                OverlayPlayButton(
-                    visible = true,
-                )
+                OverlayPlayButton(visible = true)
             }
         },
         fillMaxWidth = fillMaxWidth,
@@ -551,24 +637,27 @@ fun ArtistGridItem(
         }
     },
     fillMaxWidth: Boolean = false,
-) = GridItem(
-    title = artist.artist.name,
-    subtitle = pluralStringResource(R.plurals.n_song, artist.songCount, artist.songCount),
-    badges = badges,
-    thumbnailContent = {
-        AsyncImage(
-            model = artist.artist.thumbnailUrl?.resize(544, 544),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier =
-                Modifier
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+    GridItem(
+        title = artist.artist.name,
+        subtitle = pluralStringResource(R.plurals.n_song, artist.songCount, artist.songCount),
+        badges = badges,
+        typeTag = "Artist",
+        thumbnailContent = {
+            AsyncImage(
+                model = artist.artist.thumbnailUrl?.resize(544, 544),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
                     .fillMaxSize()
-                    .clip(CircleShape),
-        )
-    },
-    fillMaxWidth = fillMaxWidth,
-    modifier = modifier,
-)
+                    .clip(RoundedCornerShape(itemCornerRadius)),
+            )
+        },
+        fillMaxWidth = fillMaxWidth,
+        modifier = modifier,
+    )
+}
 
 @Composable
 fun AlbumListItem(
@@ -694,27 +783,11 @@ fun AlbumGridItem(
 ) {
     val itemCornerRadius = rememberItemCornerRadius()
     GridItem(
-        title = {
-            Text(
-                text = album.album.title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = if (isActive) MaterialTheme.colorScheme.primary else Color.Unspecified,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee().fillMaxWidth(),
-            )
-        },
-        subtitle = {
-            Text(
-                text = album.artists.joinToString { it.name },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
+        title = album.album.title,
+        subtitle = album.artists.joinToString { it.name },
         badges = badges,
+        isActive = isActive,
+        typeTag = stringResource(R.string.album_text),
         thumbnailContent = {
             val database = LocalDatabase.current
             val playerConnection = LocalPlayerConnection.current ?: return@GridItem
@@ -724,6 +797,7 @@ fun AlbumGridItem(
                 isActive = isActive,
                 isPlaying = isPlaying,
                 shape = RoundedCornerShape(itemCornerRadius),
+                modifier = Modifier.fillMaxSize(),
             )
 
             AlbumPlayButton(
@@ -809,62 +883,45 @@ fun PlaylistGridItem(
     context: Context = LocalContext.current
 ) {
     val itemCornerRadius = rememberItemCornerRadius()
+    val subtitle =
+        if (autoPlaylist) {
+            ""
+        } else {
+            if (playlist.songCount == 0 && playlist.playlist.remoteSongCount != null) {
+                pluralStringResource(
+                    R.plurals.n_song,
+                    playlist.playlist.remoteSongCount,
+                    playlist.playlist.remoteSongCount,
+                )
+            } else {
+                pluralStringResource(
+                    R.plurals.n_song,
+                    playlist.songCount,
+                    playlist.songCount,
+                )
+            }
+        }
+
     GridItem(
-        title = {
-            Text(
-                text = playlist.playlist.name,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee().fillMaxWidth(),
-            )
-        },
-        subtitle = {
-            val subtitle =
-                if (autoPlaylist) {
-                    ""
-                } else {
-                    if (playlist.songCount == 0 && playlist.playlist.remoteSongCount != null) {
-                        pluralStringResource(
-                            R.plurals.n_song,
-                            playlist.playlist.remoteSongCount,
-                            playlist.playlist.remoteSongCount,
-                        )
-                    } else {
-                        pluralStringResource(
-                            R.plurals.n_song,
-                            playlist.songCount,
-                            playlist.songCount,
-                        )
-                    }
-                }
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
+        title = playlist.playlist.name,
+        subtitle = subtitle,
         badges = badges,
+        typeTag = "Playlist",
         thumbnailContent = {
-            val width = maxWidth
             val thumbnailUri = getPlaylistImageUri(context, playlist.playlist.id)
-            
             if (thumbnailUri != null) {
                 AsyncImage(
                     model = thumbnailUri,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .clip(RoundedCornerShape(itemCornerRadius))
                 )
             } else {
                 PlaylistThumbnail(
                     thumbnails = playlist.thumbnails,
-                    size = width,
+                    size = maxWidth,
                     placeHolder = {
                         val painter =
                             when (playlist.playlist.name) {
@@ -881,7 +938,7 @@ fun PlaylistGridItem(
                                 painter = painterResource(painter),
                                 contentDescription = null,
                                 tint = LocalContentColor.current.copy(alpha = 0.8f),
-                                modifier = Modifier.size(width / 2),
+                                modifier = Modifier.size(maxWidth / 2),
                             )
                         }
                     },
@@ -894,38 +951,1164 @@ fun PlaylistGridItem(
     )
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// YOUTUBE GRID ITEM (Maps types dynamically to matching reference card)
+// ─────────────────────────────────────────────────────────────────────────────
+
 @Composable
-private fun playlistCountText(
-    playlist: Playlist,
-    autoPlaylist: Boolean,
-): String =
-    if (autoPlaylist) {
-        ""
-    } else if (playlist.songCount == 0 && playlist.playlist.remoteSongCount != null) {
-        pluralStringResource(
-            R.plurals.n_song,
-            playlist.playlist.remoteSongCount,
-            playlist.playlist.remoteSongCount,
+fun YouTubeGridItem(
+    item: YTItem,
+    modifier: Modifier = Modifier,
+    viewCountText: String? = null,
+    coroutineScope: CoroutineScope? = null,
+    badges: @Composable RowScope.() -> Unit = {
+        val database = LocalDatabase.current
+        val song by database.song(item.id).collectAsState(initial = null)
+        val album by database.album(item.id).collectAsState(initial = null)
+
+        if (item is SongItem && song?.song?.liked == true ||
+            item is AlbumItem && album?.album?.bookmarkedAt != null
+        ) {
+            Icon.Favorite()
+        }
+        if (item.explicit) Icon.Explicit()
+        if (item is SongItem && song?.song?.inLibrary != null) Icon.Library()
+        if (item is SongItem) {
+            val downloads by LocalDownloadUtil.current.downloads.collectAsState()
+            val download = downloads[item.id]
+            Icon.Download(download?.state, percent = download?.percentDownloaded ?: -1f)
+        }
+    },
+    thumbnailRatio: Float = 1f,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+    fillMaxWidth: Boolean = false,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+
+    val typeTag = when (item) {
+        is SongItem -> "Song"
+        is AlbumItem -> stringResource(R.string.album_text)
+        is ArtistItem -> "Artist"
+        is PlaylistItem -> "Playlist"
+        is EpisodeItem -> "Episode"
+        is PodcastItem -> "Podcast"
+    }
+
+    val subtitle = when (item) {
+        is SongItem -> {
+            val rawViews = viewCountText
+                ?: item.views
+                ?: (if (item.chartPosition != null) "#${item.chartPosition}" else null)
+                ?: item.chartChange
+                
+            val viewsStr = stringResource(R.string.views)
+            val playsStr = stringResource(R.string.plays)
+            val views = rawViews
+                ?.replace(" views", " $viewsStr", ignoreCase = true)
+                ?.replace(" plays", " $playsStr", ignoreCase = true)
+
+            joinByBullet(
+                item.artists.joinToString { it.name },
+                makeTimeString(item.duration?.times(1000L)),
+                views
+            )
+        }
+        is AlbumItem -> joinByBullet(item.artists?.joinToString { it.name }, item.year?.toString())
+        is ArtistItem -> "Artist"
+        is PlaylistItem -> joinByBullet(item.author?.name, item.songCountText)
+        is EpisodeItem -> {
+            val rawViews = viewCountText ?: item.views
+            val viewsStr = stringResource(R.string.views)
+            val playsStr = stringResource(R.string.plays)
+            val views = rawViews
+                ?.replace(" views", " $viewsStr", ignoreCase = true)
+                ?.replace(" plays", " $playsStr", ignoreCase = true)
+            joinByBullet(item.author?.name, item.publishDateText, views)
+        }
+        is PodcastItem -> joinByBullet(item.author?.name, item.episodeCountText)
+    }
+
+    GridItem(
+        title = item.title,
+        subtitle = subtitle,
+        badges = badges,
+        isActive = isActive,
+        typeTag = typeTag,
+        thumbnailContent = {
+            val database = LocalDatabase.current
+            val playerConnection = LocalPlayerConnection.current ?: return@GridItem
+
+            ItemThumbnail(
+                thumbnailUrl = item.thumbnail,
+                isActive = isActive,
+                isPlaying = isPlaying,
+                shape = RoundedCornerShape(itemCornerRadius),
+                thumbnailRatio = thumbnailRatio,
+                modifier = Modifier.fillMaxSize(),
+            )
+
+            if ((item is SongItem && !isActive) || (item is EpisodeItem && !isActive)) {
+                OverlayPlayButton(visible = true)
+            }
+
+            AlbumPlayButton(
+                visible = item is AlbumItem && !isActive,
+                onClick = {
+                    coroutineScope?.launch(Dispatchers.IO) {
+                        var albumWithSongs = database.albumWithSongs(item.id).first()
+                        var playlistId = ""
+                        if (albumWithSongs?.songs.isNullOrEmpty()) {
+                            YouTube
+                                .album(item.id)
+                                .onSuccess { albumPage ->
+                                    playlistId = albumPage.album.playlistId
+                                    database.transaction { insert(albumPage) }
+                                    albumWithSongs = database.albumWithSongs(item.id).first()
+                                }.onFailure { reportException(it) }
+                        }
+                        albumWithSongs?.let {
+                            withContext(Dispatchers.Main) {
+                                if (playlistId.isNotEmpty()) {
+                                    playerConnection.service.getAutomix(playlistId)
+                                }
+                                playerConnection.playQueue(LocalAlbumRadio(it))
+                            }
+                        }
+                    }
+                },
+            )
+        },
+        thumbnailRatio = thumbnailRatio,
+        fillMaxWidth = fillMaxWidth,
+        modifier = modifier,
+    )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOCAL GRIDS
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun LocalSongsGrid(
+    title: String,
+    subtitle: String,
+    badges: @Composable RowScope.() -> Unit = {},
+    thumbnailUrl: String?,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+    fillMaxWidth: Boolean = false,
+    modifier: Modifier = Modifier,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+    GridItem(
+        title = title,
+        subtitle = subtitle,
+        isActive = isActive,
+        badges = badges,
+        typeTag = "Song",
+        thumbnailContent = {
+            LocalThumbnail(
+                thumbnailUrl = thumbnailUrl,
+                isActive = isActive,
+                isPlaying = isPlaying,
+                shape = RoundedCornerShape(itemCornerRadius),
+                modifier = Modifier.fillMaxSize(),
+                showCenterPlay = true,
+                playButtonVisible = false,
+            )
+        },
+        fillMaxWidth = fillMaxWidth,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun LocalArtistsGrid(
+    title: String,
+    subtitle: String,
+    badges: @Composable RowScope.() -> Unit = {},
+    thumbnailUrl: String?,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+    fillMaxWidth: Boolean = false,
+    modifier: Modifier = Modifier,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+    GridItem(
+        title = title,
+        subtitle = subtitle,
+        isActive = isActive,
+        badges = badges,
+        typeTag = "Artist",
+        thumbnailContent = {
+            LocalThumbnail(
+                thumbnailUrl = thumbnailUrl,
+                isActive = false,
+                isPlaying = false,
+                shape = RoundedCornerShape(itemCornerRadius),
+                modifier = Modifier.fillMaxSize(),
+                showCenterPlay = false,
+                playButtonVisible = false,
+            )
+        },
+        fillMaxWidth = fillMaxWidth,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun LocalAlbumsGrid(
+    title: String,
+    subtitle: String,
+    badges: @Composable RowScope.() -> Unit = {},
+    thumbnailUrl: String?,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+    fillMaxWidth: Boolean = false,
+    modifier: Modifier = Modifier,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+    GridItem(
+        title = title,
+        subtitle = subtitle,
+        isActive = isActive,
+        badges = badges,
+        typeTag = stringResource(R.string.album_text),
+        thumbnailContent = {
+            LocalThumbnail(
+                thumbnailUrl = thumbnailUrl,
+                isActive = isActive,
+                isPlaying = isPlaying,
+                shape = RoundedCornerShape(itemCornerRadius),
+                modifier = Modifier.fillMaxSize(),
+                showCenterPlay = false,
+                playButtonVisible = true,
+            )
+        },
+        fillMaxWidth = fillMaxWidth,
+        modifier = modifier,
+    )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THUMBNAILS & OVERLAYS
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun ItemThumbnail(
+    thumbnailUrl: String?,
+    isActive: Boolean,
+    isPlaying: Boolean,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    albumIndex: Int? = null,
+    isSelected: Boolean = false,
+    shouldLoadImage: Boolean = true,
+    @DrawableRes placeholderIconRes: Int? = null,
+    thumbnailRatio: Float = 1f,
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+
+    BoxWithConstraints(
+        contentAlignment = Alignment.Center,
+        modifier =
+            modifier
+                .fillMaxSize()
+                .aspectRatio(thumbnailRatio)
+                .clip(shape),
+    ) {
+        val widthPx = if (maxWidth == Dp.Infinity) null else with(density) { maxWidth.roundToPx().coerceAtLeast(1) }
+        val heightPx = if (maxHeight == Dp.Infinity) null else with(density) { maxHeight.roundToPx().coerceAtLeast(1) }
+
+        if (albumIndex == null) {
+            if (placeholderIconRes != null) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(placeholderIconRes),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(ListThumbnailSize * 0.48f),
+                    )
+                }
+            }
+
+            if (shouldLoadImage && !thumbnailUrl.isNullOrBlank()) {
+                val request =
+                    remember(thumbnailUrl, widthPx, heightPx) {
+                        ImageRequest
+                            .Builder(context)
+                            .data(thumbnailUrl.resize(544, 544))
+                            .allowHardware(true)
+                            .apply {
+                                if (widthPx != null && heightPx != null) {
+                                    size(widthPx, heightPx)
+                                }
+                            }.build()
+                    }
+                AsyncImage(
+                    model = request,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else if (placeholderIconRes == null) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                )
+            }
+        }
+
+        if (albumIndex != null) {
+            AnimatedVisibility(
+                visible = !isActive,
+                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut(),
+            ) {
+                Text(
+                    text = albumIndex.toString(),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
+        }
+
+        if (isSelected) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .zIndex(1f)
+                        .clip(shape)
+                        .background(Color.Black.copy(alpha = 0.45f)),
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.done),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
+
+        val showCircularPlay = (isActive && !isPlaying && albumIndex == null)
+
+        PlayingIndicatorBox(
+            isActive = isActive,
+            playWhenReady = isPlaying,
+            color =
+                if (albumIndex != null) {
+                    if (isActive) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    }
+                } else {
+                    Color.White
+                },
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        color =
+                            if (albumIndex != null || showCircularPlay) {
+                                Color.Transparent
+                            } else {
+                                Color.Black.copy(alpha = ActiveBoxAlpha)
+                            },
+                        shape = shape,
+                    ),
         )
-    } else {
-        pluralStringResource(
-            R.plurals.n_song,
-            playlist.songCount,
-            playlist.songCount,
+    }
+}
+
+@Composable
+fun LocalThumbnail(
+    thumbnailUrl: String?,
+    isActive: Boolean,
+    isPlaying: Boolean,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    showCenterPlay: Boolean = false,
+    playButtonVisible: Boolean = false,
+    thumbnailRatio: Float = 1f,
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+
+    BoxWithConstraints(
+        contentAlignment = Alignment.Center,
+        modifier =
+            modifier
+                .aspectRatio(thumbnailRatio)
+                .clip(shape),
+    ) {
+        val widthPx = if (maxWidth == Dp.Infinity) null else with(density) { maxWidth.roundToPx().coerceAtLeast(1) }
+        val heightPx = if (maxHeight == Dp.Infinity) null else with(density) { maxHeight.roundToPx().coerceAtLeast(1) }
+        val request =
+            remember(thumbnailUrl, widthPx, heightPx) {
+                ImageRequest
+                    .Builder(context)
+                    .data(thumbnailUrl)
+                    .allowHardware(true)
+                    .apply {
+                        if (widthPx != null && heightPx != null) {
+                            size(widthPx, heightPx)
+                        }
+                    }.build()
+            }
+        AsyncImage(
+            model = request,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+        )
+
+        AnimatedVisibility(
+            visible = isActive,
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(500)),
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = if (isPlaying) 0.4f else 0f), shape),
+            ) {
+                if (isPlaying) {
+                    PlayingIndicator(
+                        color = Color.White,
+                        modifier = Modifier.height(24.dp),
+                    )
+                } else {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.play),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
+                }
+            }
+        }
+
+        if (showCenterPlay) {
+            AnimatedVisibility(
+                visible = !isActive,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(10.dp),
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.65f),
+                    border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Icon(
+                            painter = painterResource(R.drawable.play),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                }
+            }
+        }
+
+        if (playButtonVisible) {
+            AnimatedVisibility(
+                visible = true,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(10.dp),
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.65f),
+                    border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Icon(
+                            painter = painterResource(R.drawable.play),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PlaylistThumbnail(
+    thumbnails: List<String>,
+    size: Dp,
+    placeHolder: @Composable () -> Unit,
+    shape: Shape,
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val sizePx = with(density) { size.roundToPx().coerceAtLeast(1) }
+
+    when (thumbnails.size) {
+        0 -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(shape)
+                        .background(MaterialTheme.colorScheme.surfaceContainer),
+            ) {
+                placeHolder()
+            }
+        }
+
+        1 -> {
+            val request =
+                remember(thumbnails, sizePx) {
+                    ImageRequest
+                        .Builder(context)
+                        .data(thumbnails[0].resize((sizePx * 1.5).toInt(), (sizePx * 1.5).toInt()))
+                        .size(sizePx, sizePx)
+                        .allowHardware(true)
+                        .build()
+                }
+            AsyncImage(
+                model = request,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(shape),
+            )
+        }
+
+        else -> {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(shape),
+            ) {
+                listOf(
+                    Alignment.TopStart,
+                    Alignment.TopEnd,
+                    Alignment.BottomStart,
+                    Alignment.BottomEnd,
+                ).fastForEachIndexed { index, alignment ->
+                    val halfPx = (sizePx / 2).coerceAtLeast(1)
+                    val url = thumbnails.getOrNull(index)
+                    val request =
+                        remember(url, halfPx) {
+                            ImageRequest
+                                .Builder(context)
+                                .data(url?.resize((halfPx * 1.5).toInt(), (halfPx * 1.5).toInt()))
+                                .size(halfPx, halfPx)
+                                .allowHardware(true)
+                                .build()
+                        }
+                    AsyncImage(
+                        model = request,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier =
+                            Modifier
+                                .align(alignment)
+                                .fillMaxSize(0.5f),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun BoxScope.OverlayPlayButton(visible: Boolean) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier =
+            Modifier
+                .align(Alignment.TopEnd)
+                .padding(10.dp),
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = Color.Black.copy(alpha = 0.65f),
+            border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
+            modifier = Modifier.size(34.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Icon(
+                    painter = painterResource(R.drawable.play),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BoxScope.AlbumPlayButton(
+    visible: Boolean,
+    onClick: () -> Unit,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier =
+            Modifier
+                .align(Alignment.TopEnd)
+                .padding(10.dp),
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = Color.Black.copy(alpha = 0.65f),
+            border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
+            onClick = onClick,
+            modifier = Modifier.size(34.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Icon(
+                    painter = painterResource(R.drawable.play),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SwipeToSongBox(
+    modifier: Modifier = Modifier,
+    mediaItem: MediaItem,
+    contentBackgroundColor: Color? = null,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    val ctx = LocalContext.current
+    val player = LocalPlayerConnection.current
+    val scope = rememberCoroutineScope()
+    val offset = remember { mutableStateOf(0f) }
+    val threshold = 300f
+    val resolvedContentBackgroundColor = contentBackgroundColor ?: MaterialTheme.colorScheme.surface
+
+    val dragState =
+        rememberDraggableState { delta ->
+            offset.value = (offset.value + delta).coerceIn(-threshold, threshold)
+        }
+
+    Box(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .draggable(
+                    orientation = Orientation.Horizontal,
+                    state = dragState,
+                    onDragStopped = {
+                        when {
+                            offset.value >= threshold -> {
+                                player?.playNext(listOf(mediaItem))
+                                Toast.makeText(ctx, R.string.play_next, Toast.LENGTH_SHORT).show()
+                                reset(offset, scope)
+                            }
+
+                            offset.value <= -threshold -> {
+                                player?.addToQueue(listOf(mediaItem))
+                                Toast.makeText(ctx, R.string.add_to_queue, Toast.LENGTH_SHORT).show()
+                                reset(offset, scope)
+                            }
+
+                            else -> {
+                                reset(offset, scope)
+                            }
+                        }
+                    },
+                ),
+    ) {
+        if (offset.value != 0f) {
+            val (iconRes, bg, tint, align) =
+                if (offset.value > 0) {
+                    Quadruple(
+                        R.drawable.playlist_play,
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.onSecondary,
+                        Alignment.CenterStart,
+                    )
+                } else {
+                    Quadruple(
+                        R.drawable.queue_music,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.onPrimary,
+                        Alignment.CenterEnd,
+                    )
+                }
+
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .align(Alignment.Center)
+                        .background(bg),
+                contentAlignment = align,
+            ) {
+                Icon(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = null,
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 24.dp)
+                            .size(30.dp)
+                            .alpha(0.9f),
+                    tint = tint,
+                )
+            }
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset { IntOffset(offset.value.roundToInt(), 0) }
+                    .fillMaxWidth()
+                    .background(resolvedContentBackgroundColor),
+            content = content,
+        )
+    }
+}
+
+private fun reset(
+    offset: MutableState<Float>,
+    scope: CoroutineScope,
+) {
+    scope.launch {
+        animate(
+            initialValue = offset.value,
+            targetValue = 0f,
+            animationSpec = tween(durationMillis = 300),
+        ) { value, _ -> offset.value = value }
+    }
+}
+
+data class Quadruple<A, B, C, D>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D,
+)
+
+private object Icon {
+    @Composable
+    fun Favorite() {
+        Icon(
+            painter = painterResource(R.drawable.favorite),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error,
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .padding(end = 2.dp),
         )
     }
 
-@Composable
-private fun playlistPlaceholderIcon(
-    playlist: Playlist,
-    autoPlaylist: Boolean,
-): Int =
-    when (playlist.playlist.name) {
-        stringResource(R.string.liked) -> R.drawable.favorite_border
-        stringResource(R.string.offline) -> R.drawable.offline
-        stringResource(R.string.cached_playlist) -> R.drawable.cached
-        else -> if (autoPlaylist) R.drawable.trending_up else R.drawable.queue_music
+    @Composable
+    fun Library() {
+        Icon(
+            painter = painterResource(R.drawable.library_add_check),
+            contentDescription = null,
+            tint = Color.White.copy(alpha = 0.9f),
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .padding(end = 2.dp),
+        )
     }
+
+    @Composable
+    fun Download(
+        state: Int?,
+        percent: Float = -1f,
+    ) {
+        when (state) {
+            STATE_COMPLETED -> {
+                Icon(
+                    painter = painterResource(R.drawable.offline),
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.9f),
+                    modifier =
+                        Modifier
+                            .size(16.dp)
+                            .padding(end = 2.dp),
+                )
+            }
+
+            STATE_QUEUED, STATE_DOWNLOADING -> {
+                if (percent > 0f) {
+                    Box(contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(
+                            progress = { percent / 100f },
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp,
+                            trackColor = Color.White.copy(alpha = 0.3f),
+                            color = Color.White
+                        )
+                        Text(
+                            text = "${percent.toInt()}%",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 8.sp,
+                            color = Color.White,
+                        )
+                    }
+                } else {
+                    CircularWavyProgressIndicator(
+                        color = Color.White,
+                        modifier =
+                            Modifier
+                                .size(16.dp)
+                                .padding(end = 2.dp),
+                    )
+                }
+            }
+
+            else -> { /* no icon */ }
+        }
+    }
+
+    @Composable
+    fun Explicit() {
+        Icon(
+            painter = painterResource(R.drawable.explicit),
+            contentDescription = null,
+            tint = Color.White.copy(alpha = 0.85f),
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .padding(end = 2.dp),
+        )
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SMALL GRID ITEMS (Card Posters)
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun SmallGridItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String? = null,
+    isActive: Boolean = false,
+    thumbnailContent: @Composable BoxWithConstraintsScope.() -> Unit,
+    thumbnailShape: Shape,
+    thumbnailRatio: Float = 1f,
+    isArtist: Boolean? = false,
+    typeTag: String? = null,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+
+    Card(
+        shape = RoundedCornerShape(itemCornerRadius),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        modifier = modifier
+            .width(SmallGridThumbnailHeight * 1.35f * thumbnailRatio)
+            .aspectRatio(thumbnailRatio)
+            .padding(4.dp)
+    ) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            // Full background artwork
+            thumbnailContent()
+
+            // Bottom gradient scrim
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.2f),
+                                Color.Black.copy(alpha = 0.7f),
+                                Color.Black.copy(alpha = 0.95f)
+                            ),
+                            startY = constraints.maxHeight * 0.35f,
+                            endY = constraints.maxHeight.toFloat()
+                        )
+                    )
+            )
+
+            // Top-left type badge
+            if (!typeTag.isNullOrBlank()) {
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.Black.copy(alpha = 0.65f),
+                    border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.2f)),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.music_note),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(10.dp)
+                        )
+                        Text(
+                            text = typeTag,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 10.sp,
+                                color = Color.White
+                            )
+                        )
+                    }
+                }
+            }
+
+            // Bottom info
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isActive) MaterialTheme.colorScheme.primary else Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (!subtitle.isNullOrBlank()) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.75f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SongSmallGridItem(
+    song: Song,
+    modifier: Modifier = Modifier,
+    viewCountText: String? = null,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+    val subtitle = joinByBullet(
+        song.artists.joinToString { it.name },
+        viewCountText
+    )
+    SmallGridItem(
+        title = song.song.title,
+        subtitle = subtitle,
+        isActive = isActive,
+        typeTag = "Song",
+        thumbnailContent = {
+            AsyncImage(
+                model = song.song.thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+            if (!isActive) {
+                OverlayPlayButton(visible = true)
+            }
+        },
+        thumbnailShape = RoundedCornerShape(itemCornerRadius),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun ArtistSmallGridItem(
+    artist: Artist,
+    modifier: Modifier = Modifier,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+    SmallGridItem(
+        title = artist.artist.name,
+        typeTag = "Artist",
+        thumbnailContent = {
+            AsyncImage(
+                model = artist.artist.thumbnailUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        },
+        thumbnailShape = RoundedCornerShape(itemCornerRadius),
+        modifier = modifier,
+        isArtist = true,
+    )
+}
+
+@Composable
+fun AlbumSmallGridItem(
+    song: Song,
+    modifier: Modifier = Modifier,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+    song.song.albumName?.let {
+        SmallGridItem(
+            title = it,
+            isActive = isActive,
+            typeTag = stringResource(R.string.album_text),
+            thumbnailContent = {
+                AsyncImage(
+                    model = song.song.thumbnailUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            },
+            thumbnailShape = RoundedCornerShape(itemCornerRadius),
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+fun YouTubeSmallGridItem(
+    item: YTItem,
+    modifier: Modifier = Modifier,
+    viewCountText: String? = null,
+    coroutineScope: CoroutineScope? = null,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
+    fillMaxWidth: Boolean = false,
+) {
+    val itemCornerRadius = rememberItemCornerRadius()
+
+    val typeTag = when (item) {
+        is SongItem -> "Song"
+        is AlbumItem -> stringResource(R.string.album_text)
+        is ArtistItem -> "Artist"
+        is PlaylistItem -> "Playlist"
+        is EpisodeItem -> "Episode"
+        is PodcastItem -> "Podcast"
+    }
+
+    val subtitle = when (item) {
+        is SongItem -> {
+            val rawViews = item.views ?: (if (item.chartPosition != null) "#${item.chartPosition}" else null) ?: item.chartChange ?: viewCountText
+            val viewsStr = stringResource(R.string.views)
+            val playsStr = stringResource(R.string.plays)
+            val views = rawViews
+                ?.replace(" views", " $viewsStr", ignoreCase = true)
+                ?.replace(" plays", " $playsStr", ignoreCase = true)
+            
+            joinByBullet(
+                item.artists.joinToString { it.name },
+                views
+            )
+        }
+        is AlbumItem -> item.artists?.joinToString { it.name }
+        is ArtistItem -> null
+        is PlaylistItem -> item.songCountText ?: item.author?.name
+        is EpisodeItem -> {
+            val rawViews = viewCountText ?: item.views
+            val viewsStr = stringResource(R.string.views)
+            val playsStr = stringResource(R.string.plays)
+            val views = rawViews
+                ?.replace(" views", " $viewsStr", ignoreCase = true)
+                ?.replace(" plays", " $playsStr", ignoreCase = true)
+            joinByBullet(item.author?.name, item.publishDateText, views)
+        }
+        is PodcastItem -> item.episodeCountText ?: item.author?.name
+    }
+
+    SmallGridItem(
+        title = item.title,
+        subtitle = subtitle,
+        isActive = isActive,
+        typeTag = typeTag,
+        thumbnailContent = {
+            AsyncImage(
+                model = item.thumbnail,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+            if (item is SongItem || item is EpisodeItem) {
+                if (!isActive) {
+                    OverlayPlayButton(visible = true)
+                }
+            }
+        },
+        thumbnailShape = RoundedCornerShape(itemCornerRadius),
+        modifier = modifier,
+        isArtist = item is ArtistItem,
+    )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FEATURE CARDS (SPOTLIGHTS)
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun LibraryPinnedCollectionTile(
@@ -1000,6 +2183,30 @@ private val LibraryCardThumbnailSize = 72.dp
 private val LibraryCardGlowElevation = 34.dp
 private const val LibraryCardGlowAmbientAlpha = 0.82f
 private const val LibraryCardGlowSpotAlpha = 0.96f
+
+private fun playlistCountText(
+    playlist: Playlist,
+    autoPlaylist: Boolean,
+): String =
+    if (autoPlaylist) {
+        ""
+    } else if (playlist.songCount == 0 && playlist.playlist.remoteSongCount != null) {
+        playlist.playlist.remoteSongCount.toString()
+    } else {
+        playlist.songCount.toString()
+    }
+
+@Composable
+private fun playlistPlaceholderIcon(
+    playlist: Playlist,
+    autoPlaylist: Boolean,
+): Int =
+    when (playlist.playlist.name) {
+        stringResource(R.string.liked) -> R.drawable.favorite_border
+        stringResource(R.string.offline) -> R.drawable.offline
+        stringResource(R.string.cached_playlist) -> R.drawable.cached
+        else -> if (autoPlaylist) R.drawable.trending_up else R.drawable.queue_music
+    }
 
 @Composable
 fun LibraryPlaylistFeatureCard(
@@ -1479,1247 +2686,4 @@ fun YouTubeListItem(
     } else {
         content()
     }
-}
-
-@Composable
-fun YouTubeGridItem(
-    item: YTItem,
-    modifier: Modifier = Modifier,
-    viewCountText: String? = null,
-    coroutineScope: CoroutineScope? = null,
-    badges: @Composable RowScope.() -> Unit = {
-        val database = LocalDatabase.current
-        val song by database.song(item.id).collectAsState(initial = null)
-        val album by database.album(item.id).collectAsState(initial = null)
-
-        if (item is SongItem && song?.song?.liked == true ||
-            item is AlbumItem && album?.album?.bookmarkedAt != null
-        ) {
-            Icon.Favorite()
-        }
-        if (item.explicit) Icon.Explicit()
-        if (item is SongItem && song?.song?.inLibrary != null) Icon.Library()
-        if (item is SongItem) {
-            val downloads by LocalDownloadUtil.current.downloads.collectAsState()
-            val download = downloads[item.id]
-            Icon.Download(download?.state, percent = download?.percentDownloaded ?: -1f)
-        }
-    },
-    thumbnailRatio: Float = if (item is SongItem) 16f / 9 else 1f,
-    isActive: Boolean = false,
-    isPlaying: Boolean = false,
-    fillMaxWidth: Boolean = false,
-) {
-    val itemCornerRadius = rememberItemCornerRadius()
-    GridItem(
-        title = {
-            Text(
-                text = item.title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = if (isActive) MaterialTheme.colorScheme.primary else Color.Unspecified,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = if (item is ArtistItem) TextAlign.Center else TextAlign.Start,
-                modifier = Modifier.basicMarquee().fillMaxWidth(),
-            )
-        },
-        subtitle = {
-            val subtitle =
-                when (item) {
-                    is SongItem -> {
-                        val rawViews = viewCountText
-                            ?: item.views
-                            ?: (if (item.chartPosition != null) "#${item.chartPosition}" else null)
-                            ?: item.chartChange
-                            
-                        val viewsStr = stringResource(R.string.views)
-                        val playsStr = stringResource(R.string.plays)
-                        val views = rawViews
-                            ?.replace(" views", " $viewsStr", ignoreCase = true)
-                            ?.replace(" plays", " $playsStr", ignoreCase = true)
-
-                        joinByBullet(
-                            item.artists.joinToString { it.name },
-                            makeTimeString(item.duration?.times(1000L)),
-                            views
-                        )
-                    }
-                    is AlbumItem -> joinByBullet(item.artists?.joinToString { it.name }, item.year?.toString())
-                    is ArtistItem -> null
-                    is PlaylistItem -> joinByBullet(item.author?.name, item.songCountText)
-                    is EpisodeItem -> {
-                        val rawViews = viewCountText ?: item.views
-                        val viewsStr = stringResource(R.string.views)
-                        val playsStr = stringResource(R.string.plays)
-                        val views = rawViews
-                            ?.replace(" views", " $viewsStr", ignoreCase = true)
-                            ?.replace(" plays", " $playsStr", ignoreCase = true)
-                        joinByBullet(item.author?.name, item.publishDateText, views)
-                    }
-                    is PodcastItem -> joinByBullet(item.author?.name, item.episodeCountText)
-                }
-            if (subtitle != null) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        },
-        badges = badges,
-        thumbnailContent = {
-            val database = LocalDatabase.current
-            val playerConnection = LocalPlayerConnection.current ?: return@GridItem
-            val shape = if (item is ArtistItem) CircleShape else RoundedCornerShape(itemCornerRadius)
-
-            ItemThumbnail(
-                thumbnailUrl = item.thumbnail,
-                isActive = isActive,
-                isPlaying = isPlaying,
-                shape = shape,
-                thumbnailRatio = thumbnailRatio,
-            )
-
-            if ((item is SongItem && !isActive) || (item is EpisodeItem && !isActive)) {
-                OverlayPlayButton(
-                    visible = true,
-                )
-            }
-
-            AlbumPlayButton(
-                visible = item is AlbumItem && !isActive,
-                onClick = {
-                    coroutineScope?.launch(Dispatchers.IO) {
-                        var albumWithSongs = database.albumWithSongs(item.id).first()
-                        var playlistId = ""
-                        if (albumWithSongs?.songs.isNullOrEmpty()) {
-                            YouTube
-                                .album(item.id)
-                                .onSuccess { albumPage ->
-                                    playlistId = albumPage.album.playlistId
-                                    database.transaction { insert(albumPage) }
-                                    albumWithSongs = database.albumWithSongs(item.id).first()
-                                }.onFailure { reportException(it) }
-                        }
-                        albumWithSongs?.let {
-                            withContext(Dispatchers.Main) {
-                                if (playlistId.isNotEmpty()) {
-                                    playerConnection.service.getAutomix(playlistId)
-                                }
-                                playerConnection.playQueue(LocalAlbumRadio(it))
-                            }
-                        }
-                    }
-                },
-            )
-        },
-        thumbnailRatio = thumbnailRatio,
-        fillMaxWidth = fillMaxWidth,
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun LocalSongsGrid(
-    title: String,
-    subtitle: String,
-    badges: @Composable RowScope.() -> Unit = {},
-    thumbnailUrl: String?,
-    isActive: Boolean = false,
-    isPlaying: Boolean = false,
-    fillMaxWidth: Boolean = false,
-    modifier: Modifier = Modifier,
-) {
-    val itemCornerRadius = rememberItemCornerRadius()
-    GridItem(
-        title = title,
-        subtitle = subtitle,
-        isActive = isActive,
-        badges = badges,
-        thumbnailContent = {
-            LocalThumbnail(
-                thumbnailUrl = thumbnailUrl,
-                isActive = isActive,
-                isPlaying = isPlaying,
-                shape = RoundedCornerShape(itemCornerRadius),
-                modifier = if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier,
-                showCenterPlay = true,
-                playButtonVisible = false,
-            )
-        },
-        fillMaxWidth = fillMaxWidth,
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun LocalArtistsGrid(
-    title: String,
-    subtitle: String,
-    badges: @Composable RowScope.() -> Unit = {},
-    thumbnailUrl: String?,
-    isActive: Boolean = false,
-    isPlaying: Boolean = false,
-    fillMaxWidth: Boolean = false,
-    modifier: Modifier = Modifier,
-) = GridItem(
-    title = title,
-    subtitle = subtitle,
-    isActive = isActive,
-    badges = badges,
-    thumbnailContent = {
-        LocalThumbnail(
-            thumbnailUrl = thumbnailUrl,
-            isActive = false,
-            isPlaying = false,
-            shape = CircleShape,
-            modifier = if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier,
-            showCenterPlay = false,
-            playButtonVisible = false,
-        )
-    },
-    fillMaxWidth = fillMaxWidth,
-    modifier = modifier,
-)
-
-@Composable
-fun LocalAlbumsGrid(
-    title: String,
-    subtitle: String,
-    badges: @Composable RowScope.() -> Unit = {},
-    thumbnailUrl: String?,
-    isActive: Boolean = false,
-    isPlaying: Boolean = false,
-    fillMaxWidth: Boolean = false,
-    modifier: Modifier = Modifier,
-) {
-    val itemCornerRadius = rememberItemCornerRadius()
-    GridItem(
-        title = title,
-        subtitle = subtitle,
-        isActive = isActive,
-        badges = badges,
-        thumbnailContent = {
-            LocalThumbnail(
-                thumbnailUrl = thumbnailUrl,
-                isActive = isActive,
-                isPlaying = isPlaying,
-                shape = RoundedCornerShape(itemCornerRadius),
-                modifier = if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier,
-                showCenterPlay = false,
-                playButtonVisible = true,
-            )
-        },
-        fillMaxWidth = fillMaxWidth,
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun ItemThumbnail(
-    thumbnailUrl: String?,
-    isActive: Boolean,
-    isPlaying: Boolean,
-    shape: Shape,
-    modifier: Modifier = Modifier,
-    albumIndex: Int? = null,
-    isSelected: Boolean = false,
-    shouldLoadImage: Boolean = true,
-    @DrawableRes placeholderIconRes: Int? = null,
-    thumbnailRatio: Float = 1f,
-) {
-    val context = LocalContext.current
-    val density = LocalDensity.current
-
-    BoxWithConstraints(
-        contentAlignment = Alignment.Center,
-        modifier =
-            modifier
-                .fillMaxSize()
-                .aspectRatio(thumbnailRatio)
-                .clip(shape),
-    ) {
-        val cropThumbnailToSquare = false
-        val isYouTubeThumb = thumbnailUrl?.contains("ytimg.com", ignoreCase = true) == true
-        val shouldApplySquareCrop = cropThumbnailToSquare && isYouTubeThumb && kotlin.math.abs(thumbnailRatio - 1f) < 0.001f
-        val widthPx = if (maxWidth == Dp.Infinity) null else with(density) { maxWidth.roundToPx().coerceAtLeast(1) }
-        val heightPx = if (maxHeight == Dp.Infinity) null else with(density) { maxHeight.roundToPx().coerceAtLeast(1) }
-
-        if (albumIndex == null) {
-            if (placeholderIconRes != null) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        painter = painterResource(placeholderIconRes),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(ListThumbnailSize * 0.48f),
-                    )
-                }
-            }
-
-            if (shouldLoadImage && !thumbnailUrl.isNullOrBlank()) {
-                val request =
-                    remember(thumbnailUrl, widthPx, heightPx) {
-                        ImageRequest
-                            .Builder(context)
-                            .data(thumbnailUrl?.resize(544, 544))
-                            .allowHardware(true)
-                            .apply {
-                                if (widthPx != null && heightPx != null) {
-                                    size(widthPx, heightPx)
-                                }
-                            }.build()
-                    }
-                AsyncImage(
-                    model = request,
-                    contentDescription = null,
-                    contentScale = if (shouldApplySquareCrop) ContentScale.Crop else ContentScale.Fit,
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .let { if (shouldApplySquareCrop) it.aspectRatio(1f) else it },
-                )
-            } else if (placeholderIconRes == null) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                )
-            }
-        }
-
-        if (albumIndex != null) {
-            AnimatedVisibility(
-                visible = !isActive,
-                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut(),
-            ) {
-                Text(
-                    text = albumIndex.toString(),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
-        }
-
-        if (isSelected) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .zIndex(1f)
-                        .clip(shape)
-                        .background(Color.Black.copy(alpha = 0.45f)),
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.done),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
-        }
-
-        val showCircularPlay = (isActive && !isPlaying && albumIndex == null)
-
-        PlayingIndicatorBox(
-            isActive = isActive,
-            playWhenReady = isPlaying,
-            color =
-                if (albumIndex != null) {
-                    if (isActive) {
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    }
-                } else {
-                    Color.White
-                },
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        color =
-                            if (albumIndex != null || showCircularPlay) {
-                                Color.Transparent
-                            } else {
-                                Color.Black.copy(alpha = ActiveBoxAlpha)
-                            },
-                        shape = shape,
-                    ),
-        )
-    }
-}
-
-@Composable
-fun LocalThumbnail(
-    thumbnailUrl: String?,
-    isActive: Boolean,
-    isPlaying: Boolean,
-    shape: Shape,
-    modifier: Modifier = Modifier,
-    showCenterPlay: Boolean = false,
-    playButtonVisible: Boolean = false,
-    thumbnailRatio: Float = 1f,
-) {
-    val context = LocalContext.current
-    val density = LocalDensity.current
-
-    BoxWithConstraints(
-        contentAlignment = Alignment.Center,
-        modifier =
-            modifier
-                .aspectRatio(thumbnailRatio)
-                .clip(shape),
-    ) {
-        val cropThumbnailToSquare = false
-        val isYouTubeThumb = thumbnailUrl?.contains("ytimg.com", ignoreCase = true) == true
-        val shouldApplySquareCrop = cropThumbnailToSquare && isYouTubeThumb && kotlin.math.abs(thumbnailRatio - 1f) < 0.001f
-        val widthPx = if (maxWidth == Dp.Infinity) null else with(density) { maxWidth.roundToPx().coerceAtLeast(1) }
-        val heightPx = if (maxHeight == Dp.Infinity) null else with(density) { maxHeight.roundToPx().coerceAtLeast(1) }
-        val request =
-            remember(thumbnailUrl, widthPx, heightPx) {
-                ImageRequest
-                    .Builder(context)
-                    .data(thumbnailUrl)
-                    .allowHardware(true)
-                    .apply {
-                        if (widthPx != null && heightPx != null) {
-                            size(widthPx, heightPx)
-                        }
-                    }.build()
-            }
-        AsyncImage(
-            model = request,
-            contentDescription = null,
-            contentScale = if (shouldApplySquareCrop) ContentScale.Crop else ContentScale.Fit,
-            modifier = Modifier.fillMaxSize().let { if (shouldApplySquareCrop) it.aspectRatio(1f) else it },
-        )
-
-        AnimatedVisibility(
-            visible = isActive,
-            enter = fadeIn(tween(500)),
-            exit = fadeOut(tween(500)),
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = if (isPlaying) 0.4f else 0f), shape),
-            ) {
-                if (isPlaying) {
-                    PlayingIndicator(
-                        color = Color.White,
-                        modifier = Modifier.height(24.dp),
-                    )
-                } else {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.play),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
-                }
-            }
-        }
-
-        if (showCenterPlay) {
-            AnimatedVisibility(
-                visible = !isActive,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .padding(8.dp),
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier =
-                        Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(Color.Black.copy(alpha = 0.6f)),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.play),
-                        contentDescription = null,
-                        tint = Color.White,
-                    )
-                }
-            }
-        }
-
-        if (playButtonVisible) {
-            AnimatedVisibility(
-                visible = true,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp),
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier =
-                        Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(Color.Black.copy(alpha = ActiveBoxAlpha)),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.play),
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun PlaylistThumbnail(
-    thumbnails: List<String>,
-    size: Dp,
-    placeHolder: @Composable () -> Unit,
-    shape: Shape,
-) {
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    val sizePx = with(density) { size.roundToPx().coerceAtLeast(1) }
-
-    when (thumbnails.size) {
-        0 -> {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier =
-                    Modifier
-                        .size(size)
-                        .clip(shape)
-                        .background(MaterialTheme.colorScheme.surfaceContainer),
-            ) {
-                placeHolder()
-            }
-        }
-
-        1 -> {
-            val request =
-                remember(thumbnails, sizePx) {
-                    ImageRequest
-                        .Builder(context)
-                        .data(thumbnails[0].resize((sizePx * 1.5).toInt(), (sizePx * 1.5).toInt()))
-                        .size(sizePx, sizePx)
-                        .allowHardware(true)
-                        .build()
-                }
-            AsyncImage(
-                model = request,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier =
-                    Modifier
-                        .size(size)
-                        .clip(shape),
-            )
-        }
-
-        else -> {
-            Box(
-                modifier =
-                    Modifier
-                        .size(size)
-                        .clip(shape),
-            ) {
-                listOf(
-                    Alignment.TopStart,
-                    Alignment.TopEnd,
-                    Alignment.BottomStart,
-                    Alignment.BottomEnd,
-                ).fastForEachIndexed { index, alignment ->
-                    val halfPx = (sizePx / 2).coerceAtLeast(1)
-                    val url = thumbnails.getOrNull(index)
-                    val request =
-                        remember(url, halfPx) {
-                            ImageRequest
-                                .Builder(context)
-                                .data(url?.resize((halfPx * 1.5).toInt(), (halfPx * 1.5).toInt()))
-                                .size(halfPx, halfPx)
-                                .allowHardware(true)
-                                .build()
-                        }
-                    AsyncImage(
-                        model = request,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier =
-                            Modifier
-                                .align(alignment)
-                                .size(size / 2),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun BoxScope.OverlayPlayButton(visible: Boolean) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(),
-        exit = fadeOut(),
-        modifier =
-            Modifier
-                .align(Alignment.Center),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier =
-                Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = ActiveBoxAlpha)),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.play),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(20.dp),
-            )
-        }
-    }
-}
-
-@Composable
-fun BoxScope.AlbumPlayButton(
-    visible: Boolean,
-    onClick: () -> Unit,
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(),
-        exit = fadeOut(),
-        modifier =
-            Modifier
-                .align(Alignment.BottomEnd)
-                .padding(8.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier =
-                Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = ActiveBoxAlpha))
-                    .clickable(onClick = onClick),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.play),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(20.dp),
-            )
-        }
-    }
-}
-
-@Composable
-fun SwipeToSongBox(
-    modifier: Modifier = Modifier,
-    mediaItem: MediaItem,
-    contentBackgroundColor: Color? = null,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    val ctx = LocalContext.current
-    val player = LocalPlayerConnection.current
-    val scope = rememberCoroutineScope()
-    val offset = remember { mutableStateOf(0f) }
-    val threshold = 300f
-    val resolvedContentBackgroundColor = contentBackgroundColor ?: MaterialTheme.colorScheme.surface
-
-    val dragState =
-        rememberDraggableState { delta ->
-            offset.value = (offset.value + delta).coerceIn(-threshold, threshold)
-        }
-
-    Box(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .draggable(
-                    orientation = Orientation.Horizontal,
-                    state = dragState,
-                    onDragStopped = {
-                        when {
-                            offset.value >= threshold -> {
-                                player?.playNext(listOf(mediaItem))
-                                Toast.makeText(ctx, R.string.play_next, Toast.LENGTH_SHORT).show()
-                                reset(offset, scope)
-                            }
-
-                            offset.value <= -threshold -> {
-                                player?.addToQueue(listOf(mediaItem))
-                                Toast.makeText(ctx, R.string.add_to_queue, Toast.LENGTH_SHORT).show()
-                                reset(offset, scope)
-                            }
-
-                            else -> {
-                                reset(offset, scope)
-                            }
-                        }
-                    },
-                ),
-    ) {
-        if (offset.value != 0f) {
-            val (iconRes, bg, tint, align) =
-                if (offset.value > 0) {
-                    Quadruple(
-                        R.drawable.playlist_play,
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.onSecondary,
-                        Alignment.CenterStart,
-                    )
-                } else {
-                    Quadruple(
-                        R.drawable.queue_music,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.onPrimary,
-                        Alignment.CenterEnd,
-                    )
-                }
-
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .align(Alignment.Center)
-                        .background(bg),
-                contentAlignment = align,
-            ) {
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = null,
-                    modifier =
-                        Modifier
-                            .padding(horizontal = 24.dp)
-                            .size(30.dp)
-                            .alpha(0.9f),
-                    tint = tint,
-                )
-            }
-        }
-
-        Box(
-            modifier =
-                Modifier
-                    .offset { IntOffset(offset.value.roundToInt(), 0) }
-                    .fillMaxWidth()
-                    .background(resolvedContentBackgroundColor),
-            content = content,
-        )
-    }
-}
-
-private fun reset(
-    offset: MutableState<Float>,
-    scope: CoroutineScope,
-) {
-    scope.launch {
-        animate(
-            initialValue = offset.value,
-            targetValue = 0f,
-            animationSpec = tween(durationMillis = 300),
-        ) { value, _ -> offset.value = value }
-    }
-}
-
-data class Quadruple<A, B, C, D>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D,
-)
-
-private object Icon {
-    @Composable
-    fun Favorite() {
-        Icon(
-            painter = painterResource(R.drawable.favorite),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.error,
-            modifier =
-                Modifier
-                    .size(18.dp)
-                    .padding(end = 2.dp),
-        )
-    }
-
-    @Composable
-    fun Library() {
-        Icon(
-            painter = painterResource(R.drawable.library_add_check),
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .size(18.dp)
-                    .padding(end = 2.dp),
-        )
-    }
-
-    @Composable
-    fun Download(
-        state: Int?,
-        percent: Float = -1f,
-    ) {
-        when (state) {
-            STATE_COMPLETED -> {
-                Icon(
-                    painter = painterResource(R.drawable.offline),
-                    contentDescription = null,
-                    modifier =
-                        Modifier
-                            .size(18.dp)
-                            .padding(end = 2.dp),
-                )
-            }
-
-            STATE_QUEUED, STATE_DOWNLOADING -> {
-                if (percent > 0f) {
-                    Box(contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(
-                            progress = { percent / 100f },
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                            trackColor = MaterialTheme.colorScheme.outlineVariant,
-                        )
-                        Text(
-                            text = "${percent.toInt()}%",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontSize = 8.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                } else {
-                    CircularWavyProgressIndicator(
-                        modifier =
-                            Modifier
-                                .size(16.dp)
-                                .padding(end = 2.dp),
-                    )
-                }
-            }
-
-            else -> { /* no icon */ }
-        }
-    }
-
-    @Composable
-    fun Explicit() {
-        Icon(
-            painter = painterResource(R.drawable.explicit),
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .size(18.dp)
-                    .padding(end = 2.dp),
-        )
-    }
-}
-
-@Composable
-fun SmallGridItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    subtitle: String? = null,
-    isActive: Boolean = false,
-    thumbnailContent: @Composable BoxWithConstraintsScope.() -> Unit,
-    thumbnailShape: Shape,
-    thumbnailRatio: Float = 1f,
-    isArtist: Boolean? = false,
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = if (isArtist == true) Alignment.CenterHorizontally else Alignment.Start,
-        modifier =
-            modifier
-                .fillMaxHeight()
-                .width(GridThumbnailHeight * thumbnailRatio)
-                .padding(12.dp),
-    ) {
-        BoxWithConstraints(
-            modifier =
-                Modifier
-                    .height(SmallGridThumbnailHeight)
-                    .aspectRatio(thumbnailRatio)
-                    .clip(thumbnailShape)
-        ) {
-            thumbnailContent()
-        }
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Column(
-            horizontalAlignment = if (isArtist == true) Alignment.CenterHorizontally else Alignment.Start,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.width(SmallGridThumbnailHeight),
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
-                color = if (isActive) MaterialTheme.colorScheme.primary else Color.Unspecified,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = if (isArtist == true) TextAlign.Center else TextAlign.Start,
-                modifier =
-                    Modifier
-                        .basicMarquee()
-                        .fillMaxWidth(),
-            )
-            if (!subtitle.isNullOrBlank()) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = if (isArtist == true) TextAlign.Center else TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SongSmallGridItem(
-    song: Song,
-    modifier: Modifier = Modifier,
-    viewCountText: String? = null,
-    isActive: Boolean = false,
-    isPlaying: Boolean = false,
-) {
-    val itemCornerRadius = rememberItemCornerRadius()
-    val subtitle = joinByBullet(
-        song.artists.joinToString { it.name },
-        viewCountText
-    )
-    SmallGridItem(
-        title = song.song.title,
-        subtitle = subtitle,
-        isActive = isActive,
-        thumbnailContent = {
-            AsyncImage(
-                model = song.song.thumbnailUrl,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(itemCornerRadius)),
-            )
-
-            AnimatedVisibility(
-                visible = isActive,
-                enter = fadeIn(tween(500)),
-                exit = fadeOut(tween(500)),
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = Color.Black.copy(alpha = if (isPlaying) 0.4f else 0f),
-                                shape = RoundedCornerShape(itemCornerRadius),
-                            ),
-                ) {
-                    if (isPlaying) {
-                        PlayingIndicator(
-                            color = Color.White,
-                            modifier = Modifier.height(24.dp),
-                        )
-                    } else {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primaryContainer),
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.play),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.size(28.dp),
-                            )
-                        }
-                    }
-                }
-            }
-
-            AnimatedVisibility(
-                visible = !isActive,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .padding(8.dp),
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier =
-                        Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(Color.Black.copy(alpha = 0.6f)),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.play),
-                        contentDescription = null,
-                        tint = Color.White,
-                    )
-                }
-            }
-        },
-        thumbnailShape = RoundedCornerShape(itemCornerRadius),
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun ArtistSmallGridItem(
-    artist: Artist,
-    modifier: Modifier = Modifier,
-) = SmallGridItem(
-    title = artist.artist.name,
-    thumbnailContent = {
-        AsyncImage(
-            model = artist.artist.thumbnailUrl,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-        )
-    },
-    thumbnailShape = CircleShape,
-    modifier = modifier,
-    isArtist = true,
-)
-
-@Composable
-fun AlbumSmallGridItem(
-    song: Song,
-    modifier: Modifier = Modifier,
-    isActive: Boolean = false,
-    isPlaying: Boolean = false,
-) {
-    val itemCornerRadius = rememberItemCornerRadius()
-    song.song.albumName?.let {
-        SmallGridItem(
-            title = it,
-            isActive = isActive,
-            thumbnailContent = {
-                AsyncImage(
-                    model = song.song.thumbnailUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                )
-
-                AnimatedVisibility(
-                    visible = isActive,
-                    enter = fadeIn(tween(500)),
-                    exit = fadeOut(tween(500)),
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .background(
-                                    color = Color.Black.copy(alpha = if (isPlaying) 0.4f else 0f),
-                                    shape = RoundedCornerShape(itemCornerRadius),
-                                ),
-                    ) {
-                        if (isPlaying) {
-                            PlayingIndicator(
-                                color = Color.White,
-                                modifier = Modifier.height(24.dp),
-                            )
-                        } else {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primaryContainer),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.play),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(28.dp),
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-            thumbnailShape = RoundedCornerShape(itemCornerRadius),
-            modifier = modifier,
-        )
-    }
-}
-
-@Composable
-fun YouTubeSmallGridItem(
-    item: YTItem,
-    modifier: Modifier = Modifier,
-    viewCountText: String? = null,
-    coroutineScope: CoroutineScope? = null,
-    isActive: Boolean = false,
-    isPlaying: Boolean = false,
-    fillMaxWidth: Boolean = false,
-) {
-    val itemCornerRadius = rememberItemCornerRadius()
-    val subtitle = when (item) {
-        is SongItem -> {
-            val rawViews = item.views ?: (if (item.chartPosition != null) "#${item.chartPosition}" else null) ?: item.chartChange ?: viewCountText
-            val viewsStr = stringResource(R.string.views)
-            val playsStr = stringResource(R.string.plays)
-            val views = rawViews
-                ?.replace(" views", " $viewsStr", ignoreCase = true)
-                ?.replace(" plays", " $playsStr", ignoreCase = true)
-            
-            joinByBullet(
-                item.artists.joinToString { it.name },
-                views
-            )
-        }
-        is AlbumItem -> item.artists?.joinToString { it.name }
-        is ArtistItem -> null
-        is PlaylistItem -> item.songCountText ?: item.author?.name
-        is EpisodeItem -> {
-            val rawViews = viewCountText ?: item.views
-            val viewsStr = stringResource(R.string.views)
-            val playsStr = stringResource(R.string.plays)
-            val views = rawViews
-                ?.replace(" views", " $viewsStr", ignoreCase = true)
-                ?.replace(" plays", " $playsStr", ignoreCase = true)
-            joinByBullet(item.author?.name, item.publishDateText, views)
-        }
-        is PodcastItem -> item.episodeCountText ?: item.author?.name
-    }
-    SmallGridItem(
-        title = item.title,
-        subtitle = subtitle,
-        isActive = isActive,
-        thumbnailContent = {
-            AsyncImage(
-                model = item.thumbnail,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(if (item is ArtistItem) CircleShape else RoundedCornerShape(itemCornerRadius)),
-            )
-            if (item is SongItem || item is EpisodeItem) {
-                AnimatedVisibility(
-                    visible = isActive,
-                    enter = fadeIn(tween(500)),
-                    exit = fadeOut(tween(500)),
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .background(
-                                    color = Color.Black.copy(alpha = if (isPlaying) 0.4f else 0f),
-                                    shape = RoundedCornerShape(itemCornerRadius),
-                                ),
-                    ) {
-                        if (isPlaying) {
-                            PlayingIndicator(
-                                color = Color.White,
-                                modifier = Modifier.height(24.dp),
-                            )
-                        } else {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primaryContainer),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.play),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(28.dp),
-                                )
-                            }
-                        }
-                    }
-                }
-
-                AnimatedVisibility(
-                    visible = !isActive,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    modifier =
-                        Modifier
-                            .align(Alignment.Center)
-                            .padding(8.dp),
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier =
-                            Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(Color.Black.copy(alpha = 0.6f)),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.play),
-                            contentDescription = null,
-                            tint = Color.White,
-                        )
-                    }
-                }
-            }
-        },
-        thumbnailShape = if (item is ArtistItem) CircleShape else RoundedCornerShape(itemCornerRadius),
-        modifier = modifier,
-        isArtist = item is ArtistItem,
-    )
 }
