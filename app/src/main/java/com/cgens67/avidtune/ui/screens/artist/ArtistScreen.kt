@@ -1,18 +1,9 @@
 package com.cgens67.gluetune.ui.screens.artist
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
-import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,8 +43,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -89,7 +78,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.palette.graphics.Palette
@@ -179,7 +167,6 @@ fun ArtistScreen(
     var gradientColors by remember { mutableStateOf<List<Color>>(emptyList()) }
     val fallbackColor = MaterialTheme.colorScheme.surface.toArgb()
     val surfaceColor = MaterialTheme.colorScheme.surface
-    val dominantColor = gradientColors.firstOrNull() ?: surfaceColor
 
     // Get thumbnail URL
     val thumbnail = artistPage?.artist?.thumbnail ?: libraryArtist?.artist?.thumbnailUrl
@@ -269,28 +256,6 @@ fun ArtistScreen(
             (1f - (scrollOffset / (headerHeightPx * 0.85f))).coerceIn(0f, 1f)
         }
     }
-
-    val topBarProgress by remember(headerHeightPx) {
-        derivedStateOf {
-            if (lazyListState.firstVisibleItemIndex > 0) {
-                1f
-            } else {
-                (lazyListState.firstVisibleItemScrollOffset / (headerHeightPx * 0.65f)).coerceIn(0f, 1f)
-            }
-        }
-    }
-
-    val topBarContainerColor by animateColorAsState(
-        targetValue = dominantColor.copy(alpha = topBarProgress * 0.95f),
-        animationSpec = tween(250),
-        label = "topBarColor"
-    )
-
-    val buttonBgAlpha by animateFloatAsState(
-        targetValue = if (topBarProgress > 0.8f) 0f else 0.6f,
-        animationSpec = tween(250),
-        label = "buttonBgAlpha"
-    )
 
     Box(
         modifier = Modifier
@@ -472,7 +437,7 @@ fun ArtistScreen(
                                 lineHeight = 24.sp
                             )
 
-                            // Action Buttons (Proper padding and sizing so text never truncates)
+                            // Action Buttons
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
@@ -712,8 +677,6 @@ fun ArtistScreen(
                             NavigationTitle(
                                 title = getTranslatedArtistSectionTitle(section.title),
                                 onClick = section.moreEndpoint?.let {
-                                    // FIXED: Reverted back to `?params=` instead of `&params=`
-                                    // This prevents the route mismatch exception in the Compose NavGraph
                                     { navController.navigate("artist/${viewModel.artistId}/items?browseId=${it.browseId}?params=${it.params}") }
                                 },
                             )
@@ -841,68 +804,6 @@ fun ArtistScreen(
                 }
             }
         }
-
-        // --- 3. DYNAMIC TOP APP BAR ---
-        TopAppBar(
-            title = {
-                AnimatedVisibility(
-                    visible = topBarProgress > 0.8f,
-                    enter = fadeIn(tween(250)),
-                    exit = fadeOut(tween(200))
-                ) {
-                    Text(
-                        text = artistName,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = navController::navigateUp,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = buttonBgAlpha))
-                ) {
-                    Icon(
-                        painterResource(R.drawable.arrow_back),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            },
-            actions = {
-                IconButton(
-                    onClick = {
-                        artistPage?.artist?.shareLink?.let { link ->
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("Artist Link", link)
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, R.string.link_copied, Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = buttonBgAlpha))
-                ) {
-                    Icon(
-                        painterResource(R.drawable.link),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = topBarContainerColor,
-                scrolledContainerColor = topBarContainerColor
-            ),
-            modifier = Modifier.zIndex(10f)
-        )
     }
 }
 
