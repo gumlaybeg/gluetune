@@ -1,5 +1,6 @@
 package com.cgens67.gluetune.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,8 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,38 +54,43 @@ fun PreferenceEntry(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier =
-        modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(
                 enabled = isEnabled && onClick != null,
                 onClick = onClick ?: {},
-            ).alpha(if (isEnabled) 1f else 0.5f)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            )
+            .alpha(if (isEnabled) 1f else 0.5f)
+            .padding(horizontal = 20.dp, vertical = 16.dp),
     ) {
         if (icon != null) {
             Box(
-                modifier = Modifier.padding(horizontal = 4.dp),
+                modifier = Modifier.size(24.dp),
+                contentAlignment = Alignment.Center
             ) {
                 icon()
             }
-
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(16.dp))
         }
 
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.weight(1f),
         ) {
-            ProvideTextStyle(MaterialTheme.typography.titleMedium) {
+            ProvideTextStyle(
+                MaterialTheme.typography.titleMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
                 title()
             }
 
             if (description != null) {
+                Spacer(Modifier.height(4.dp))
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -92,9 +98,14 @@ fun PreferenceEntry(
         }
 
         if (trailingContent != null) {
-            Spacer(Modifier.width(12.dp))
-
-            trailingContent()
+            Spacer(Modifier.width(16.dp))
+            ProvideTextStyle(
+                MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                trailingContent()
+            }
         }
     }
 }
@@ -120,13 +131,13 @@ fun <T> ListPreference(
             items(values) { value ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier =
-                    Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
                             showDialog = false
                             onValueSelected(value)
-                        }.padding(horizontal = 16.dp, vertical = 12.dp),
+                        }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 ) {
                     RadioButton(
                         selected = value == selectedValue,
@@ -146,7 +157,13 @@ fun <T> ListPreference(
     PreferenceEntry(
         modifier = modifier,
         title = title,
-        description = valueText(selectedValue),
+        trailingContent = {
+            Text(
+                text = valueText(selectedValue),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
         icon = icon,
         onClick = { showDialog = true },
         isEnabled = isEnabled,
@@ -229,8 +246,7 @@ fun EditTextPreference(
 
     if (showDialog) {
         TextFieldDialog(
-            initialTextFieldValue =
-            TextFieldValue(
+            initialTextFieldValue = TextFieldValue(
                 text = value,
                 selection = TextRange(value.length),
             ),
@@ -244,7 +260,13 @@ fun EditTextPreference(
     PreferenceEntry(
         modifier = modifier,
         title = title,
-        description = value,
+        trailingContent = {
+            Text(
+                text = value,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
         icon = icon,
         onClick = { showDialog = true },
         isEnabled = isEnabled,
@@ -328,7 +350,13 @@ fun SliderPreference(
     PreferenceEntry(
         modifier = modifier,
         title = title,
-        description = value.roundToInt().toString(),
+        trailingContent = {
+            Text(
+                text = value.roundToInt().toString(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
         icon = icon,
         onClick = { showDialog = true },
         isEnabled = isEnabled,
@@ -341,9 +369,9 @@ fun PreferenceGroupTitle(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = title.uppercase(),
+        text = title,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(start = 20.dp, bottom = 8.dp, top = 16.dp),
     )
 }
