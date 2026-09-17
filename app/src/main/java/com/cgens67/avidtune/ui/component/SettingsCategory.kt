@@ -88,7 +88,7 @@ fun SettingsGeneralCategory(
                 text = it,
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 4.dp, bottom = 8.dp, top = 8.dp)
+                modifier = Modifier.padding(start = 0.dp, bottom = 8.dp, top = 8.dp)
             )
         }
 
@@ -109,8 +109,8 @@ fun SettingsGeneralCategory(
                     if (index < items.size - 1) {
                         HorizontalDivider(
                             modifier = Modifier.padding(
-                                start = 56.dp,
-                                end = 0.dp
+                                start = 76.dp,
+                                end = 20.dp
                             ),
                             thickness = 0.5.dp,
                             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
@@ -214,8 +214,8 @@ private fun Material3SettingsItemRow(
         if (showDivider) {
             HorizontalDivider(
                 modifier = Modifier.padding(
-                    start = if (item.icon != null) 56.dp else 16.dp,
-                    end = 0.dp
+                    start = if (item.icon != null) 76.dp else 20.dp,
+                    end = 20.dp
                 ),
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
