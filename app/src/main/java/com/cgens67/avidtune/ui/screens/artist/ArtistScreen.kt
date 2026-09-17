@@ -138,6 +138,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URLEncoder
 
 @SuppressLint("ServiceCast")
 @OptIn(
@@ -711,8 +712,23 @@ fun ArtistScreen(
                         ) {
                             NavigationTitle(
                                 title = getTranslatedArtistSectionTitle(section.title),
-                                onClick = section.moreEndpoint?.let {
-                                    { navController.navigate("artist/${viewModel.artistId}/items?browseId=${it.browseId}&params=${it.params}") }
+                                onClick = section.moreEndpoint?.let { endpoint ->
+                                    {
+                                        try {
+                                            val browseId = endpoint.browseId?.let { URLEncoder.encode(it, "UTF-8") } ?: ""
+                                            var route = "artist/${viewModel.artistId}/items?browseId=$browseId"
+                                            
+                                            // Encode params safely and only append if it is not null
+                                            if (endpoint.params != null) {
+                                                val encodedParams = URLEncoder.encode(endpoint.params!!, "UTF-8")
+                                                route += "&params=$encodedParams"
+                                            }
+                                            
+                                            navController.navigate(route)
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
+                                    }
                                 },
                             )
                         }
