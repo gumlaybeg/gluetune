@@ -9,7 +9,30 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -72,11 +95,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -87,6 +114,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
@@ -107,6 +135,9 @@ import com.cgens67.gluetune.LocalPlayerConnection
 import com.cgens67.gluetune.R
 import com.cgens67.gluetune.constants.CoverResolution
 import com.cgens67.gluetune.constants.CoverResolutionKey
+import com.cgens67.gluetune.constants.HideExplicitKey
+import com.cgens67.gluetune.constants.HideMusicVideosKey
+import com.cgens67.gluetune.constants.EnableArtistCanvasKey
 import com.cgens67.gluetune.db.entities.Album
 import com.cgens67.gluetune.extensions.togglePlayPause
 import com.cgens67.gluetune.playback.ExoDownloadService
@@ -124,7 +155,10 @@ import com.cgens67.gluetune.ui.menu.YouTubeAlbumMenu
 import com.cgens67.gluetune.ui.utils.ItemWrapper
 import com.cgens67.gluetune.ui.utils.resize
 import com.cgens67.gluetune.utils.rememberEnumPreference
+import com.cgens67.gluetune.utils.rememberPreference
 import com.cgens67.gluetune.viewmodels.AlbumViewModel
+import com.cgens67.gluetune.ui.component.ArtistVideo
+import com.cgens67.gluetune.ui.component.ArtistCanvasHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -161,6 +195,7 @@ fun AlbumScreen(
     val albumWithSongs by viewModel.albumWithSongs.collectAsState()
     val otherVersions by viewModel.otherVersions.collectAsState()
     val albumDescription by viewModel.albumDescription.collectAsState()
+    val (enableArtistCanvas) = rememberPreference(EnableArtistCanvasKey, defaultValue = true)
 
     val wrappedSongs = albumWithSongs?.songs?.map { item -> ItemWrapper(item) }?.toMutableList()
     var selection by remember {
@@ -215,6 +250,17 @@ fun AlbumScreen(
                 } else {
                     Download.STATE_STOPPED
                 }
+        }
+    }
+
+    // Artist Canvas
+    val artistName = albumWithSongs?.artists?.joinToString { it.name }
+    var artistVideoUrl by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(artistName, enableArtistCanvas) {
+        if (enableArtistCanvas && !artistName.isNullOrBlank() && artistName != context.getString(R.string.unknown)) {
+            artistVideoUrl = ArtistCanvasHelper.getArtistCanvas(context, artistName)
+        } else {
+            artistVideoUrl = null
         }
     }
 
@@ -274,6 +320,13 @@ fun AlbumScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop
                                 )
+
+                                artistVideoUrl?.let { url ->
+                                    ArtistVideo(
+                                        videoUrl = url,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
                             }
 
                             Spacer(Modifier.height(32.dp))
@@ -292,9 +345,9 @@ fun AlbumScreen(
 
                             Spacer(Modifier.height(8.dp))
 
-                            val artistName = albumWithSongs.artists.joinToString { it.name }
+                            val artistNameLocal = albumWithSongs.artists.joinToString { it.name }
                             Text(
-                                text = artistName,
+                                text = artistNameLocal,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center,
