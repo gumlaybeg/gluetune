@@ -134,18 +134,20 @@ import com.cgens67.gluetune.LocalDownloadUtil
 import com.cgens67.gluetune.LocalPlayerAwareWindowInsets
 import com.cgens67.gluetune.LocalPlayerConnection
 import com.cgens67.gluetune.R
+import com.cgens67.gluetune.canvas.AlbumCanvasEnabledKey
+import com.cgens67.gluetune.canvas.CanvasArtworkPlayer
+import com.cgens67.gluetune.canvas.rememberAlbumCanvas
 import com.cgens67.gluetune.constants.CoverResolution
 import com.cgens67.gluetune.constants.CoverResolutionKey
 import com.cgens67.gluetune.constants.HideExplicitKey
 import com.cgens67.gluetune.constants.HideMusicVideosKey
-import com.cgens67.gluetune.constants.EnableArtistCanvasKey
 import com.cgens67.gluetune.db.entities.Album
+import com.cgens67.gluetune.db.entities.Song
 import com.cgens67.gluetune.extensions.togglePlayPause
 import com.cgens67.gluetune.playback.ExoDownloadService
 import com.cgens67.gluetune.playback.queues.LocalAlbumRadio
 import com.cgens67.gluetune.ui.component.LocalMenuState
 import com.cgens67.gluetune.ui.component.NavigationTitle
-import com.cgens67.gluetune.ui.component.SongListItem
 import com.cgens67.gluetune.ui.component.YouTubeGridItem
 import com.cgens67.gluetune.ui.component.shimmer.ListItemPlaceHolder
 import com.cgens67.gluetune.ui.component.shimmer.ShimmerHost
@@ -155,17 +157,94 @@ import com.cgens67.gluetune.ui.menu.SongMenu
 import com.cgens67.gluetune.ui.menu.YouTubeAlbumMenu
 import com.cgens67.gluetune.ui.utils.ItemWrapper
 import com.cgens67.gluetune.ui.utils.resize
+import com.cgens67.gluetune.utils.joinByBullet
+import com.cgens67.gluetune.utils.makeTimeString
 import com.cgens67.gluetune.utils.rememberEnumPreference
 import com.cgens67.gluetune.utils.rememberPreference
 import com.cgens67.gluetune.viewmodels.AlbumViewModel
-import com.cgens67.gluetune.ui.component.ArtistVideo
-import com.cgens67.gluetune.ui.component.ArtistCanvasHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
+
+@Composable
+fun AlbumTrackItem(
+    song: Song,
+    index: Int,
+    isActive: Boolean,
+    isPlaying: Boolean,
+    onMenuClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Track Number / Playing Indicator
+        Box(
+            modifier = Modifier.width(36.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isActive) {
+                Icon(
+                    painter = painterResource(if (isPlaying) R.drawable.volume_up else R.drawable.volume_off),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+            } else {
+                Text(
+                    text = index.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+            }
+        }
+
+        Spacer(Modifier.width(8.dp))
+
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+            Text(
+                text = song.song.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = if (isActive) MaterialTheme.colorScheme.primary else Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            
+            Spacer(Modifier.height(2.dp))
+            
+            val durationText = song.song.duration.takeIf { it > 0 }?.let { makeTimeString(it * 1000L) }
+            val artistText = song.artists.joinToString { it.name }
+            val subtitleText = listOfNotNull(artistText.takeIf { it.isNotBlank() }, durationText).joinToString(" • ")
+
+            Text(
+                text = subtitleText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.6f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        IconButton(
+            onClick = onMenuClick,
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.more_vert),
+                contentDescription = null,
+                tint = Color.White
+            )
+        }
+    }
+}
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -196,7 +275,7 @@ fun AlbumScreen(
     val albumWithSongs by viewModel.albumWithSongs.collectAsState()
     val otherVersions by viewModel.otherVersions.collectAsState()
     val albumDescription by viewModel.albumDescription.collectAsState()
-    val (enableArtistCanvas) = rememberPreference(EnableArtistCanvasKey, defaultValue = true)
+    val (albumCanvasEnabled) = rememberPreference(AlbumCanvasEnabledKey, defaultValue = false)
 
     val wrappedSongs = albumWithSongs?.songs?.map { item -> ItemWrapper(item) }?.toMutableList()
     var selection by remember {
@@ -255,15 +334,11 @@ fun AlbumScreen(
     }
 
     // Artist Canvas
-    val artistName = albumWithSongs?.artists?.joinToString { it.name }
-    var artistVideoUrl by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(artistName, enableArtistCanvas) {
-        if (enableArtistCanvas && !artistName.isNullOrBlank() && artistName != context.getString(R.string.unknown)) {
-            artistVideoUrl = ArtistCanvasHelper.getArtistCanvas(context, artistName)
-        } else {
-            artistVideoUrl = null
-        }
-    }
+    val canvasArtwork = rememberAlbumCanvas(
+        albumTitle = albumWithSongs?.album?.title,
+        artistName = albumWithSongs?.artists?.joinToString { it.name }?.takeIf { it.isNotEmpty() },
+        firstSongTitle = albumWithSongs?.songs?.firstOrNull()?.song?.title
+    )
 
     val lazyListState = rememberLazyListState()
 
@@ -322,9 +397,11 @@ fun AlbumScreen(
                                     contentScale = ContentScale.Crop
                                 )
 
-                                artistVideoUrl?.let { url ->
-                                    ArtistVideo(
-                                        videoUrl = url,
+                                if (albumCanvasEnabled && canvasArtwork != null) {
+                                    CanvasArtworkPlayer(
+                                        primaryUrl = canvasArtwork.animated,
+                                        fallbackUrl = canvasArtwork.videoUrl,
+                                        isPlaying = true,
                                         modifier = Modifier.fillMaxSize()
                                     )
                                 }
@@ -580,34 +657,21 @@ fun AlbumScreen(
                                     .clip(RoundedCornerShape(12.dp))
                                     .background(Color.White.copy(alpha = if (songWrapper.item.id == mediaMetadata?.id) 0.15f else 0.05f))
                             ) {
-                                SongListItem(
+                                AlbumTrackItem(
                                     song = songWrapper.item,
-                                    albumIndex = wrappedSongs.indexOf(songWrapper) + 1,
+                                    index = wrappedSongs.indexOf(songWrapper) + 1,
                                     isActive = songWrapper.item.id == mediaMetadata?.id,
                                     isPlaying = isPlaying,
-                                    showInLibraryIcon = true,
-                                    trailingContent = {
-                                        IconButton(
-                                            onClick = {
-                                                menuState.show {
-                                                    SongMenu(
-                                                        originalSong = songWrapper.item,
-                                                        navController = navController,
-                                                        onDismiss = menuState::dismiss,
-                                                    )
-                                                }
-                                            },
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.more_vert),
-                                                contentDescription = null,
-                                                tint = Color.White
+                                    onMenuClick = {
+                                        menuState.show {
+                                            SongMenu(
+                                                originalSong = songWrapper.item,
+                                                navController = navController,
+                                                onDismiss = menuState::dismiss,
                                             )
                                         }
                                     },
-                                    isSelected = songWrapper.isSelected && selection,
                                     modifier = Modifier
-                                        .fillMaxWidth()
                                         .combinedClickable(
                                             onClick = {
                                                 if (!selection) {
