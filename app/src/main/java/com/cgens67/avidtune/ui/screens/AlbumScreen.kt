@@ -1,4 +1,3 @@
-
 package com.cgens67.gluetune.ui.screens
 
 import android.annotation.SuppressLint
@@ -55,7 +54,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -139,6 +137,7 @@ import com.cgens67.gluetune.playback.queues.LocalAlbumRadio
 import com.cgens67.gluetune.ui.component.LocalMenuState
 import com.cgens67.gluetune.ui.component.NavigationTitle
 import com.cgens67.gluetune.ui.component.YouTubeGridItem
+import com.cgens67.gluetune.ui.component.shimmer.ShimmerHost
 import com.cgens67.gluetune.ui.menu.AlbumMenu
 import com.cgens67.gluetune.ui.menu.SelectionSongMenu
 import com.cgens67.gluetune.ui.menu.SongMenu
