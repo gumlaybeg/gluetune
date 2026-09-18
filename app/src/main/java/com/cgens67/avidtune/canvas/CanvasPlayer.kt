@@ -1,3 +1,4 @@
+
 package com.cgens67.gluetune.canvas
 
 import android.content.Context
@@ -85,92 +86,34 @@ fun rememberAlbumCanvas(
         }
 
         val fetched = withContext(Dispatchers.IO) {
-            val searchTasks = listOf(
-                albumTitle to artistName
-            ).filter { (s, a) -> s.isNotBlank() && a.isNotBlank() }
-
-            searchTasks.firstNotNullOfOrNull { (s, a) ->
-                AppleMusicCanvasProvider.getByAlbumArtist(
-                    album = s,
-                    artist = a,
-                    storefront = storefront
-                )?.takeIf { !it.preferredAnimationUrl.isNullOrBlank() }
-                    ?: TidalCanvasProvider.getByAlbumArtist(
-                        album = s,
-                        artist = a
-                    )?.takeIf { !it.preferredAnimationUrl.isNullOrBlank() }
-            }
-        }
-
-        var validated = fetched?.let { artwork ->
-            val resultArtist = artwork.artist
-            val canvasAlbumName = artwork.albumName
-
-            val artistMatches = if (resultArtist != null && artistName.isNotBlank()) {
-                val requestedList = splitAndNormalizeArtists(artistName)
-                val resultList = splitAndNormalizeArtists(resultArtist)
-                requestedList.isNotEmpty() && resultList.isNotEmpty() &&
-                requestedList.all { req -> resultList.any { res -> res == req } }
-            } else true
-
-            val albumMatches = if (canvasAlbumName != null && albumTitle.isNotBlank()) {
-                canvasAlbumName.trim().equals(albumTitle.trim(), ignoreCase = true)
-            } else false
-
-            if (artistMatches && albumMatches) {
-                artwork
-            } else {
-                null
-            }
-        }
-
-        if (validated == null) {
-            val tidalFetched = withContext(Dispatchers.IO) {
-                TidalCanvasProvider.getByAlbumArtist(
-                    album = albumTitle,
-                    artist = artistName
-                )?.takeIf { !it.preferredAnimationUrl.isNullOrBlank() }
-            }
-            validated = tidalFetched?.let { artwork ->
-                val resultArtist = artwork.artist
-                val canvasAlbumName = artwork.albumName
-
-                val artistMatches = if (resultArtist != null && artistName.isNotBlank()) {
-                    val requestedList = splitAndNormalizeArtists(artistName)
-                    val resultList = splitAndNormalizeArtists(resultArtist)
-                    requestedList.isNotEmpty() && resultList.isNotEmpty() &&
-                    requestedList.all { req -> resultList.any { res -> res == req } }
-                } else true
-
-                val albumMatches = if (canvasAlbumName != null && albumTitle.isNotBlank()) {
-                    canvasAlbumName.trim().equals(albumTitle.trim(), ignoreCase = true)
-                } else false
-
-                if (artistMatches && albumMatches) {
-                    artwork
-                } else {
-                    null
+            val tasks = buildList {
+                add(albumTitle to artistName)
+                val clean = cleanAlbumTitle(albumTitle)
+                if (clean != albumTitle && clean.isNotBlank()) {
+                    add(clean to artistName)
                 }
             }
+
+            tasks.firstNotNullOfOrNull { (alb, art) ->
+                AppleMusicCanvasProvider.getByAlbumArtist(album = alb, artist = art, storefront = storefront)
+                    ?.takeIf { !it.preferredAnimationUrl.isNullOrBlank() }
+                    ?: (if (storefront != "us") AppleMusicCanvasProvider.getByAlbumArtist(album = alb, artist = art, storefront = "us")?.takeIf { !it.preferredAnimationUrl.isNullOrBlank() } else null)
+                    ?: TidalCanvasProvider.getByAlbumArtist(album = alb, artist = art)
+                        ?.takeIf { !it.preferredAnimationUrl.isNullOrBlank() }
+                    ?: (firstSongTitle?.let { song ->
+                        ViviMusicCanvasProvider.getBySongArtist(song = song, artist = art, album = alb)
+                            ?.takeIf { !it.preferredAnimationUrl.isNullOrBlank() }
+                    })
+            }
         }
 
-        if (validated != null) {
-            canvasArtwork = validated
-            CanvasArtworkPlaybackCache.put(cacheKey, validated)
+        if (fetched != null) {
+            canvasArtwork = fetched
+            CanvasArtworkPlaybackCache.put(cacheKey, fetched)
         }
     }
 
     return canvasArtwork
-}
-
-private fun splitAndNormalizeArtists(raw: String): List<String> {
-    return raw.split(
-        Regex(
-            "(?:\\s*,\\s*|\\s*&\\s*|\\s+×\\s+|\\s+x\\s+|\\bfeat\\.?\\b|\\bft\\.?\\b|\\bfeaturing\\b|\\bwith\\b)",
-            RegexOption.IGNORE_CASE,
-        )
-    ).map { it.replace(Regex("\\s+"), " ").trim().lowercase(Locale.ROOT) }
-        .filter { it.isNotBlank() }
 }
 
 @Composable
