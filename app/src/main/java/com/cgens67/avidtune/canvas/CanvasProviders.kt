@@ -5,7 +5,6 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.cache.HttpCache
-import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -171,10 +170,6 @@ object AppleMusicCanvasProvider {
                 connectTimeoutMillis = 15_000
                 requestTimeoutMillis = 25_000
                 socketTimeoutMillis = 25_000
-            }
-            install(ContentEncoding) {
-                gzip()
-                deflate()
             }
             install(HttpCache)
             expectSuccess = false
@@ -476,10 +471,6 @@ object TidalCanvasProvider {
                 requestTimeoutMillis = 30_000
                 socketTimeoutMillis = 30_000
             }
-            install(ContentEncoding) {
-                gzip()
-                deflate()
-            }
             install(HttpCache)
             expectSuccess = false
         }
@@ -646,10 +637,6 @@ object ViviMusicCanvasProvider {
                 connectTimeoutMillis = 12_000
                 requestTimeoutMillis = 18_000
                 socketTimeoutMillis = 18_000
-            }
-            install(ContentEncoding) {
-                gzip()
-                deflate()
             }
             install(HttpCache)
             expectSuccess = false
