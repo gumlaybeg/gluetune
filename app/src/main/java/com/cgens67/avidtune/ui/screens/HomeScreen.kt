@@ -75,6 +75,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.carousel.HorizontalCenteredHeroCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
+import androidx.compose.material3.carousel.maskClip
+import androidx.compose.material3.carousel.maskBorder
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -650,7 +652,8 @@ private fun HomeGreetingHeader(
     val greetingText = when (hour) {
         in 5..11 -> "Good morning"
         in 12..17 -> "Good afternoon"
-        else -> "Good evening"
+        in 18..21 -> "Good evening"
+        else -> "Good night"
     }
 
     Row(
@@ -664,15 +667,15 @@ private fun HomeGreetingHeader(
         Column {
             Text(
                 text = greetingText,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.onSurface
             )
             if (accountName.isNotBlank() && accountName != "Guest") {
                 Text(
                     text = accountName,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -706,28 +709,36 @@ private fun HomeGreetingHeader(
     }
 }
 
+private data class QuickActionItem(
+    val route: String,
+    val icon: Int,
+    val label: String,
+    val containerColor: Color,
+    val contentColor: Color
+)
+
 @Composable
 private fun HomeQuickActionsRow(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val actions = listOf(
-        Triple("history", R.drawable.history, stringResource(R.string.history)),
-        Triple("stats", R.drawable.equalizer, stringResource(R.string.stats)),
-        Triple("auto_playlist/liked", R.drawable.favorite, stringResource(R.string.liked)),
-        Triple("auto_playlist/downloaded", R.drawable.offline, stringResource(R.string.offline)),
-        Triple("apple_music_trending", R.drawable.apple, stringResource(R.string.trending))
+        QuickActionItem("history", R.drawable.history, stringResource(R.string.history), MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer),
+        QuickActionItem("stats", R.drawable.equalizer, stringResource(R.string.stats), MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.colorScheme.onTertiaryContainer),
+        QuickActionItem("auto_playlist/liked", R.drawable.favorite, stringResource(R.string.liked), MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.onPrimaryContainer),
+        QuickActionItem("auto_playlist/downloaded", R.drawable.offline, stringResource(R.string.offline), MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer),
+        QuickActionItem("apple_music_trending", R.drawable.apple, stringResource(R.string.trending), MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer)
     )
 
     LazyRow(
-        modifier = modifier.fillMaxWidth().padding(bottom = 8.dp),
+        modifier = modifier.fillMaxWidth().padding(bottom = 16.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(actions) { (route, icon, label) ->
+        items(actions) { action ->
             Surface(
                 onClick = {
-                    when (route) {
+                    when (action.route) {
                         "history" -> navController.navigate("history")
                         "stats" -> navController.navigate("stats")
                         "auto_playlist/liked" -> navController.navigate("auto_playlist/liked")
@@ -736,27 +747,24 @@ private fun HomeQuickActionsRow(
                     }
                 },
                 shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier.width(100.dp).height(80.dp)
+                color = action.containerColor,
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(8.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     Icon(
-                        painter = painterResource(icon),
+                        painter = painterResource(action.icon),
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        modifier = Modifier.size(20.dp),
+                        tint = action.contentColor
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.width(8.dp))
                     Text(
-                        text = label,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        text = action.label,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = action.contentColor
                     )
                 }
             }
@@ -795,8 +803,8 @@ fun QuickPicksSection(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clip(MaterialTheme.shapes.extraLarge)
-                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), MaterialTheme.shapes.extraLarge)
+                .maskClip(MaterialTheme.shapes.extraLarge)
+                .maskBorder(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), MaterialTheme.shapes.extraLarge)
                 .combinedClickable(
                     onClick = {
                         if (isActive) playerConnection.player.togglePlayPause()
