@@ -15,7 +15,7 @@ object AvidLyricsProvider : LyricsProvider {
     override val name = "AvidLyrics"
 
     private const val GITHUB_USERNAME = "cgens67"
-    private const val GITHUB_REPO = "gluetune-lyrics"
+    private const val GITHUB_REPO = "avidtune-lyrics"
     private const val GITHUB_BRANCH = "main"
 
     private val client by lazy {

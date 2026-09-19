@@ -84,7 +84,7 @@ object AvidCanvasProvider : ArtistCanvasProvider {
             val formattedName = artistName.lowercase().replace(Regex("[^a-z0-9]"), "_")
             if (formattedName.isBlank()) return@runCatching null
 
-            val baseUrl = "https://raw.githubusercontent.com/cgens67/gluetune-canvas/main/canvas/$formattedName"
+            val baseUrl = "https://raw.githubusercontent.com/cgens67/avidtune-canvas/main/canvas/$formattedName"
 
             // Check mp4 first
             val mp4Url = "$baseUrl.mp4"
