@@ -45,7 +45,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -72,6 +71,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
@@ -80,6 +80,7 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -105,19 +106,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -134,6 +129,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
+import androidx.compose.ui.util.fastFirstOrNull
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.app.NotificationManagerCompat
@@ -167,8 +163,7 @@ import com.cgens67.gluetune.constants.DynamicThemeKey
 import com.cgens67.gluetune.constants.LastSeenVersionCodeKey
 import com.cgens67.gluetune.constants.MiniPlayerHeight
 import com.cgens67.gluetune.constants.NavigationBarAnimationSpec
-import com.cgens67.gluetune.constants.PlayerBackgroundStyle
-import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
+import com.cgens67.gluetune.constants.NavigationBarHeight
 import com.cgens67.gluetune.constants.PauseSearchHistoryKey
 import com.cgens67.gluetune.constants.PureBlackKey
 import com.cgens67.gluetune.constants.SearchSource
@@ -189,7 +184,6 @@ import com.cgens67.gluetune.ui.component.AvatarPreferenceManager
 import com.cgens67.gluetune.ui.component.AvatarSelection
 import com.cgens67.gluetune.ui.component.BottomSheetMenu
 import com.cgens67.gluetune.ui.component.FloatingNavigationToolbar
-import com.cgens67.gluetune.ui.component.IconButton as AppIconButton
 import com.cgens67.gluetune.ui.component.LocalMenuState
 import com.cgens67.gluetune.ui.component.Lyrics
 import com.cgens67.gluetune.ui.component.SwitchPreference
@@ -220,6 +214,7 @@ import com.cgens67.gluetune.utils.get
 import com.cgens67.gluetune.utils.rememberEnumPreference
 import com.cgens67.gluetune.utils.rememberPreference
 import com.cgens67.gluetune.utils.reportException
+import com.cgens67.gluetune.viewmodels.HomeViewModel
 import com.cgens67.gluetune.viewmodels.NewReleaseViewModel
 import com.cgens67.innertube.YouTube
 import com.cgens67.innertube.models.SongItem
@@ -403,11 +398,6 @@ class MainActivity : ComponentActivity() {
                     if (useSystemFont) AppFont.SYSTEM else AppFont.SF_PRO
                 }
             }
-            
-            val playerBackground by rememberEnumPreference(
-                key = PlayerBackgroundStyleKey,
-                defaultValue = PlayerBackgroundStyle.DEFAULT
-            )
 
             LaunchedEffect(playerConnection, enableDynamicTheme, useDarkTheme, customThemeColor) {
                 val playerConnection = playerConnection
@@ -530,6 +520,9 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val (previousTab) = rememberSaveable { mutableStateOf("home") }
+
+                    val homeViewModel: HomeViewModel = hiltViewModel()
+                    val accountImageUrl by homeViewModel.accountImageUrl.collectAsState()
 
                     val navigationItems = remember { Screens.MainScreens }
                     val (slimNav) = rememberPreference(SlimNavBarKey, defaultValue = false)
@@ -837,277 +830,252 @@ class MainActivity : ComponentActivity() {
                         Scaffold(
                             topBar = {
                                 if (shouldShowTopBar) {
-                                    AnimatedVisibility(
-                                        visible = shouldShowTopBar,
-                                        enter = fadeIn(animationSpec = tween(400)) + slideInVertically(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) { -it },
-                                        exit = fadeOut(animationSpec = tween(300)) + slideOutVertically(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) { -it }
-                                    ) {
-                                        Box(modifier = Modifier.fillMaxWidth()) {
-                                            // Capa base con color de fondo siempre visible
-                                            Box(
-                                                modifier = Modifier
-                                                    .matchParentSize()
-                                                    .background(MaterialTheme.colorScheme.surface)
-                                            )
+                                    val shouldUseFloatingTopBar = remember(navBackStackEntry) {
+                                        navBackStackEntry?.destination?.route == Screens.Home.route ||
+                                            navBackStackEntry?.destination?.route == Screens.Explore.route ||
+                                            navBackStackEntry?.destination?.route == Screens.Library.route
+                                    }
+                                    val shouldShowBlurBackground = remember(navBackStackEntry) {
+                                        shouldUseFloatingTopBar
+                                    }
 
-                                            // Validación más segura para el background
-                                            val safeSelectedValue = when {
-                                                playerBackground == PlayerBackgroundStyle.BLUR &&
-                                                        Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> {
-                                                    PlayerBackgroundStyle.DEFAULT // Sin blur en versiones < Android 12 (S)
-                                                }
+                                    val surfaceColor = MaterialTheme.colorScheme.surface
+                                    val currentScrollBehavior = if (shouldUseFloatingTopBar) searchBarScrollBehavior else topAppBarScrollBehavior
 
-                                                else -> playerBackground
-                                            }
+                                    // Animaciones de Titulo
+                                    val infiniteTransition = rememberInfiniteTransition(label = "header_transition")
 
-                                            // Solo mostrar blur si safeSelectedValue es BLUR
-                                            if (safeSelectedValue == PlayerBackgroundStyle.BLUR) {
-                                                val playerConnection = LocalPlayerConnection.current
+                                    val gradientOffset by infiniteTransition.animateFloat(
+                                        initialValue = 0f,
+                                        targetValue = 1000f,
+                                        animationSpec = infiniteRepeatable(
+                                            animation = tween(3000, easing = LinearEasing),
+                                            repeatMode = RepeatMode.Restart
+                                        ),
+                                        label = "gradient_offset"
+                                    )
+                                    val titleGradient = Brush.linearGradient(
+                                        colors = listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.tertiary,
+                                            MaterialTheme.colorScheme.primary
+                                        ),
+                                        start = Offset(gradientOffset, 0f),
+                                        end = Offset(gradientOffset + 1000f, 0f),
+                                        tileMode = androidx.compose.ui.graphics.TileMode.Repeated
+                                    )
 
-                                                // Verificación más segura del playerConnection
-                                                playerConnection?.let { connection ->
-                                                    val mediaMetadata by connection.mediaMetadata.collectAsState()
-
-                                                    mediaMetadata?.thumbnailUrl?.let { imageUrl ->
-                                                        AsyncImage(
-                                                            model = imageUrl,
-                                                            contentDescription = null,
-                                                            contentScale = ContentScale.FillBounds,
-                                                            modifier = Modifier
-                                                                .matchParentSize()
-                                                                .blur(35.dp)
-                                                                .alpha(0.6f)
-                                                                .graphicsLayer {
-                                                                    compositingStrategy = CompositingStrategy.Offscreen
-                                                                }
-                                                                .drawWithContent {
-                                                                    drawContent()
-                                                                    drawRect(
-                                                                        brush = Brush.verticalGradient(
-                                                                            colors = listOf(
-                                                                                Color.Black.copy(alpha = 0.5f),
-                                                                                Color.Transparent
-                                                                            ),
-                                                                            startY = 0f,
-                                                                            endY = size.height * 0.6f
-                                                                        ),
-                                                                        blendMode = BlendMode.DstIn
-                                                                    )
-                                                                },
-                                                            onError = { error ->
-                                                                // Log del error sin crashear la app
-                                                                Log.w(
-                                                                    "PlayerBackground",
-                                                                    "Error loading background image: ${error.result.throwable.message}"
-                                                                )
-                                                            }
-                                                        )
-                                                    }
-                                                }
-                                            }
-
-                                            // Animaciones de Titulo
-                                            val infiniteTransition = rememberInfiniteTransition(label = "header_transition")
-                                            
-                                            val gradientOffset by infiniteTransition.animateFloat(
-                                                initialValue = 0f,
-                                                targetValue = 1000f,
-                                                animationSpec = infiniteRepeatable(
-                                                    animation = tween(3000, easing = LinearEasing),
-                                                    repeatMode = RepeatMode.Restart
-                                                ),
-                                                label = "gradient_offset"
-                                            )
-                                            val titleGradient = Brush.linearGradient(
-                                                colors = listOf(
-                                                    MaterialTheme.colorScheme.primary,
-                                                    MaterialTheme.colorScheme.tertiary,
-                                                    MaterialTheme.colorScheme.primary
-                                                ),
-                                                start = Offset(gradientOffset, 0f),
-                                                end = Offset(gradientOffset + 1000f, 0f),
-                                                tileMode = TileMode.Repeated
-                                            )
-
-                                            TopAppBar(
-                                                title = {
-                                                    Row(
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        modifier = Modifier.fillMaxWidth()
-                                                    ) {
-                                                        Icon(
-                                                            painter = painterResource(R.drawable.gluetune),
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.primary,
-                                                            modifier = Modifier.size(28.dp)
-                                                        )
-                                                        Spacer(modifier = Modifier.width(8.dp))
-                                                        Text(
-                                                            text = stringResource(R.string.app_name),
-                                                            style = MaterialTheme.typography.titleLarge.copy(
-                                                                brush = titleGradient
-                                                            ),
-                                                            fontWeight = FontWeight.ExtraBold,
-                                                            maxLines = 1,
-                                                            overflow = TextOverflow.Ellipsis
-                                                        )
-                                                    }
-                                                },
-
-                                                actions = {
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        val context = LocalContext.current
-                                                        val viewModel: NewReleaseViewModel = hiltViewModel()
-                                                        val hasNewReleases by viewModel.hasNewReleases.collectAsState()
-
-                                                        // Notif Anim
-                                                        val notifInteractionSource = remember { MutableInteractionSource() }
-                                                        val isNotifPressed by notifInteractionSource.collectIsPressedAsState()
-                                                        val notifScale by animateFloatAsState(
-                                                            targetValue = if (isNotifPressed) 0.8f else 1f,
-                                                            animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
-                                                            label = "notif_scale"
-                                                        )
-
-                                                        // Ícono de notificación para nuevos lanzamientos
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .size(48.dp)
-                                                                .scale(notifScale)
-                                                        ) {
-                                                            com.cgens67.gluetune.ui.component.IconButton(
-                                                                onClick = {
-                                                                    try {
-                                                                        // Marcar como vistos al navegar
-                                                                        viewModel.markNewReleasesAsSeen()
-                                                                        navController.navigate("new_release")
-                                                                    } catch (e: Exception) {
-                                                                        e.printStackTrace()
-                                                                        Toast.makeText(
-                                                                            context,
-                                                                            R.string.navigation_error,
-                                                                            Toast.LENGTH_SHORT
-                                                                        ).show()
-                                                                    }
-                                                                },
-                                                                onLongClick = {},
-                                                                interactionSource = notifInteractionSource
-                                                            ) {
-                                                                Icon(
-                                                                    painter = painterResource(R.drawable.notification_on),
-                                                                    contentDescription = stringResource(R.string.new_release_albums),
-                                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                                                )
-                                                            }
-
-                                                            // Badge para nuevos lanzamientos
-                                                            if (hasNewReleases) {
-                                                                val badgeScale by infiniteTransition.animateFloat(
-                                                                    initialValue = 0.8f,
-                                                                    targetValue = 1.2f,
-                                                                    animationSpec = infiniteRepeatable(
-                                                                        animation = tween(800, easing = FastOutSlowInEasing),
-                                                                        repeatMode = RepeatMode.Reverse
-                                                                    ),
-                                                                    label = "badge_scale"
-                                                                )
-                                                                Box(
-                                                                    modifier = Modifier
-                                                                        .align(Alignment.TopEnd)
-                                                                        .size(10.dp)
-                                                                        .scale(badgeScale)
-                                                                        .clip(CircleShape)
-                                                                        .background(
-                                                                            color = MaterialTheme.colorScheme.primary,
-                                                                            shape = CircleShape
-                                                                        )
-                                                                        .border(
-                                                                            width = 1.dp,
-                                                                            color = MaterialTheme.colorScheme.background,
-                                                                            shape = CircleShape
-                                                                        )
-                                                                )
-                                                            }
-                                                        }
-
-                                                        val togetherInteractionSource = remember { MutableInteractionSource() }
-                                                        val isTogetherPressed by togetherInteractionSource.collectIsPressedAsState()
-                                                        val togetherScale by animateFloatAsState(
-                                                            targetValue = if (isTogetherPressed) 0.8f else 1f,
-                                                            animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
-                                                            label = "together_scale"
-                                                        )
-
-                                                        com.cgens67.gluetune.ui.component.IconButton(
-                                                            onClick = { showTogetherScreen = true },
-                                                            onLongClick = {},
-                                                            interactionSource = togetherInteractionSource,
-                                                            modifier = Modifier.scale(togetherScale)
-                                                        ) {
-                                                            Icon(
-                                                                painter = painterResource(R.drawable.group),
-                                                                contentDescription = stringResource(R.string.music_together),
-                                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                                            )
-                                                        }
-
-                                                        val searchInteractionSource = remember { MutableInteractionSource() }
-                                                        val isSearchPressed by searchInteractionSource.collectIsPressedAsState()
-                                                        val searchScale by animateFloatAsState(
-                                                            targetValue = if (isSearchPressed) 0.8f else 1f,
-                                                            animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
-                                                            label = "search_scale"
-                                                        )
-
-                                                        com.cgens67.gluetune.ui.component.IconButton(
-                                                            onClick = { onActiveChange(true) },
-                                                            onLongClick = {},
-                                                            interactionSource = searchInteractionSource,
-                                                            modifier = Modifier.scale(searchScale)
-                                                        ) {
-                                                            Icon(
-                                                                painter = painterResource(R.drawable.search),
-                                                                contentDescription = stringResource(R.string.search),
-                                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                                            )
-                                                        }
-
-                                                        val profileInteractionSource = remember { MutableInteractionSource() }
-                                                        val isProfilePressed by profileInteractionSource.collectIsPressedAsState()
-                                                        val profileScale by animateFloatAsState(
-                                                            targetValue = if (isProfilePressed) 0.85f else 1f,
-                                                            animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
-                                                            label = "profile_scale"
-                                                        )
-
-                                                        Box(modifier = Modifier.scale(profileScale)) {
-                                                            ProfileIconWithUpdateBadge(
-                                                                currentVersion = BuildConfig.VERSION_NAME,
-                                                                onProfileClick = {
-                                                                    try {
-                                                                        navController.navigate("settings")
-                                                                    } catch (e: Exception) {
-                                                                        e.printStackTrace()
-                                                                        Toast.makeText(
-                                                                            context,
-                                                                            R.string.navigation_error,
-                                                                            Toast.LENGTH_SHORT
-                                                                        ).show()
-                                                                    }
-                                                                }
-                                                            )
-                                                        }
-                                                    }
-                                                },
-                                                scrollBehavior = searchBarScrollBehavior,
-                                                colors = TopAppBarDefaults.topAppBarColors(
-                                                    containerColor = Color.Transparent
-                                                )
+                                    Box(
+                                        modifier = Modifier.offset {
+                                            IntOffset(
+                                                x = 0,
+                                                y = currentScrollBehavior.state.heightOffset.toInt()
                                             )
                                         }
+                                    ) {
+                                        if (shouldShowBlurBackground) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(AppBarHeight + with(LocalDensity.current) {
+                                                        WindowInsets.systemBars.getTop(LocalDensity.current).toDp()
+                                                    })
+                                                    .background(
+                                                        Brush.verticalGradient(
+                                                            colors = listOf(
+                                                                surfaceColor.copy(alpha = 0.95f),
+                                                                surfaceColor.copy(alpha = 0.85f),
+                                                                surfaceColor.copy(alpha = 0.6f),
+                                                                Color.Transparent
+                                                            )
+                                                        )
+                                                    )
+                                            )
+                                        }
+
+                                        TopAppBar(
+                                            windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top),
+                                            title = {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.gluetune),
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier
+                                                            .size(28.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(8.dp))
+                                                    Text(
+                                                        text = stringResource(R.string.app_name),
+                                                        style = MaterialTheme.typography.titleLarge.copy(
+                                                            brush = titleGradient
+                                                        ),
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis
+                                                    )
+                                                }
+                                            },
+                                            actions = {
+                                                Row(
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    val context = LocalContext.current
+                                                    val viewModel: com.cgens67.gluetune.viewmodels.NewReleaseViewModel = hiltViewModel()
+                                                    val hasNewReleases by viewModel.hasNewReleases.collectAsState()
+
+                                                    // Notif Anim
+                                                    val notifInteractionSource = remember { MutableInteractionSource() }
+                                                    val isNotifPressed by notifInteractionSource.collectIsPressedAsState()
+                                                    val notifScale by animateFloatAsState(
+                                                        targetValue = if (isNotifPressed) 0.8f else 1f,
+                                                        animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
+                                                        label = "notif_scale"
+                                                    )
+
+                                                    // Ícono de notificación para nuevos lanzamientos
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .size(48.dp)
+                                                            .scale(notifScale)
+                                                    ) {
+                                                        com.cgens67.gluetune.ui.component.IconButton(
+                                                            onClick = {
+                                                                try {
+                                                                    // Marcar como vistos al navegar
+                                                                    viewModel.markNewReleasesAsSeen()
+                                                                    navController.navigate("new_release")
+                                                                } catch (e: Exception) {
+                                                                    e.printStackTrace()
+                                                                    Toast.makeText(
+                                                                        context,
+                                                                        R.string.navigation_error,
+                                                                        Toast.LENGTH_SHORT
+                                                                    ).show()
+                                                                }
+                                                            },
+                                                            onLongClick = {},
+                                                            interactionSource = notifInteractionSource
+                                                        ) {
+                                                            Icon(
+                                                                painter = painterResource(R.drawable.notification_on),
+                                                                contentDescription = stringResource(R.string.new_release_albums),
+                                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                            )
+                                                        }
+
+                                                        // Badge para nuevos lanzamientos
+                                                        if (hasNewReleases) {
+                                                            val badgeScale by infiniteTransition.animateFloat(
+                                                                initialValue = 0.8f,
+                                                                targetValue = 1.2f,
+                                                                animationSpec = infiniteRepeatable(
+                                                                    animation = tween(800, easing = FastOutSlowInEasing),
+                                                                    repeatMode = RepeatMode.Reverse
+                                                                ),
+                                                                label = "badge_scale"
+                                                            )
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .align(Alignment.TopEnd)
+                                                                    .size(10.dp)
+                                                                    .scale(badgeScale)
+                                                                    .clip(CircleShape)
+                                                                    .background(
+                                                                        color = MaterialTheme.colorScheme.primary,
+                                                                        shape = CircleShape
+                                                                    )
+                                                                    .border(
+                                                                        width = 1.dp,
+                                                                        color = MaterialTheme.colorScheme.background,
+                                                                        shape = CircleShape
+                                                                    )
+                                                            )
+                                                        }
+                                                    }
+
+                                                    val togetherInteractionSource = remember { MutableInteractionSource() }
+                                                    val isTogetherPressed by togetherInteractionSource.collectIsPressedAsState()
+                                                    val togetherScale by animateFloatAsState(
+                                                        targetValue = if (isTogetherPressed) 0.8f else 1f,
+                                                        animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
+                                                        label = "together_scale"
+                                                    )
+
+                                                    com.cgens67.gluetune.ui.component.IconButton(
+                                                        onClick = { showTogetherScreen = true },
+                                                        onLongClick = {},
+                                                        interactionSource = togetherInteractionSource,
+                                                        modifier = Modifier.scale(togetherScale)
+                                                    ) {
+                                                        Icon(
+                                                            painter = painterResource(R.drawable.group),
+                                                            contentDescription = stringResource(R.string.music_together),
+                                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+
+                                                    val searchInteractionSource = remember { MutableInteractionSource() }
+                                                    val isSearchPressed by searchInteractionSource.collectIsPressedAsState()
+                                                    val searchScale by animateFloatAsState(
+                                                        targetValue = if (isSearchPressed) 0.8f else 1f,
+                                                        animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
+                                                        label = "search_scale"
+                                                    )
+
+                                                    com.cgens67.gluetune.ui.component.IconButton(
+                                                        onClick = { onActiveChange(true) },
+                                                        onLongClick = {},
+                                                        interactionSource = searchInteractionSource,
+                                                        modifier = Modifier.scale(searchScale)
+                                                    ) {
+                                                        Icon(
+                                                            painter = painterResource(R.drawable.search),
+                                                            contentDescription = stringResource(R.string.search),
+                                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
+
+                                                    val profileInteractionSource = remember { MutableInteractionSource() }
+                                                    val isProfilePressed by profileInteractionSource.collectIsPressedAsState()
+                                                    val profileScale by animateFloatAsState(
+                                                        targetValue = if (isProfilePressed) 0.85f else 1f,
+                                                        animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
+                                                        label = "profile_scale"
+                                                    )
+
+                                                    Box(modifier = Modifier.scale(profileScale)) {
+                                                        ProfileIconWithUpdateBadge(
+                                                            currentVersion = BuildConfig.VERSION_NAME,
+                                                            onProfileClick = {
+                                                                try {
+                                                                    navController.navigate("settings")
+                                                                } catch (e: Exception) {
+                                                                    e.printStackTrace()
+                                                                    Toast.makeText(
+                                                                        context,
+                                                                        R.string.navigation_error,
+                                                                        Toast.LENGTH_SHORT
+                                                                    ).show()
+                                                                }
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                            },
+                                            scrollBehavior = if (shouldUseFloatingTopBar) searchBarScrollBehavior else topAppBarScrollBehavior,
+                                            colors = TopAppBarDefaults.topAppBarColors(
+                                                containerColor = if (shouldUseFloatingTopBar) Color.Transparent else if (pureBlack) Color.Black else MaterialTheme.colorScheme.surface,
+                                                scrolledContainerColor = if (shouldUseFloatingTopBar) Color.Transparent else if (pureBlack) Color.Black else MaterialTheme.colorScheme.surface,
+                                                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                                                actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        )
                                     }
                                 }
 
@@ -1132,7 +1100,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                         },
                                         leadingIcon = {
-                                            AppIconButton(
+                                            com.cgens67.gluetune.ui.component.IconButton(
                                                 onClick = {
                                                     when {
                                                         active -> onActiveChange(false)
@@ -1173,7 +1141,7 @@ class MainActivity : ComponentActivity() {
                                             ) {
                                                 if (active) {
                                                     if (query.text.isNotEmpty()) {
-                                                        AppIconButton(
+                                                        com.cgens67.gluetune.ui.component.IconButton(
                                                             onClick = {
                                                                 onQueryChange(TextFieldValue(""))
                                                             },
@@ -1185,7 +1153,7 @@ class MainActivity : ComponentActivity() {
                                                             )
                                                         }
                                                     }
-                                                    AppIconButton(
+                                                    com.cgens67.gluetune.ui.component.IconButton(
                                                         onClick = {
                                                             searchSource =
                                                                 if (searchSource == SearchSource.ONLINE) {
