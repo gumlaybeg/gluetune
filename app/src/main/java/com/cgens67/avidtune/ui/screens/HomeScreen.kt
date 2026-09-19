@@ -24,10 +24,12 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -346,7 +348,6 @@ fun HomeScreen(
                         val width = this.size.width
                         val height = this.size.height
 
-                        // Softer mesh gradients for the redesigned background
                         val brush1 = Brush.radialGradient(colors = listOf(color1.copy(0.25f), color1.copy(0.15f), color1.copy(0.08f), color1.copy(0.03f), Color.Transparent), center = Offset(width * 0.15f, height * 0.1f), radius = width * 0.55f)
                         val brush2 = Brush.radialGradient(colors = listOf(color2.copy(0.20f), color2.copy(0.12f), color2.copy(0.06f), color2.copy(0.02f), Color.Transparent), center = Offset(width * 0.85f, height * 0.2f), radius = width * 0.65f)
                         val brush3 = Brush.radialGradient(colors = listOf(color3.copy(0.15f), color3.copy(0.08f), color3.copy(0.04f), color3.copy(0.01f), Color.Transparent), center = Offset(width * 0.3f, height * 0.45f), radius = width * 0.6f)
@@ -647,9 +648,9 @@ private fun HomeGreetingHeader(
 ) {
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
     val greetingText = when (hour) {
-        in 5..11 -> stringResource(R.string.good_morning)
-        in 12..17 -> stringResource(R.string.good_afternoon)
-        else -> stringResource(R.string.good_evening)
+        in 5..11 -> "Good morning"
+        in 12..17 -> "Good afternoon"
+        else -> "Good evening"
     }
 
     Row(
