@@ -39,6 +39,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -130,6 +131,7 @@ import com.cgens67.gluetune.canvas.CanvasArtworkPlayer
 import com.cgens67.gluetune.canvas.rememberAlbumCanvas
 import com.cgens67.gluetune.constants.CoverResolution
 import com.cgens67.gluetune.constants.CoverResolutionKey
+import com.cgens67.gluetune.constants.DarkModeKey
 import com.cgens67.gluetune.db.entities.Album
 import com.cgens67.gluetune.db.entities.Song
 import com.cgens67.gluetune.extensions.togglePlayPause
@@ -143,6 +145,7 @@ import com.cgens67.gluetune.ui.menu.AlbumMenu
 import com.cgens67.gluetune.ui.menu.SelectionSongMenu
 import com.cgens67.gluetune.ui.menu.SongMenu
 import com.cgens67.gluetune.ui.menu.YouTubeAlbumMenu
+import com.cgens67.gluetune.ui.screens.settings.DarkMode
 import com.cgens67.gluetune.ui.utils.ItemWrapper
 import com.cgens67.gluetune.ui.utils.resize
 import com.cgens67.gluetune.utils.makeTimeString
@@ -162,6 +165,7 @@ fun AlbumTrackItem(
     isActive: Boolean,
     isPlaying: Boolean,
     activeColor: Color,
+    textColor: Color,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -187,7 +191,7 @@ fun AlbumTrackItem(
                     text = index.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White.copy(alpha = 0.85f)
+                    color = textColor.copy(alpha = 0.85f)
                 )
             }
         }
@@ -199,7 +203,7 @@ fun AlbumTrackItem(
                 text = song.song.title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = if (isActive) activeColor else Color.White,
+                color = if (isActive) activeColor else textColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -213,7 +217,7 @@ fun AlbumTrackItem(
             Text(
                 text = subtitleText,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.65f),
+                color = textColor.copy(alpha = 0.65f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -226,7 +230,7 @@ fun AlbumTrackItem(
             Icon(
                 painter = painterResource(R.drawable.more_vert),
                 contentDescription = null,
-                tint = Color.White.copy(alpha = 0.85f)
+                tint = textColor.copy(alpha = 0.85f)
             )
         }
     }
@@ -256,6 +260,20 @@ fun AlbumScreen(
         key = CoverResolutionKey,
         defaultValue = CoverResolution.RES_1080
     )
+
+    // Dark Mode Theme logic
+    val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.AUTO)
+    val isSystemDark = isSystemInDarkTheme()
+    val useDarkTheme = remember(darkTheme, isSystemDark) {
+        if (darkTheme == DarkMode.AUTO) isSystemDark else darkTheme == DarkMode.ON
+    }
+
+    val textColor = if (useDarkTheme) Color.White else MaterialTheme.colorScheme.onSurface
+    val subTextColor = if (useDarkTheme) Color.White.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant
+    val bgColor = if (useDarkTheme) Color(0xFF0F0F0F) else MaterialTheme.colorScheme.surface
+    val scrimColor = if (useDarkTheme) Color.Black.copy(alpha = 0.75f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+    val buttonBgColor = if (useDarkTheme) Color.White.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant
+    val surfaceAlphaColor = if (useDarkTheme) Color.White.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
 
     val playlistId by viewModel.playlistId.collectAsState()
     val albumWithSongs by viewModel.albumWithSongs.collectAsState()
@@ -314,24 +332,26 @@ fun AlbumScreen(
         }
     }
 
-    // Ensure status bar icons are white on AlbumScreen regardless of system light/dark theme
-    DisposableEffect(Unit) {
+    // Adapt status bar icons to theme mode
+    DisposableEffect(useDarkTheme) {
         val window = (context as? Activity)?.window
         if (window != null) {
             val insetsController = WindowCompat.getInsetsController(window, view)
             val originalLightStatus = insetsController.isAppearanceLightStatusBars
-            insetsController.isAppearanceLightStatusBars = false
+            insetsController.isAppearanceLightStatusBars = !useDarkTheme
             onDispose {
                 insetsController.isAppearanceLightStatusBars = originalLightStatus
             }
         } else onDispose {}
     }
 
-    // High-contrast accent color for active item title & volume icon (fixes low-contrast tone 40 in light mode)
+    // High-contrast accent color for active item title & volume icon
     val primaryColor = MaterialTheme.colorScheme.primary
-    val activeColor = remember(primaryColor) {
-        if (primaryColor.luminance() < 0.45f) {
+    val activeColor = remember(primaryColor, useDarkTheme) {
+        if (useDarkTheme && primaryColor.luminance() < 0.45f) {
             ColorUtils.blendARGB(primaryColor.toArgb(), android.graphics.Color.WHITE, 0.70f).let { Color(it) }
+        } else if (!useDarkTheme && primaryColor.luminance() > 0.55f) {
+            ColorUtils.blendARGB(primaryColor.toArgb(), android.graphics.Color.BLACK, 0.70f).let { Color(it) }
         } else {
             primaryColor
         }
@@ -352,7 +372,7 @@ fun AlbumScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color(0xFF0F0F0F))) {
+    Box(modifier = Modifier.fillMaxSize().background(bgColor)) {
         // Blurred immersive background
         AsyncImage(
             model = albumWithSongs?.album?.thumbnailUrl,
@@ -365,10 +385,10 @@ fun AlbumScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.75f))
+                .background(scrimColor)
         )
 
-        CompositionLocalProvider(LocalContentColor provides Color.White) {
+        CompositionLocalProvider(LocalContentColor provides textColor) {
             LazyColumn(
                 state = lazyListState,
                 contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
@@ -392,7 +412,7 @@ fun AlbumScreen(
                                     .aspectRatio(1f)
                                     .shadow(elevation = 32.dp, shape = RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.White.copy(alpha = 0.08f))
+                                    .background(surfaceAlphaColor)
                             ) {
                                 AsyncImage(
                                     model = currentAlbumWithSongs.album.thumbnailUrl?.resize(coverResolution.size, coverResolution.size),
@@ -418,7 +438,7 @@ fun AlbumScreen(
                                 text = currentAlbumWithSongs.album.title,
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White,
+                                color = textColor,
                                 textAlign = TextAlign.Center,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
@@ -431,7 +451,7 @@ fun AlbumScreen(
                             Text(
                                 text = artistNameLocal,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color.White.copy(alpha = 0.75f),
+                                color = subTextColor,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .padding(horizontal = 24.dp)
@@ -467,7 +487,7 @@ fun AlbumScreen(
                                 Text(
                                     text = albumInfoText,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.6f),
+                                    color = subTextColor,
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -491,11 +511,11 @@ fun AlbumScreen(
                                         )
                                     },
                                     shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.12f),
+                                    color = buttonBgColor,
                                     modifier = Modifier.size(50.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
-                                        Icon(painterResource(R.drawable.shuffle), null, tint = Color.White, modifier = Modifier.size(22.dp))
+                                        Icon(painterResource(R.drawable.shuffle), null, tint = textColor, modifier = Modifier.size(22.dp))
                                     }
                                 }
 
@@ -525,14 +545,14 @@ fun AlbumScreen(
                                         }
                                     },
                                     shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.12f),
+                                    color = buttonBgColor,
                                     modifier = Modifier.size(50.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         when (downloadState) {
-                                            Download.STATE_COMPLETED -> Icon(painterResource(R.drawable.offline), null, tint = Color.White, modifier = Modifier.size(22.dp))
-                                            Download.STATE_DOWNLOADING -> CircularProgressIndicator(color = Color.White, strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
-                                            else -> Icon(painterResource(R.drawable.download), null, tint = Color.White, modifier = Modifier.size(22.dp))
+                                            Download.STATE_COMPLETED -> Icon(painterResource(R.drawable.offline), null, tint = textColor, modifier = Modifier.size(22.dp))
+                                            Download.STATE_DOWNLOADING -> CircularProgressIndicator(color = textColor, strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
+                                            else -> Icon(painterResource(R.drawable.download), null, tint = textColor, modifier = Modifier.size(22.dp))
                                         }
                                     }
                                 }
@@ -551,7 +571,7 @@ fun AlbumScreen(
                                         }
                                     },
                                     shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.22f),
+                                    color = if (useDarkTheme) Color.White.copy(alpha = 0.22f) else MaterialTheme.colorScheme.primaryContainer,
                                     modifier = Modifier.size(66.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
@@ -560,7 +580,7 @@ fun AlbumScreen(
                                                 if (isPlaying && isActiveAlbum) R.drawable.pause else R.drawable.play
                                             ),
                                             contentDescription = null,
-                                            tint = Color.White,
+                                            tint = if (useDarkTheme) Color.White else MaterialTheme.colorScheme.onPrimaryContainer,
                                             modifier = Modifier.size(32.dp)
                                         )
                                     }
@@ -577,11 +597,11 @@ fun AlbumScreen(
                                         context.startActivity(Intent.createChooser(intent, null))
                                     },
                                     shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.12f),
+                                    color = buttonBgColor,
                                     modifier = Modifier.size(50.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
-                                        Icon(painterResource(R.drawable.share), null, tint = Color.White, modifier = Modifier.size(22.dp))
+                                        Icon(painterResource(R.drawable.share), null, tint = textColor, modifier = Modifier.size(22.dp))
                                     }
                                 }
 
@@ -591,7 +611,7 @@ fun AlbumScreen(
                                         database.query { update(currentAlbumWithSongs.album.toggleLike()) }
                                     },
                                     shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.12f),
+                                    color = buttonBgColor,
                                     modifier = Modifier.size(50.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
@@ -600,7 +620,7 @@ fun AlbumScreen(
                                                 if (currentAlbumWithSongs.album.bookmarkedAt != null) R.drawable.favorite else R.drawable.favorite_border
                                             ),
                                             contentDescription = null,
-                                            tint = if (currentAlbumWithSongs.album.bookmarkedAt != null) Color(0xFFFF5252) else Color.White,
+                                            tint = if (currentAlbumWithSongs.album.bookmarkedAt != null) Color(0xFFFF5252) else textColor,
                                             modifier = Modifier.size(22.dp)
                                         )
                                     }
@@ -613,8 +633,8 @@ fun AlbumScreen(
                             if (isDescriptionLoading) {
                                 ShimmerHost(modifier = Modifier.padding(horizontal = 24.dp)) {
                                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        Spacer(Modifier.fillMaxWidth().height(14.dp).background(Color.White.copy(alpha = 0.2f), RoundedCornerShape(8.dp)))
-                                        Spacer(Modifier.fillMaxWidth(0.85f).height(14.dp).background(Color.White.copy(alpha = 0.2f), RoundedCornerShape(8.dp)))
+                                        Spacer(Modifier.fillMaxWidth().height(14.dp).background(surfaceAlphaColor, RoundedCornerShape(8.dp)))
+                                        Spacer(Modifier.fillMaxWidth(0.85f).height(14.dp).background(surfaceAlphaColor, RoundedCornerShape(8.dp)))
                                     }
                                 }
                             } else if (albumDescription != null) {
@@ -622,7 +642,7 @@ fun AlbumScreen(
                                 Text(
                                     text = albumDescription!!,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.72f),
+                                    color = subTextColor,
                                     textAlign = TextAlign.Start,
                                     modifier = Modifier
                                         .padding(horizontal = 24.dp)
@@ -648,21 +668,23 @@ fun AlbumScreen(
                             items = wrappedSongs,
                             key = { song -> song.item.id },
                         ) { songWrapper ->
+                            val isSongActive = songWrapper.item.id == mediaMetadata?.id
                             Surface(
                                 color = Color.Transparent,
-                                contentColor = Color.White,
+                                contentColor = textColor,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp, vertical = 3.dp)
                                     .clip(RoundedCornerShape(14.dp))
-                                    .background(Color.White.copy(alpha = if (songWrapper.item.id == mediaMetadata?.id) 0.16f else 0.06f))
+                                    .background(if (isSongActive) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f) else surfaceAlphaColor)
                             ) {
                                 AlbumTrackItem(
                                     song = songWrapper.item,
                                     index = wrappedSongs.indexOf(songWrapper) + 1,
-                                    isActive = songWrapper.item.id == mediaMetadata?.id,
+                                    isActive = isSongActive,
                                     isPlaying = isPlaying,
                                     activeColor = activeColor,
+                                    textColor = textColor,
                                     onMenuClick = {
                                         menuState.show {
                                             SongMenu(
@@ -763,7 +785,7 @@ fun AlbumScreen(
             }
         }
 
-        // Top App Bar with fixed dark container colors in light mode to prevent white washouts
+        // Top App Bar with fixed dark/light container colors to prevent washouts
         TopAppBar(
             title = {
                 if (selection) {
@@ -771,7 +793,7 @@ fun AlbumScreen(
                     Text(
                         text = pluralStringResource(R.plurals.n_song, count, count),
                         style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+                        color = textColor
                     )
                 } else {
                     AnimatedVisibility(visible = !transparentAppBar) {
@@ -780,7 +802,7 @@ fun AlbumScreen(
                             style = MaterialTheme.typography.titleLarge,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = Color.White
+                            color = textColor
                         )
                     }
                 }
@@ -800,7 +822,7 @@ fun AlbumScreen(
                             if (selection) R.drawable.close else R.drawable.arrow_back
                         ),
                         contentDescription = null,
-                        tint = Color.White
+                        tint = textColor
                     )
                 }
             },
@@ -821,7 +843,7 @@ fun AlbumScreen(
                                 if (count == wrappedSongs?.size) R.drawable.deselect else R.drawable.select_all
                             ),
                             contentDescription = null,
-                            tint = Color.White
+                            tint = textColor
                         )
                     }
 
@@ -840,7 +862,7 @@ fun AlbumScreen(
                         Icon(
                             painter = painterResource(R.drawable.more_vert),
                             contentDescription = null,
-                            tint = Color.White
+                            tint = textColor
                         )
                     }
                 } else {
@@ -862,18 +884,18 @@ fun AlbumScreen(
                             Icon(
                                 painter = painterResource(R.drawable.more_vert),
                                 contentDescription = stringResource(R.string.more_options),
-                                tint = Color.White
+                                tint = textColor
                             )
                         }
                     }
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = if (transparentAppBar && !selection) Color.Transparent else Color(0xD9101010),
-                scrolledContainerColor = Color(0xD9101010),
-                titleContentColor = Color.White,
-                navigationIconContentColor = Color.White,
-                actionIconContentColor = Color.White
+                containerColor = if (transparentAppBar && !selection) Color.Transparent else if (useDarkTheme) Color(0xD9101010) else MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                scrolledContainerColor = if (useDarkTheme) Color(0xD9101010) else MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                titleContentColor = textColor,
+                navigationIconContentColor = textColor,
+                actionIconContentColor = textColor
             ),
             scrollBehavior = scrollBehavior
         )
