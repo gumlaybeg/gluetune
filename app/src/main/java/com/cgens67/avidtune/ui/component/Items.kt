@@ -176,14 +176,14 @@ inline fun ListItem(
         else -> defaultContentColor
     }
     val subtitleContentColor = when {
-        isActive -> MaterialTheme.colorScheme.onSurfaceVariant
+        isActive -> MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> defaultContentColor.copy(alpha = 0.7f)
     }
     val trailingContentColor = when {
         isActive -> MaterialTheme.colorScheme.primary
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> defaultContentColor.copy(alpha = 0.8f)
     }
 
     val itemCornerRadius = rememberItemCornerRadius()
@@ -264,14 +264,9 @@ fun ListItem(
     subtitle = {
         badges()
         if (!subtitle.isNullOrEmpty()) {
-            val defaultSubtitleColor = LocalContentColor.current.takeOrElse { MaterialTheme.colorScheme.onSurfaceVariant }
             Text(
                 text = subtitle,
-                color = when {
-                    isActive -> MaterialTheme.colorScheme.onSurfaceVariant
-                    isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                    else -> defaultSubtitleColor.copy(alpha = 0.75f)
-                },
+                color = LocalContentColor.current,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -283,7 +278,7 @@ fun ListItem(
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
-// POSTER CARD GRID ITEM (Matches Reference Image)
+// POSTER CARD GRID ITEM
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
@@ -320,10 +315,8 @@ fun GridItem(
         }
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            // 1. Full-bleed Artwork Background
             thumbnailContent()
 
-            // 2. Smooth, Rich Bottom Gradient Scrim for Readability
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -337,7 +330,6 @@ fun GridItem(
                     )
             )
 
-            // 3. Top-Left Translucent Category Badge (e.g. ♪ Album)
             if (!typeTag.isNullOrBlank()) {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
@@ -370,7 +362,6 @@ fun GridItem(
                 }
             }
 
-            // 4. Bottom Title, Subtitle, and Metadata Badges
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -684,16 +675,13 @@ fun AlbumListItem(
                 downloadState =
                     when {
                         songs.all { downloads[it.id]?.state == STATE_COMPLETED } -> STATE_COMPLETED
-
                         songs.all {
-                            downloads[it.id]?.state in
-                                listOf(
-                                    STATE_QUEUED,
-                                    STATE_DOWNLOADING,
-                                    STATE_COMPLETED,
-                                )
+                            downloads[it.id]?.state in listOf(
+                                STATE_QUEUED,
+                                STATE_DOWNLOADING,
+                                STATE_COMPLETED,
+                            )
                         } -> STATE_DOWNLOADING
-
                         else -> Download.STATE_STOPPED
                     }
             }
@@ -754,16 +742,13 @@ fun AlbumGridItem(
                 downloadState =
                     when {
                         songs.all { downloads[it.id]?.state == STATE_COMPLETED } -> STATE_COMPLETED
-
                         songs.all {
-                            downloads[it.id]?.state in
-                                listOf(
-                                    STATE_QUEUED,
-                                    STATE_DOWNLOADING,
-                                    STATE_COMPLETED,
-                                )
+                            downloads[it.id]?.state in listOf(
+                                STATE_QUEUED,
+                                STATE_DOWNLOADING,
+                                STATE_COMPLETED,
+                            )
                         } -> STATE_DOWNLOADING
-
                         else -> Download.STATE_STOPPED
                     }
             }
@@ -949,7 +934,7 @@ fun PlaylistGridItem(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// YOUTUBE GRID ITEM (Maps types dynamically to matching reference card)
+// YOUTUBE GRID ITEM
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
@@ -1719,7 +1704,7 @@ data class Quadruple<A, B, C, D>(
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BADGES (REDESIGNED PILL STYLE MATCHING REFERENCE IMAGE)
+// BADGES (REDESIGNED PILL STYLE)
 // ─────────────────────────────────────────────────────────────────────────────
 
 private object Icon {
@@ -1848,7 +1833,7 @@ private object Icon {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SMALL GRID ITEMS (Card Posters)
+// SMALL GRID ITEMS
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
@@ -1877,10 +1862,8 @@ fun SmallGridItem(
             .padding(4.dp)
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            // Full background artwork
             thumbnailContent()
 
-            // Bottom gradient scrim
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -1894,7 +1877,6 @@ fun SmallGridItem(
                     )
             )
 
-            // Top-left type badge
             if (!typeTag.isNullOrBlank()) {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
@@ -1927,7 +1909,6 @@ fun SmallGridItem(
                 }
             }
 
-            // Bottom info
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
