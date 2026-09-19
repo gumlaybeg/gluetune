@@ -1,3 +1,4 @@
+--- START OF FILE app/src/main/java/com/cgens67/avidtune/ui/screens/HomeScreen.kt ---
 @file:OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalMaterial3ExpressiveApi::class,
@@ -29,6 +30,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -63,15 +66,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.carousel.HorizontalCenteredHeroCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
@@ -88,10 +87,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
@@ -131,9 +130,6 @@ import com.cgens67.gluetune.constants.GridThumbnailHeight
 import com.cgens67.gluetune.constants.InnerTubeCookieKey
 import com.cgens67.gluetune.constants.ListItemHeight
 import com.cgens67.gluetune.constants.ListThumbnailSize
-import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
-import com.cgens67.gluetune.constants.PureBlackKey
-import com.cgens67.gluetune.constants.SwipeThumbnailKey
 import com.cgens67.gluetune.constants.ThumbnailCornerRadius
 import com.cgens67.gluetune.db.entities.Album
 import com.cgens67.gluetune.db.entities.Artist
@@ -173,7 +169,6 @@ import com.cgens67.gluetune.utils.rememberEnumPreference
 import com.cgens67.gluetune.utils.rememberPreference
 import com.cgens67.gluetune.viewmodels.HomeViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
@@ -649,40 +644,58 @@ private fun HomeGreetingHeader(
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
     val greetingText = when (hour) {
         in 5..11 -> "Good morning"
-        in 12..17 -> "Good afternoon"
-        in 18..21 -> "Good evening"
-        else -> "Good night"
+        in 12..16 -> "Good afternoon"
+        in 17..21 -> "Good evening"
+        else -> "Good night" // Covers 22:00 through 04:59
+    }
+
+    val subGreetingText = when (hour) {
+        in 5..11 -> "Ready to jumpstart your day?"
+        in 12..16 -> "Keep the energy rolling"
+        in 17..21 -> "Unwind with your favorite tunes"
+        else -> "Relax and drift away to the music"
     }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
-            .padding(horizontal = 16.dp, vertical = 20.dp),
+            .padding(horizontal = 20.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = greetingText,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-            if (accountName.isNotBlank() && accountName != "Guest") {
-                Text(
-                    text = accountName,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = if (accountName.isNotBlank() && accountName != "Guest") {
+                    "Welcome back, $accountName • $subGreetingText"
+                } else {
+                    subGreetingText
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
         
+        Spacer(Modifier.width(16.dp))
+
         Surface(
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceVariant,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
             modifier = Modifier
-                .size(48.dp)
+                .size(46.dp)
+                .clip(CircleShape)
                 .clickable(onClick = onAccountClick)
         ) {
             if (accountImageUrl != null) {
@@ -696,12 +709,14 @@ private fun HomeGreetingHeader(
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
-                Icon(
-                    painter = painterResource(R.drawable.person),
-                    contentDescription = null,
-                    modifier = Modifier.padding(12.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        painter = painterResource(R.drawable.person),
+                        contentDescription = null,
+                        modifier = Modifier.size(22.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
@@ -711,8 +726,7 @@ private data class QuickActionItem(
     val route: String,
     val icon: Int,
     val label: String,
-    val containerColor: Color,
-    val contentColor: Color
+    val isSecondary: Boolean
 )
 
 @Composable
@@ -720,49 +734,75 @@ private fun HomeQuickActionsRow(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val actions = listOf(
-        QuickActionItem("history", R.drawable.history, stringResource(R.string.history), MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.onPrimaryContainer),
-        QuickActionItem("stats", R.drawable.equalizer, stringResource(R.string.stats), MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer),
-        QuickActionItem("auto_playlist/liked", R.drawable.favorite, stringResource(R.string.liked), MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.colorScheme.onTertiaryContainer),
-        QuickActionItem("auto_playlist/downloaded", R.drawable.offline, stringResource(R.string.offline), MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.onSurfaceVariant),
-        QuickActionItem("apple_music_trending", R.drawable.apple, stringResource(R.string.trending), MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer)
-    )
+    val actions = remember {
+        listOf(
+            QuickActionItem("history", R.drawable.history, "History", isSecondary = true),
+            QuickActionItem("stats", R.drawable.equalizer, "Stats", isSecondary = false),
+            QuickActionItem("auto_playlist/liked", R.drawable.favorite, "Liked", isSecondary = false),
+            QuickActionItem("auto_playlist/downloaded", R.drawable.offline, "Offline", isSecondary = true),
+            QuickActionItem("apple_music_trending", R.drawable.apple, "Trending", isSecondary = false)
+        )
+    }
 
     LazyRow(
-        modifier = modifier.fillMaxWidth().padding(bottom = 16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(actions) { action ->
+        items(actions, key = { it.route }) { action ->
+            val interactionSource = remember { MutableInteractionSource() }
+            val isPressed by interactionSource.collectIsPressedAsState()
+            val scale by animateFloatAsState(
+                targetValue = if (isPressed) 0.94f else 1f,
+                animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                label = "quickActionPress"
+            )
+
+            val containerColor = if (action.isSecondary) {
+                MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f)
+            } else {
+                MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.8f)
+            }
+            val contentColor = if (action.isSecondary) {
+                MaterialTheme.colorScheme.onSecondaryContainer
+            } else {
+                MaterialTheme.colorScheme.onTertiaryContainer
+            }
+            val borderColor = if (action.isSecondary) {
+                MaterialTheme.colorScheme.secondary.copy(alpha = 0.25f)
+            } else {
+                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.25f)
+            }
+
             Surface(
-                onClick = {
-                    when (action.route) {
-                        "history" -> navController.navigate("history")
-                        "stats" -> navController.navigate("stats")
-                        "auto_playlist/liked" -> navController.navigate("auto_playlist/liked")
-                        "auto_playlist/downloaded" -> navController.navigate("auto_playlist/downloaded")
-                        "apple_music_trending" -> navController.navigate("apple_music_trending")
-                    }
-                },
-                shape = RoundedCornerShape(50),
-                color = action.containerColor,
+                onClick = { navController.navigate(action.route) },
+                shape = RoundedCornerShape(16.dp),
+                color = containerColor,
+                border = BorderStroke(1.dp, borderColor),
+                interactionSource = interactionSource,
+                modifier = Modifier
+                    .scale(scale)
+                    .height(44.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                 ) {
                     Icon(
                         painter = painterResource(action.icon),
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = action.contentColor
+                        modifier = Modifier.size(18.dp),
+                        tint = contentColor
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         text = action.label,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
-                        color = action.contentColor
+                        color = contentColor,
+                        maxLines = 1
                     )
                 }
             }
@@ -801,8 +841,11 @@ fun QuickPicksSection(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clip(MaterialTheme.shapes.extraLarge)
-                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), MaterialTheme.shapes.extraLarge)
+                .maskClip(MaterialTheme.shapes.extraLarge)
+                .maskBorder(
+                    BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                    MaterialTheme.shapes.extraLarge
+                )
                 .combinedClickable(
                     onClick = {
                         if (isActive) playerConnection.player.togglePlayPause()
@@ -814,16 +857,66 @@ fun QuickPicksSection(
                     }
                 )
         ) {
-            AsyncImage(model = ImageRequest.Builder(LocalContext.current).data(song.song.thumbnailUrl?.resize(coverResolution.size, coverResolution.size)).crossfade(true).build(), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-            Box(modifier = Modifier.fillMaxSize().background(Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Transparent, Color.Black.copy(alpha = 0.7f)))))
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(song.song.thumbnailUrl?.resize(coverResolution.size, coverResolution.size))
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.75f)
+                            )
+                        )
+                    )
+            )
             if (isActive && isPlaying) {
-                Box(modifier = Modifier.align(Alignment.TopEnd).padding(12.dp).size(32.dp).background(MaterialTheme.colorScheme.primary, CircleShape), contentAlignment = Alignment.Center) {
-                    Icon(painterResource(R.drawable.volume_up), null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(18.dp))
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp)
+                        .size(32.dp)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painterResource(R.drawable.volume_up),
+                        null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
             }
-            Column(modifier = Modifier.align(Alignment.BottomStart).padding(16.dp)) {
-                Text(text = song.song.title, style = MaterialTheme.typography.titleMedium, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(text = song.artists.joinToString { it.name }, style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.7f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = song.song.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = song.artists.joinToString { it.name },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.7f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
