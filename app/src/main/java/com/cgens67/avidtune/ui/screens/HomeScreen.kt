@@ -13,6 +13,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -90,6 +95,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
@@ -129,6 +135,9 @@ import com.cgens67.gluetune.constants.GridThumbnailHeight
 import com.cgens67.gluetune.constants.InnerTubeCookieKey
 import com.cgens67.gluetune.constants.ListItemHeight
 import com.cgens67.gluetune.constants.ListThumbnailSize
+import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
+import com.cgens67.gluetune.constants.PureBlackKey
+import com.cgens67.gluetune.constants.SwipeThumbnailKey
 import com.cgens67.gluetune.constants.ThumbnailCornerRadius
 import com.cgens67.gluetune.db.entities.Album
 import com.cgens67.gluetune.db.entities.Artist
@@ -168,6 +177,8 @@ import com.cgens67.gluetune.utils.rememberEnumPreference
 import com.cgens67.gluetune.utils.rememberPreference
 import com.cgens67.gluetune.viewmodels.HomeViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
@@ -597,22 +608,47 @@ fun HomeScreen(
                     scope.launch(Dispatchers.Main) {
                         if (local) {
                             when (val luckyItem = allLocalItems.random()) {
-                                is Song -> playerConnection.playQueue(YouTubeQueue.radio(luckyItem.toMediaMetadata()))
-                                is Album -> {
-                                    val albumWithSongs = withContext(Dispatchers.IO) { database.albumWithSongs(luckyItem.id).first() }
-                                    albumWithSongs?.let { playerConnection.playQueue(LocalAlbumRadio(it)) }
+                                is Song -> {
+                                    playerConnection.playQueue(YouTubeQueue.radio(luckyItem.toMediaMetadata()))
                                 }
-                                is Artist -> {}
-                                is Playlist -> {}
+                                is Album -> {
+                                    val albumId = luckyItem.id
+                                    val albumWithSongs = withContext(Dispatchers.IO) {
+                                        database.albumWithSongs(albumId).firstOrNull()
+                                    }
+                                    if (albumWithSongs != null) {
+                                        playerConnection.playQueue(LocalAlbumRadio(albumWithSongs))
+                                    }
+                                }
+                                is Artist -> Unit
+                                is Playlist -> Unit
                             }
                         } else {
                             when (val luckyItem = allYtItems.random()) {
-                                is SongItem -> playerConnection.playQueue(YouTubeQueue.radio(luckyItem.toMediaMetadata()))
-                                is AlbumItem -> playerConnection.playQueue(YouTubeAlbumRadio(luckyItem.playlistId))
-                                is ArtistItem -> luckyItem.radioEndpoint?.let { playerConnection.playQueue(YouTubeQueue(it)) }
-                                is PlaylistItem -> luckyItem.playEndpoint?.let { playerConnection.playQueue(YouTubeQueue(it)) }
-                                is EpisodeItem -> playerConnection.playQueue(YouTubeQueue.radio(luckyItem.asSongItem().toMediaMetadata()))
-                                is PodcastItem -> luckyItem.playEndpoint?.let { playerConnection.playQueue(YouTubeQueue(it)) }
+                                is SongItem -> {
+                                    playerConnection.playQueue(YouTubeQueue.radio(luckyItem.toMediaMetadata()))
+                                }
+                                is AlbumItem -> {
+                                    playerConnection.playQueue(YouTubeAlbumRadio(luckyItem.playlistId))
+                                }
+                                is ArtistItem -> {
+                                    luckyItem.radioEndpoint?.let {
+                                        playerConnection.playQueue(YouTubeQueue(it))
+                                    }
+                                }
+                                is PlaylistItem -> {
+                                    luckyItem.playEndpoint?.let {
+                                        playerConnection.playQueue(YouTubeQueue(it))
+                                    }
+                                }
+                                is EpisodeItem -> {
+                                    playerConnection.playQueue(YouTubeQueue.radio(luckyItem.asSongItem().toMediaMetadata()))
+                                }
+                                is PodcastItem -> {
+                                    luckyItem.playEndpoint?.let {
+                                        playerConnection.playQueue(YouTubeQueue(it))
+                                    }
+                                }
                             }
                         }
                     }
@@ -645,7 +681,7 @@ private fun HomeGreetingHeader(
         in 5..11 -> "Good morning"
         in 12..16 -> "Good afternoon"
         in 17..21 -> "Good evening"
-        else -> "Good night" // Covers 22:00 through 04:59
+        else -> "Good night"
     }
 
     val subGreetingText = when (hour) {
