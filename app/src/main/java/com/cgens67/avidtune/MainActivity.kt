@@ -29,8 +29,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -41,6 +46,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,6 +70,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
@@ -91,12 +100,14 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
@@ -168,10 +179,9 @@ import com.cgens67.gluetune.playback.MusicService
 import com.cgens67.gluetune.playback.MusicService.MusicBinder
 import com.cgens67.gluetune.playback.PlayerConnection
 import com.cgens67.gluetune.playback.queues.YouTubeQueue
-import com.cgens67.gluetune.ui.component.AvatarPreferenceManager
-import com.cgens67.gluetune.ui.component.AvatarSelection
 import com.cgens67.gluetune.ui.component.BottomSheetMenu
 import com.cgens67.gluetune.ui.component.FloatingNavigationToolbar
+import com.cgens67.gluetune.ui.component.IconButton as AppIconButton
 import com.cgens67.gluetune.ui.component.LocalMenuState
 import com.cgens67.gluetune.ui.component.Lyrics
 import com.cgens67.gluetune.ui.component.SwitchPreference
@@ -864,9 +874,10 @@ class MainActivity : ComponentActivity() {
                                                     Icon(
                                                         painter = painterResource(R.drawable.gluetune),
                                                         contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier
                                                             .size(35.dp)
-                                                            .padding(end = 3.dp)
+                                                            .padding(end = 4.dp)
                                                     )
 
                                                     Text(
@@ -953,7 +964,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                         },
                                         leadingIcon = {
-                                            com.cgens67.gluetune.ui.component.IconButton(
+                                            AppIconButton(
                                                 onClick = {
                                                     when {
                                                         active -> onActiveChange(false)
@@ -994,7 +1005,7 @@ class MainActivity : ComponentActivity() {
                                             ) {
                                                 if (active) {
                                                     if (query.text.isNotEmpty()) {
-                                                        com.cgens67.gluetune.ui.component.IconButton(
+                                                        AppIconButton(
                                                             onClick = {
                                                                 onQueryChange(TextFieldValue(""))
                                                             },
@@ -1006,7 +1017,7 @@ class MainActivity : ComponentActivity() {
                                                             )
                                                         }
                                                     }
-                                                    com.cgens67.gluetune.ui.component.IconButton(
+                                                    AppIconButton(
                                                         onClick = {
                                                             searchSource =
                                                                 if (searchSource == SearchSource.ONLINE) {
@@ -1615,160 +1626,4 @@ fun isNewerVersion(remoteVersion: String, currentVersion: String): Boolean {
         if (r < c) return false
     }
     return false
-}
-
-@Composable
-fun ProfileIconWithUpdateBadge(
-    currentVersion: String,
-    onProfileClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val avatarManager = remember { AvatarPreferenceManager(context) }
-    val currentSelection by avatarManager.getAvatarSelection.collectAsState(initial = AvatarSelection.Default)
-    var showUpdateBadge by remember { mutableStateOf(false) }
-    val updatedOnClick = rememberUpdatedState(onProfileClick)
-
-    val infiniteTransition = rememberInfiniteTransition(label = "badge_animation")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.15f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "scale"
-    )
-
-    val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.6f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "alpha"
-    )
-
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val pressScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.85f else 1f,
-        animationSpec = spring<Float>(stiffness = Spring.StiffnessMedium),
-        label = "press_scale"
-    )
-
-    LaunchedEffect(currentVersion) {
-        try {
-            val latestVersion = withContext(Dispatchers.IO) { checkForUpdates() }
-            showUpdateBadge = latestVersion?.let { isNewerVersion(it, currentVersion) } ?: false
-        } catch (e: Exception) {
-            Timber.tag("ProfileIcon").e("Error checking for updates: ${e.message}")
-        }
-    }
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(48.dp)
-            .scale(pressScale)
-            .clip(CircleShape)
-            .clickable(
-                indication = null,
-                interactionSource = interactionSource
-            ) {
-                try {
-                    updatedOnClick.value()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            when (currentSelection) {
-                is AvatarSelection.Custom -> {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data((currentSelection as AvatarSelection.Custom).uri.toUri())
-                            .crossfade(true)
-                            .error(R.drawable.person)
-                            .placeholder(R.drawable.person)
-                            .build(),
-                        contentDescription = "Custom avatar",
-                        modifier = modifier
-                            .size(28.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                is AvatarSelection.DiceBear -> {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data((currentSelection as AvatarSelection.DiceBear).url)
-                            .crossfade(true)
-                            .error(R.drawable.person)
-                            .placeholder(R.drawable.person)
-                            .build(),
-                        contentDescription = "DiceBear avatar",
-                        modifier = modifier
-                            .size(28.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                else -> {
-                    Icon(
-                        painter = painterResource(R.drawable.person),
-                        contentDescription = "Default avatar",
-                        modifier = modifier
-                    )
-                }
-            }
-        }
-
-        if (showUpdateBadge) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(28.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .scale(scale)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f * alpha),
-                                    Color.Transparent
-                                )
-                            ),
-                            shape = CircleShape
-                        )
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
-                            shape = CircleShape
-                        )
-                )
-
-                Icon(
-                    painter = painterResource(R.drawable.update),
-                    contentDescription = "Update available",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(18.dp)
-                        .align(Alignment.Center)
-                        .scale(scale)
-                        .alpha(alpha)
-                )
-            }
-        }
-    }
 }
