@@ -66,6 +66,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -97,6 +98,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -172,6 +174,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -343,12 +346,13 @@ fun HomeScreen(
                         val width = this.size.width
                         val height = this.size.height
 
-                        val brush1 = Brush.radialGradient(colors = listOf(color1.copy(0.38f), color1.copy(0.24f), color1.copy(0.14f), color1.copy(0.06f), Color.Transparent), center = Offset(width * 0.15f, height * 0.1f), radius = width * 0.55f)
-                        val brush2 = Brush.radialGradient(colors = listOf(color2.copy(0.34f), color2.copy(0.2f), color2.copy(0.11f), color2.copy(0.05f), Color.Transparent), center = Offset(width * 0.85f, height * 0.2f), radius = width * 0.65f)
-                        val brush3 = Brush.radialGradient(colors = listOf(color3.copy(0.3f), color3.copy(0.17f), color3.copy(0.09f), color3.copy(0.04f), Color.Transparent), center = Offset(width * 0.3f, height * 0.45f), radius = width * 0.6f)
-                        val brush4 = Brush.radialGradient(colors = listOf(color4.copy(0.26f), color4.copy(0.14f), color4.copy(0.08f), color4.copy(0.03f), Color.Transparent), center = Offset(width * 0.7f, height * 0.5f), radius = width * 0.7f)
-                        val brush5 = Brush.radialGradient(colors = listOf(color5.copy(0.22f), color5.copy(0.12f), color5.copy(0.06f), color5.copy(0.02f), Color.Transparent), center = Offset(width * 0.5f, height * 0.75f), radius = width * 0.8f)
-                        val overlayBrush = Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Transparent, surfaceColor.copy(0.22f), surfaceColor.copy(0.55f), surfaceColor), startY = height * 0.4f, endY = height)
+                        // Softer mesh gradients for the redesigned background
+                        val brush1 = Brush.radialGradient(colors = listOf(color1.copy(0.25f), color1.copy(0.15f), color1.copy(0.08f), color1.copy(0.03f), Color.Transparent), center = Offset(width * 0.15f, height * 0.1f), radius = width * 0.55f)
+                        val brush2 = Brush.radialGradient(colors = listOf(color2.copy(0.20f), color2.copy(0.12f), color2.copy(0.06f), color2.copy(0.02f), Color.Transparent), center = Offset(width * 0.85f, height * 0.2f), radius = width * 0.65f)
+                        val brush3 = Brush.radialGradient(colors = listOf(color3.copy(0.15f), color3.copy(0.08f), color3.copy(0.04f), color3.copy(0.01f), Color.Transparent), center = Offset(width * 0.3f, height * 0.45f), radius = width * 0.6f)
+                        val brush4 = Brush.radialGradient(colors = listOf(color4.copy(0.20f), color4.copy(0.10f), color4.copy(0.05f), color4.copy(0.02f), Color.Transparent), center = Offset(width * 0.7f, height * 0.5f), radius = width * 0.7f)
+                        val brush5 = Brush.radialGradient(colors = listOf(color5.copy(0.18f), color5.copy(0.10f), color5.copy(0.05f), color5.copy(0.01f), Color.Transparent), center = Offset(width * 0.5f, height * 0.75f), radius = width * 0.8f)
+                        val overlayBrush = Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Transparent, surfaceColor.copy(0.3f), surfaceColor.copy(0.7f), surfaceColor), startY = height * 0.4f, endY = height)
 
                         onDrawBehind {
                             drawRect(brush1); drawRect(brush2); drawRect(brush3); drawRect(brush4); drawRect(brush5); drawRect(overlayBrush)
@@ -369,66 +373,42 @@ fun HomeScreen(
             contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues()
         ) {
             item {
-                Row(
-                    modifier = Modifier
-                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .animateItem(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(Modifier.width(12.dp))
-
-                    FilterChip(
-                        selected = false,
-                        onClick = { navController.navigate("apple_music_trending") },
-                        label = { Text(stringResource(R.string.trending)) },
-                        leadingIcon = { Icon(painterResource(R.drawable.apple), null, modifier = Modifier.size(18.dp).offset(y = (-0.9).dp)) },
-                        shape = RoundedCornerShape(16.dp),
-                        border = null,
-                        colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-                    )
-
-                    Spacer(Modifier.width(8.dp))
-
-                    val chips = buildList {
-                        add("history" to stringResource(R.string.history))
-                        add("stats" to stringResource(R.string.stats))
-                        add("liked" to stringResource(R.string.liked))
-                        add("downloads" to stringResource(R.string.offline))
-                        if (isLoggedIn) add("account" to stringResource(R.string.account))
-                    }
-
-                    chips.forEach { (value, label) ->
-                        FilterChip(
-                            selected = false,
-                            onClick = {
-                                when (value) {
-                                    "history" -> navController.navigate("history")
-                                    "stats" -> navController.navigate("stats")
-                                    "liked" -> navController.navigate("auto_playlist/liked")
-                                    "downloads" -> navController.navigate("auto_playlist/downloaded")
-                                    "account" -> if (isLoggedIn) navController.navigate("account")
-                                }
-                            },
-                            label = { Text(label) },
-                            shape = RoundedCornerShape(16.dp),
-                            border = null,
-                            colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                    }
-                }
+                HomeGreetingHeader(
+                    accountName = accountName,
+                    accountImageUrl = url,
+                    onAccountClick = {
+                        if (isLoggedIn) navController.navigate("account")
+                        else navController.navigate("settings/account")
+                    },
+                    modifier = Modifier.animateItem()
+                )
+            }
+            item {
+                HomeQuickActionsRow(navController = navController, modifier = Modifier.animateItem())
             }
 
             quickPicks?.takeIf { it.isNotEmpty() }?.let { quickPicks ->
                 item {
-                    QuickPicksSection(quickPicks = quickPicks, mediaMetadata = mediaMetadata, isPlaying = isPlaying, navController = navController, playerConnection = playerConnection, menuState = menuState, haptic = haptic, modifier = Modifier.animateItem())
+                    QuickPicksSection(
+                        quickPicks = quickPicks,
+                        mediaMetadata = mediaMetadata,
+                        isPlaying = isPlaying,
+                        navController = navController,
+                        playerConnection = playerConnection,
+                        menuState = menuState,
+                        haptic = haptic,
+                        modifier = Modifier.animateItem()
+                    )
                 }
             }
 
             keepListening?.takeIf { it.isNotEmpty() }?.let { keepListening ->
-                item { NavigationTitle(title = stringResource(R.string.keep_listening), modifier = Modifier.animateItem()) }
+                item { 
+                    NavigationTitle(
+                        title = stringResource(R.string.keep_listening), 
+                        modifier = Modifier.animateItem().padding(top = 8.dp)
+                    ) 
+                }
                 item {
                     val rows = min(2, keepListening.size)
                     LazyHorizontalGrid(
@@ -446,20 +426,30 @@ fun HomeScreen(
                 item {
                     NavigationTitle(
                         label = stringResource(R.string.your_ytb_playlists),
-                        title = accountName,
+                        title = accountName.ifBlank { stringResource(R.string.account) },
                         thumbnail = {
                             if (url != null) {
-                                AsyncImage(model = ImageRequest.Builder(LocalContext.current).data(url).diskCachePolicy(CachePolicy.ENABLED).diskCacheKey(url).crossfade(true).build(), placeholder = painterResource(R.drawable.person), error = painterResource(R.drawable.person), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.size(ListThumbnailSize).clip(CircleShape))
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current).data(url).diskCachePolicy(CachePolicy.ENABLED).diskCacheKey(url).crossfade(true).build(),
+                                    placeholder = painterResource(R.drawable.person),
+                                    error = painterResource(R.drawable.person),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.size(ListThumbnailSize).clip(CircleShape)
+                                )
                             } else {
                                 Icon(painterResource(R.drawable.person), null, modifier = Modifier.size(ListThumbnailSize))
                             }
                         },
                         onClick = { navController.navigate("account") },
-                        modifier = Modifier.animateItem()
+                        modifier = Modifier.animateItem().padding(top = 16.dp)
                     )
                 }
                 item {
-                    LazyRow(contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(), modifier = Modifier.animateItem()) {
+                    LazyRow(
+                        contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(),
+                        modifier = Modifier.animateItem()
+                    ) {
                         items(accountPlaylists) { item -> ytGridItem(item) }
                     }
                 }
@@ -480,11 +470,14 @@ fun HomeScreen(
                                 is Playlist -> {}
                             }
                         },
-                        modifier = Modifier.animateItem()
+                        modifier = Modifier.animateItem().padding(top = 16.dp)
                     )
                 }
                 item {
-                    LazyRow(contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(), modifier = Modifier.animateItem()) {
+                    LazyRow(
+                        contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(),
+                        modifier = Modifier.animateItem()
+                    ) {
                         items(recommendation.items) { item -> ytGridItem(item) }
                     }
                 }
@@ -497,20 +490,32 @@ fun HomeScreen(
                         title = getTranslatedHomeSectionTitle(section.title),
                         label = section.label?.let { getTranslatedHomeSectionTitle(it) },
                         thumbnail = if (thumbnailUrl != null) { { AsyncImage(model = thumbnailUrl, contentDescription = null, modifier = Modifier.size(ListThumbnailSize).clip(if (section.endpoint?.isArtistEndpoint == true) CircleShape else RoundedCornerShape(ThumbnailCornerRadius))) } } else null,
-                        modifier = Modifier.animateItem()
+                        modifier = Modifier.animateItem().padding(top = 16.dp)
                     )
                 }
                 item {
-                    LazyRow(contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(), modifier = Modifier.animateItem()) {
+                    LazyRow(
+                        contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(),
+                        modifier = Modifier.animateItem()
+                    ) {
                         items(section.items) { item -> ytGridItem(item) }
                     }
                 }
             }
 
             explorePage?.newReleaseAlbums?.let { newReleaseAlbums ->
-                item { NavigationTitle(title = stringResource(R.string.new_release_albums), onClick = { navController.navigate("new_release") }, modifier = Modifier.animateItem()) }
                 item {
-                    LazyRow(contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(), modifier = Modifier.animateItem()) {
+                    NavigationTitle(
+                        title = stringResource(R.string.new_release_albums),
+                        onClick = { navController.navigate("new_release") },
+                        modifier = Modifier.animateItem().padding(top = 16.dp)
+                    )
+                }
+                item {
+                    LazyRow(
+                        contentPadding = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal).asPaddingValues(),
+                        modifier = Modifier.animateItem()
+                    ) {
                         items(newReleaseAlbums) { album ->
                             YouTubeGridItem(
                                 item = album,
@@ -537,7 +542,12 @@ fun HomeScreen(
             }
 
             forgottenFavorites?.takeIf { it.isNotEmpty() }?.let { forgottenFavorites ->
-                item { NavigationTitle(title = stringResource(R.string.forgotten_favorites), modifier = Modifier.animateItem()) }
+                item {
+                    NavigationTitle(
+                        title = stringResource(R.string.forgotten_favorites),
+                        modifier = Modifier.animateItem().padding(top = 16.dp)
+                    )
+                }
                 item {
                     val rows = min(4, forgottenFavorites.size)
                     LazyHorizontalGrid(
@@ -628,6 +638,131 @@ fun HomeScreen(
     }
 }
 
+@Composable
+private fun HomeGreetingHeader(
+    accountName: String,
+    accountImageUrl: String?,
+    onAccountClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    val greetingText = when (hour) {
+        in 5..11 -> stringResource(R.string.good_morning)
+        in 12..17 -> stringResource(R.string.good_afternoon)
+        else -> stringResource(R.string.good_evening)
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal))
+            .padding(horizontal = 16.dp, vertical = 20.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = greetingText,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (accountName.isNotBlank() && accountName != "Guest") {
+                Text(
+                    text = accountName,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+        
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier
+                .size(48.dp)
+                .clickable(onClick = onAccountClick)
+        ) {
+            if (accountImageUrl != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(accountImageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.person),
+                    contentDescription = null,
+                    modifier = Modifier.padding(12.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeQuickActionsRow(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
+    val actions = listOf(
+        Triple("history", R.drawable.history, stringResource(R.string.history)),
+        Triple("stats", R.drawable.equalizer, stringResource(R.string.stats)),
+        Triple("auto_playlist/liked", R.drawable.favorite, stringResource(R.string.liked)),
+        Triple("auto_playlist/downloaded", R.drawable.offline, stringResource(R.string.offline)),
+        Triple("apple_music_trending", R.drawable.apple, stringResource(R.string.trending))
+    )
+
+    LazyRow(
+        modifier = modifier.fillMaxWidth().padding(bottom = 8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(actions) { (route, icon, label) ->
+            Surface(
+                onClick = {
+                    when (route) {
+                        "history" -> navController.navigate("history")
+                        "stats" -> navController.navigate("stats")
+                        "auto_playlist/liked" -> navController.navigate("auto_playlist/liked")
+                        "auto_playlist/downloaded" -> navController.navigate("auto_playlist/downloaded")
+                        "apple_music_trending" -> navController.navigate("apple_music_trending")
+                    }
+                },
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                modifier = Modifier.width(100.dp).height(80.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun QuickPicksSection(
@@ -659,8 +794,8 @@ fun QuickPicksSection(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .maskClip(MaterialTheme.shapes.extraLarge)
-                .maskBorder(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), MaterialTheme.shapes.extraLarge)
+                .clip(MaterialTheme.shapes.extraLarge)
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), MaterialTheme.shapes.extraLarge)
                 .combinedClickable(
                     onClick = {
                         if (isActive) playerConnection.player.togglePlayPause()
