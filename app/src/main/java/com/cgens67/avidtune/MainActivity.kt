@@ -76,6 +76,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -105,6 +107,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
@@ -180,8 +183,6 @@ import com.cgens67.gluetune.playback.MusicService
 import com.cgens67.gluetune.playback.MusicService.MusicBinder
 import com.cgens67.gluetune.playback.PlayerConnection
 import com.cgens67.gluetune.playback.queues.YouTubeQueue
-import com.cgens67.gluetune.ui.component.AvatarPreferenceManager
-import com.cgens67.gluetune.ui.component.AvatarSelection
 import com.cgens67.gluetune.ui.component.BottomSheetMenu
 import com.cgens67.gluetune.ui.component.FloatingNavigationToolbar
 import com.cgens67.gluetune.ui.component.IconButton as AppIconButton
@@ -521,6 +522,9 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val (previousTab) = rememberSaveable { mutableStateOf("home") }
+
+                    val homeViewModel: HomeViewModel = hiltViewModel()
+                    val accountImageUrl by homeViewModel.accountImageUrl.collectAsState()
 
                     val navigationItems = remember { Screens.MainScreens }
                     val (slimNav) = rememberPreference(SlimNavBarKey, defaultValue = false)
@@ -862,8 +866,8 @@ class MainActivity : ComponentActivity() {
                                         tileMode = TileMode.Repeated
                                     )
 
-                                    val viewModel: NewReleaseViewModel = hiltViewModel()
-                                    val hasNewReleases by viewModel.hasNewReleases.collectAsState()
+                                    val releaseViewModel: NewReleaseViewModel = hiltViewModel()
+                                    val hasNewReleases by releaseViewModel.hasNewReleases.collectAsState()
 
                                     Box(
                                         modifier = Modifier.offset {
@@ -918,6 +922,8 @@ class MainActivity : ComponentActivity() {
                                                 }
                                             },
                                             actions = {
+                                                val actionContext = LocalContext.current
+
                                                 // 1. Notification Bell
                                                 val notifInteractionSource = remember { MutableInteractionSource() }
                                                 val isNotifPressed by notifInteractionSource.collectIsPressedAsState()
@@ -935,12 +941,12 @@ class MainActivity : ComponentActivity() {
                                                     com.cgens67.gluetune.ui.component.IconButton(
                                                         onClick = {
                                                             try {
-                                                                viewModel.markNewReleasesAsSeen()
+                                                                releaseViewModel.markNewReleasesAsSeen()
                                                                 navController.navigate("new_release")
                                                             } catch (e: Exception) {
                                                                 e.printStackTrace()
                                                                 Toast.makeText(
-                                                                    context,
+                                                                    actionContext,
                                                                     R.string.navigation_error,
                                                                     Toast.LENGTH_SHORT
                                                                 ).show()
@@ -1048,7 +1054,7 @@ class MainActivity : ComponentActivity() {
                                                             } catch (e: Exception) {
                                                                 e.printStackTrace()
                                                                 Toast.makeText(
-                                                                    context,
+                                                                    actionContext,
                                                                     R.string.navigation_error,
                                                                     Toast.LENGTH_SHORT
                                                                 ).show()
