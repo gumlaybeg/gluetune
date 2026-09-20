@@ -9,15 +9,13 @@ import androidx.compose.ui.unit.sp
 import com.cgens67.gluetune.R
 
 val sfProDisplayBold = FontFamily(Font(R.font.sfprodisplaybold))
-// Ensure you have googlesansbold.ttf and spacegroteskbold.ttf in your res/font folder. 
-// If not, replace these with R.font.poppins to avoid resource errors.
 val googleSansBold = FontFamily(Font(R.font.googlesansbold))
 val spaceGroteskBold = FontFamily(Font(R.font.spacegroteskbold))
 
 val AppFontFamily = FontFamily(Font(R.font.sfprodisplaybold))
 val LyricsFontFamily = FontFamily(Font(R.font.sfprodisplaybold))
 
-fun buildTypography(fontFamily: FontFamily) =
+private fun buildTypography(fontFamily: FontFamily) =
     Typography(
         displayLarge =
             TextStyle(
