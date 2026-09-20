@@ -1,21 +1,11 @@
-/*
- * ArchiveTune (2026)
- * © Rukamori — github.com/rukamori
- * GPL-3.0 License | Contributors: see git history
- * Do not remove or alter this notice. - Per GPL-3.0 Section 4 & Section 5
- */
-
 package com.cgens67.gluetune.ui.theme
 
-import android.app.WallpaperManager
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Build
-import android.util.Base64
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.snap
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -25,33 +15,23 @@ import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
-import com.materialkolor.PaletteStyle
-import com.materialkolor.dynamicColorScheme
-import com.materialkolor.ktx.toHct
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import com.cgens67.gluetune.constants.AppFont
-import kotlin.math.abs
-import kotlin.math.min
+import com.google.material.color.hct.Hct
+import com.google.material.color.scheme.SchemeTonalSpot
+import com.google.material.color.score.Score
+import org.json.JSONObject
 
 val DefaultThemeColor = Color(0xFFED5564)
 val LocalGlueTuneFont = staticCompositionLocalOf { AppFont.SYSTEM }
@@ -75,103 +55,81 @@ fun GlueTuneTheme(
     seedPalette: ThemeSeedPalette? = null,
     disableAnimations: Boolean = false,
     appFont: AppFont = AppFont.SYSTEM,
-    customFontUri: String = "",
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
     val useSystemDynamicColor =
         (seedPalette == null && themeColor == DefaultThemeColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
 
-    val resolvedFontFamily =
-        remember(appFont) {
-            when (appFont) {
-                AppFont.SYSTEM -> FontFamily.Default
-                AppFont.SF_PRO -> sfProDisplayBold
-                AppFont.GOOGLE_SANS -> googleSansBold
-                AppFont.SPACE_GROTESK -> spaceGroteskBold
-            }
+    val resolvedFontFamily = remember(appFont) {
+        when (appFont) {
+            AppFont.SYSTEM -> FontFamily.Default
+            AppFont.SF_PRO -> sfProDisplayBold
+            AppFont.GOOGLE_SANS -> googleSansBold
+            AppFont.SPACE_GROTESK -> spaceGroteskBold
         }
+    }
         
-    val typography =
-        remember(resolvedFontFamily) {
-            when (resolvedFontFamily) {
-                AppFontFamily -> AppTypography
-                FontFamily.Default -> SystemTypography
-                else -> typographyFor(resolvedFontFamily)
-            }
+    val typography = remember(resolvedFontFamily) {
+        when (resolvedFontFamily) {
+            AppFontFamily -> AppTypography
+            FontFamily.Default -> SystemTypography
+            else -> typographyFor(resolvedFontFamily)
         }
+    }
         
-    val motionScheme =
-        remember(disableAnimations) {
-            if (disableAnimations) DisabledMotionScheme else MotionScheme.expressive()
-        }
-    val paletteStyle =
-        remember(themeColor, seedPalette) {
-            paletteStyleFor(seedPalette?.primary ?: themeColor)
-        }
+    val motionScheme = remember(disableAnimations) {
+        if (disableAnimations) DisabledMotionScheme else MotionScheme.expressive()
+    }
 
-    val appColorScheme =
-        remember(seedPalette, themeColor, darkTheme) {
-            if (seedPalette != null) {
-                exactPaletteColorScheme(
-                    palette = seedPalette,
-                    isDark = darkTheme,
-                )
-            } else {
-                materialKolorDynamicColorScheme(
-                    keyColor = themeColor,
-                    isDark = darkTheme,
-                    style = paletteStyle,
-                )
-            }
-        }
-
-    val baseColorScheme =
-        if (useSystemDynamicColor) {
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        } else {
-            appColorScheme
-        }
-
-    val colorScheme =
-        remember(baseColorScheme, pureBlack, darkTheme) {
-            if (darkTheme && pureBlack) baseColorScheme.pureBlack(true) else baseColorScheme
-        }
-
-    val animatedColorScheme =
-        if (disableAnimations) {
-            colorScheme
-        } else {
-            animateColorScheme(
-                targetColorScheme = colorScheme,
-                animationSpec = motionScheme.defaultEffectsSpec(),
+    val appColorScheme = remember(seedPalette, themeColor, darkTheme) {
+        if (seedPalette != null) {
+            mergedSeedColorScheme(
+                primarySeed = seedPalette.primary,
+                secondarySeed = seedPalette.secondary,
+                tertiarySeed = seedPalette.tertiary,
+                neutralSeed = seedPalette.neutral,
+                isDark = darkTheme,
             )
+        } else {
+            val scheme = SchemeTonalSpot(Hct.fromInt(themeColor.toArgb()), darkTheme, 0.0)
+            scheme.toColorScheme()
         }
+    }
 
-    val expressiveShapes =
-        remember {
-            Shapes(
-                extraSmall =
-                    androidx.compose.foundation.shape
-                        .RoundedCornerShape(8.dp),
-                small =
-                    androidx.compose.foundation.shape
-                        .RoundedCornerShape(12.dp),
-                medium =
-                    androidx.compose.foundation.shape
-                        .RoundedCornerShape(16.dp),
-                large =
-                    androidx.compose.foundation.shape
-                        .RoundedCornerShape(24.dp),
-                extraLarge =
-                    androidx.compose.foundation.shape
-                        .RoundedCornerShape(32.dp),
-            )
-        }
+    val baseColorScheme = if (useSystemDynamicColor) {
+        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    } else {
+        appColorScheme
+    }
+
+    val colorScheme = remember(baseColorScheme, pureBlack, darkTheme) {
+        if (darkTheme && pureBlack) baseColorScheme.pureBlack(true, darkTheme) else baseColorScheme
+    }
+
+    val animatedColorScheme = if (disableAnimations) {
+        colorScheme
+    } else {
+        animateColorScheme(
+            targetColorScheme = colorScheme,
+            animationSpec = motionScheme.defaultEffectsSpec(),
+        )
+    }
+
+    val expressiveShapes = remember {
+        Shapes(
+            extraSmall = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+            small = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+            medium = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+            large = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
+            extraLarge = androidx.compose.foundation.shape.RoundedCornerShape(32.dp),
+        )
+    }
 
     CompositionLocalProvider(
         LocalGlueTuneFont provides appFont,
         LocalGlueTuneFontFamily provides resolvedFontFamily,
+        LocalOverscrollFactory provides null
     ) {
         MaterialExpressiveTheme(
             colorScheme = animatedColorScheme,
@@ -197,21 +155,11 @@ private fun animateColorScheme(
         secondary = animateColorAsState(targetColorScheme.secondary, animationSpec, label = "secondary").value,
         onSecondary = animateColorAsState(targetColorScheme.onSecondary, animationSpec, label = "onSecondary").value,
         secondaryContainer = animateColorAsState(targetColorScheme.secondaryContainer, animationSpec, label = "secondaryContainer").value,
-        onSecondaryContainer =
-            animateColorAsState(
-                targetColorScheme.onSecondaryContainer,
-                animationSpec,
-                label = "onSecondaryContainer",
-            ).value,
+        onSecondaryContainer = animateColorAsState(targetColorScheme.onSecondaryContainer, animationSpec, label = "onSecondaryContainer").value,
         tertiary = animateColorAsState(targetColorScheme.tertiary, animationSpec, label = "tertiary").value,
         onTertiary = animateColorAsState(targetColorScheme.onTertiary, animationSpec, label = "onTertiary").value,
         tertiaryContainer = animateColorAsState(targetColorScheme.tertiaryContainer, animationSpec, label = "tertiaryContainer").value,
-        onTertiaryContainer =
-            animateColorAsState(
-                targetColorScheme.onTertiaryContainer,
-                animationSpec,
-                label = "onTertiaryContainer",
-            ).value,
+        onTertiaryContainer = animateColorAsState(targetColorScheme.onTertiaryContainer, animationSpec, label = "onTertiaryContainer").value,
         background = animateColorAsState(targetColorScheme.background, animationSpec, label = "background").value,
         onBackground = animateColorAsState(targetColorScheme.onBackground, animationSpec, label = "onBackground").value,
         surface = animateColorAsState(targetColorScheme.surface, animationSpec, label = "surface").value,
@@ -231,30 +179,10 @@ private fun animateColorScheme(
         surfaceBright = animateColorAsState(targetColorScheme.surfaceBright, animationSpec, label = "surfaceBright").value,
         surfaceDim = animateColorAsState(targetColorScheme.surfaceDim, animationSpec, label = "surfaceDim").value,
         surfaceContainer = animateColorAsState(targetColorScheme.surfaceContainer, animationSpec, label = "surfaceContainer").value,
-        surfaceContainerLow =
-            animateColorAsState(
-                targetColorScheme.surfaceContainerLow,
-                animationSpec,
-                label = "surfaceContainerLow",
-            ).value,
-        surfaceContainerLowest =
-            animateColorAsState(
-                targetColorScheme.surfaceContainerLowest,
-                animationSpec,
-                label = "surfaceContainerLowest",
-            ).value,
-        surfaceContainerHigh =
-            animateColorAsState(
-                targetColorScheme.surfaceContainerHigh,
-                animationSpec,
-                label = "surfaceContainerHigh",
-            ).value,
-        surfaceContainerHighest =
-            animateColorAsState(
-                targetColorScheme.surfaceContainerHighest,
-                animationSpec,
-                label = "surfaceContainerHighest",
-            ).value,
+        surfaceContainerLow = animateColorAsState(targetColorScheme.surfaceContainerLow, animationSpec, label = "surfaceContainerLow").value,
+        surfaceContainerLowest = animateColorAsState(targetColorScheme.surfaceContainerLowest, animationSpec, label = "surfaceContainerLowest").value,
+        surfaceContainerHigh = animateColorAsState(targetColorScheme.surfaceContainerHigh, animationSpec, label = "surfaceContainerHigh").value,
+        surfaceContainerHighest = animateColorAsState(targetColorScheme.surfaceContainerHighest, animationSpec, label = "surfaceContainerHighest").value,
     )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -267,47 +195,17 @@ private object DisabledMotionScheme : MotionScheme {
     override fun <T> slowEffectsSpec(): FiniteAnimationSpec<T> = snap()
 }
 
-private fun exactPaletteColorScheme(
-    palette: ThemeSeedPalette,
-    isDark: Boolean,
-): ColorScheme =
-    mergedSeedColorScheme(
-        primarySeed = palette.primary,
-        secondarySeed = palette.secondary,
-        tertiarySeed = palette.tertiary,
-        neutralSeed = palette.neutral,
-        isDark = isDark,
-    )
-
-private fun materialKolorDynamicColorScheme(
-    keyColor: Color,
-    isDark: Boolean,
-    contrastLevel: Double = 0.0,
-    style: PaletteStyle,
-): ColorScheme =
-    mergedSeedColorScheme(
-        primarySeed = keyColor,
-        secondarySeed = keyColor,
-        tertiarySeed = keyColor,
-        neutralSeed = keyColor,
-        isDark = isDark,
-        contrastLevel = contrastLevel,
-        style = style,
-    )
-
 private fun mergedSeedColorScheme(
     primarySeed: Color,
     secondarySeed: Color,
     tertiarySeed: Color,
     neutralSeed: Color,
-    isDark: Boolean,
-    contrastLevel: Double = 0.0,
-    style: PaletteStyle = paletteStyleFor(primarySeed),
+    isDark: Boolean
 ): ColorScheme {
-    val primaryScheme = materialKolorScheme(primarySeed, isDark, contrastLevel, style)
-    val secondaryScheme = materialKolorScheme(secondarySeed, isDark, contrastLevel, paletteStyleFor(secondarySeed))
-    val tertiaryScheme = materialKolorScheme(tertiarySeed, isDark, contrastLevel, paletteStyleFor(tertiarySeed))
-    val neutralScheme = materialKolorScheme(neutralSeed, isDark, contrastLevel, paletteStyleFor(neutralSeed))
+    val primaryScheme = SchemeTonalSpot(Hct.fromInt(primarySeed.toArgb()), isDark, 0.0).toColorScheme()
+    val secondaryScheme = SchemeTonalSpot(Hct.fromInt(secondarySeed.toArgb()), isDark, 0.0).toColorScheme()
+    val tertiaryScheme = SchemeTonalSpot(Hct.fromInt(tertiarySeed.toArgb()), isDark, 0.0).toColorScheme()
+    val neutralScheme = SchemeTonalSpot(Hct.fromInt(neutralSeed.toArgb()), isDark, 0.0).toColorScheme()
 
     return ColorScheme(
         primary = primaryScheme.primary,
@@ -349,61 +247,102 @@ private fun mergedSeedColorScheme(
     )
 }
 
-private fun materialKolorScheme(
-    seedColor: Color,
-    isDark: Boolean,
-    contrastLevel: Double,
-    style: PaletteStyle,
-): ColorScheme =
-    dynamicColorScheme(
-        seedColor = seedColor,
-        isDark = isDark,
-        contrastLevel = contrastLevel,
-        style = style,
-    )
+fun com.google.material.color.scheme.DynamicScheme.toColorScheme() = ColorScheme(
+    primary = Color(primary),
+    onPrimary = Color(onPrimary),
+    primaryContainer = Color(primaryContainer),
+    onPrimaryContainer = Color(onPrimaryContainer),
+    inversePrimary = Color(inversePrimary),
+    secondary = Color(secondary),
+    onSecondary = Color(onSecondary),
+    secondaryContainer = Color(secondaryContainer),
+    onSecondaryContainer = Color(onSecondaryContainer),
+    tertiary = Color(tertiary),
+    onTertiary = Color(onTertiary),
+    tertiaryContainer = Color(tertiaryContainer),
+    onTertiaryContainer = Color(onTertiaryContainer),
+    background = Color(background),
+    onBackground = Color(onBackground),
+    surface = Color(surface),
+    onSurface = Color(onSurface),
+    surfaceVariant = Color(surfaceVariant),
+    onSurfaceVariant = Color(onSurfaceVariant),
+    surfaceTint = Color(primary),
+    inverseSurface = Color(inverseSurface),
+    inverseOnSurface = Color(inverseOnSurface),
+    error = Color(error),
+    onError = Color(onError),
+    errorContainer = Color(errorContainer),
+    onErrorContainer = Color(onErrorContainer),
+    outline = Color(outline),
+    outlineVariant = Color(outlineVariant),
+    scrim = Color(scrim),
+    surfaceBright = Color(surfaceBright),
+    surfaceDim = Color(surfaceDim),
+    surfaceContainer = Color(surfaceContainer),
+    surfaceContainerHigh = Color(surfaceContainerHigh),
+    surfaceContainerHighest = Color(surfaceContainerHighest),
+    surfaceContainerLow = Color(surfaceContainerLow),
+    surfaceContainerLowest = Color(surfaceContainerLowest),
+)
 
-private fun paletteStyleFor(seedColor: Color): PaletteStyle {
-    val chroma = seedColor.toHct().chroma
-    return when {
-        chroma < 4.0 -> PaletteStyle.Monochrome
-        chroma < 12.0 -> PaletteStyle.Neutral
-        else -> PaletteStyle.TonalSpot
-    }
-}
-
-private fun Int.toComposeColor(): Color = Color(this.toLong() and 0xFFFFFFFFL)
-
-fun Bitmap.extractThemeColor(): Color {
-    val palette =
-        Palette
-            .from(this)
-            .maximumColorCount(16)
-            .generate()
-
-    val swatch =
-        palette.vibrantSwatch
-            ?: palette.dominantSwatch
-            ?: palette.mutedSwatch
-            ?: palette.lightVibrantSwatch
-            ?: palette.darkVibrantSwatch
-            ?: palette.lightMutedSwatch
-            ?: palette.darkMutedSwatch
-
-    return swatch?.rgb?.toComposeColor() ?: DefaultThemeColor
-}
-
-fun ColorScheme.pureBlack(apply: Boolean) =
-    if (apply) {
+fun ColorScheme.pureBlack(apply: Boolean, isDarkTheme: Boolean) =
+    if (apply && isDarkTheme) {
         copy(
             surface = Color.Black,
             background = Color.Black,
+            surfaceContainer = Color.Black,
+            surfaceContainerLow = Color.Black,
+            surfaceContainerLowest = Color.Black,
         )
-    } else {
-        this
+    } else this
+
+val ColorSaver = object : Saver<Color, Int> {
+    override fun restore(value: Int): Color = Color(value)
+    override fun SaverScope.save(value: Color): Int = value.toArgb()
+}
+
+data class ThemeSeedPalette(
+    val primary: Color,
+    val secondary: Color,
+    val tertiary: Color,
+    val neutral: Color
+)
+
+object ThemeSeedPaletteCodec {
+    fun decodeFromPreference(value: String): ThemeSeedPalette? {
+        if (!value.startsWith("{")) return null
+        return try {
+            val json = JSONObject(value)
+            ThemeSeedPalette(
+                primary = Color(json.getInt("primary")),
+                secondary = Color(json.getInt("secondary")),
+                tertiary = Color(json.getInt("tertiary")),
+                neutral = Color(json.getInt("neutral"))
+            )
+        } catch (e: Exception) { null }
     }
 
-val ColorSaver =
-    object : Saver<Color, Int> {
-        override fun restore(value: Int): Color = value.toComposeColor()
-        override fun SaverScope.save(value: Color): Int = value.toArgb()
+    fun extractNameFromJsonOrNull(jsonString: String): String? {
+        return try {
+            val json = JSONObject(jsonString)
+            if (json.has("name")) json.getString("name") else null
+        } catch (e: Exception) { null }
     }
+
+    fun encodeForPreference(palette: ThemeSeedPalette, name: String?): String {
+        val json = JSONObject()
+        json.put("primary", palette.primary.toArgb())
+        json.put("secondary", palette.secondary.toArgb())
+        json.put("tertiary", palette.tertiary.toArgb())
+        json.put("neutral", palette.neutral.toArgb())
+        name?.let { json.put("name", it) }
+        return json.toString()
+    }
+}
+
+fun Bitmap.extractThemeColor(): Color {
+    val colorsToPopulation = Palette.from(this).maximumColorCount(8).generate().swatches.associate { it.rgb to it.population }
+    val rankedColors = Score.score(colorsToPopulation)
+    return Color(rankedColors.firstOrNull() ?: DefaultThemeColor.toArgb())
+}
