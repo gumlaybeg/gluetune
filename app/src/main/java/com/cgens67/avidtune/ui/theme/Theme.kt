@@ -1,7 +1,6 @@
 package com.cgens67.gluetune.ui.theme
 
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FiniteAnimationSpec
@@ -11,7 +10,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -29,11 +27,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import com.cgens67.gluetune.constants.AppFont
-import com.google.material.color.dynamiccolor.DynamicScheme
 import com.google.material.color.dynamiccolor.MaterialDynamicColors
 import com.google.material.color.hct.Hct
+import com.google.material.color.scheme.SchemeMonochrome
+import com.google.material.color.scheme.SchemeNeutral
 import com.google.material.color.scheme.SchemeTonalSpot
-import com.google.material.color.score.Score
 
 val DefaultThemeColor = Color(0xFFED5564)
 val LocalGlueTuneFont = staticCompositionLocalOf { AppFont.SYSTEM }
@@ -94,8 +92,13 @@ fun GlueTuneTheme(
                 isDark = darkTheme,
             )
         } else {
-            val scheme = SchemeTonalSpot(Hct.fromInt(themeColor.toArgb()), darkTheme, 0.0)
-            scheme.toColorScheme()
+            mergedSeedColorScheme(
+                primarySeed = themeColor,
+                secondarySeed = themeColor,
+                tertiarySeed = themeColor,
+                neutralSeed = themeColor,
+                isDark = darkTheme,
+            )
         }
     }
 
@@ -106,7 +109,7 @@ fun GlueTuneTheme(
     }
 
     val colorScheme = remember(baseColorScheme, pureBlack, darkTheme) {
-        if (darkTheme && pureBlack) baseColorScheme.pureBlack(true, darkTheme) else baseColorScheme
+        if (darkTheme && pureBlack) baseColorScheme.pureBlack(true) else baseColorScheme
     }
 
     val animatedColorScheme = if (disableAnimations) {
@@ -197,17 +200,67 @@ private object DisabledMotionScheme : MotionScheme {
     override fun <T> slowEffectsSpec(): FiniteAnimationSpec<T> = snap()
 }
 
+private fun materialKolorScheme(seedColor: Color, isDark: Boolean, contrastLevel: Double = 0.0): ColorScheme {
+    val hct = Hct.fromInt(seedColor.toArgb())
+    val scheme = when {
+        hct.chroma < 4.0 -> SchemeMonochrome(hct, isDark, contrastLevel)
+        hct.chroma < 12.0 -> SchemeNeutral(hct, isDark, contrastLevel)
+        else -> SchemeTonalSpot(hct, isDark, contrastLevel)
+    }
+    
+    val dc = MaterialDynamicColors()
+    return ColorScheme(
+        primary = Color(dc.primary().getArgb(scheme)),
+        onPrimary = Color(dc.onPrimary().getArgb(scheme)),
+        primaryContainer = Color(dc.primaryContainer().getArgb(scheme)),
+        onPrimaryContainer = Color(dc.onPrimaryContainer().getArgb(scheme)),
+        inversePrimary = Color(dc.inversePrimary().getArgb(scheme)),
+        secondary = Color(dc.secondary().getArgb(scheme)),
+        onSecondary = Color(dc.onSecondary().getArgb(scheme)),
+        secondaryContainer = Color(dc.secondaryContainer().getArgb(scheme)),
+        onSecondaryContainer = Color(dc.onSecondaryContainer().getArgb(scheme)),
+        tertiary = Color(dc.tertiary().getArgb(scheme)),
+        onTertiary = Color(dc.onTertiary().getArgb(scheme)),
+        tertiaryContainer = Color(dc.tertiaryContainer().getArgb(scheme)),
+        onTertiaryContainer = Color(dc.onTertiaryContainer().getArgb(scheme)),
+        background = Color(dc.background().getArgb(scheme)),
+        onBackground = Color(dc.onBackground().getArgb(scheme)),
+        surface = Color(dc.surface().getArgb(scheme)),
+        onSurface = Color(dc.onSurface().getArgb(scheme)),
+        surfaceVariant = Color(dc.surfaceVariant().getArgb(scheme)),
+        onSurfaceVariant = Color(dc.onSurfaceVariant().getArgb(scheme)),
+        surfaceTint = Color(dc.primary().getArgb(scheme)),
+        inverseSurface = Color(dc.inverseSurface().getArgb(scheme)),
+        inverseOnSurface = Color(dc.inverseOnSurface().getArgb(scheme)),
+        error = Color(dc.error().getArgb(scheme)),
+        onError = Color(dc.onError().getArgb(scheme)),
+        errorContainer = Color(dc.errorContainer().getArgb(scheme)),
+        onErrorContainer = Color(dc.onErrorContainer().getArgb(scheme)),
+        outline = Color(dc.outline().getArgb(scheme)),
+        outlineVariant = Color(dc.outlineVariant().getArgb(scheme)),
+        scrim = Color(dc.scrim().getArgb(scheme)),
+        surfaceBright = Color(dc.surfaceBright().getArgb(scheme)),
+        surfaceDim = Color(dc.surfaceDim().getArgb(scheme)),
+        surfaceContainer = Color(dc.surfaceContainer().getArgb(scheme)),
+        surfaceContainerHigh = Color(dc.surfaceContainerHigh().getArgb(scheme)),
+        surfaceContainerHighest = Color(dc.surfaceContainerHighest().getArgb(scheme)),
+        surfaceContainerLow = Color(dc.surfaceContainerLow().getArgb(scheme)),
+        surfaceContainerLowest = Color(dc.surfaceContainerLowest().getArgb(scheme)),
+    )
+}
+
 private fun mergedSeedColorScheme(
     primarySeed: Color,
     secondarySeed: Color,
     tertiarySeed: Color,
     neutralSeed: Color,
-    isDark: Boolean
+    isDark: Boolean,
+    contrastLevel: Double = 0.0
 ): ColorScheme {
-    val primaryScheme = SchemeTonalSpot(Hct.fromInt(primarySeed.toArgb()), isDark, 0.0).toColorScheme()
-    val secondaryScheme = SchemeTonalSpot(Hct.fromInt(secondarySeed.toArgb()), isDark, 0.0).toColorScheme()
-    val tertiaryScheme = SchemeTonalSpot(Hct.fromInt(tertiarySeed.toArgb()), isDark, 0.0).toColorScheme()
-    val neutralScheme = SchemeTonalSpot(Hct.fromInt(neutralSeed.toArgb()), isDark, 0.0).toColorScheme()
+    val primaryScheme = materialKolorScheme(primarySeed, isDark, contrastLevel)
+    val secondaryScheme = materialKolorScheme(secondarySeed, isDark, contrastLevel)
+    val tertiaryScheme = materialKolorScheme(tertiarySeed, isDark, contrastLevel)
+    val neutralScheme = materialKolorScheme(neutralSeed, isDark, contrastLevel)
 
     return ColorScheme(
         primary = primaryScheme.primary,
@@ -217,12 +270,12 @@ private fun mergedSeedColorScheme(
         inversePrimary = primaryScheme.inversePrimary,
         secondary = secondaryScheme.primary,
         onSecondary = secondaryScheme.onPrimary,
-        secondaryContainer = secondaryScheme.primaryContainer,
-        onSecondaryContainer = secondaryScheme.onPrimaryContainer,
+        secondaryContainer = secondaryScheme.secondaryContainer,
+        onSecondaryContainer = secondaryScheme.onSecondaryContainer,
         tertiary = tertiaryScheme.primary,
         onTertiary = tertiaryScheme.onPrimary,
-        tertiaryContainer = tertiaryScheme.primaryContainer,
-        onTertiaryContainer = tertiaryScheme.onPrimaryContainer,
+        tertiaryContainer = tertiaryScheme.tertiaryContainer,
+        onTertiaryContainer = tertiaryScheme.onTertiaryContainer,
         background = neutralScheme.background,
         onBackground = neutralScheme.onBackground,
         surface = neutralScheme.surface,
@@ -249,50 +302,8 @@ private fun mergedSeedColorScheme(
     )
 }
 
-fun DynamicScheme.toColorScheme(): ColorScheme {
-    val dc = MaterialDynamicColors()
-    return ColorScheme(
-        primary = Color(dc.primary().getArgb(this)),
-        onPrimary = Color(dc.onPrimary().getArgb(this)),
-        primaryContainer = Color(dc.primaryContainer().getArgb(this)),
-        onPrimaryContainer = Color(dc.onPrimaryContainer().getArgb(this)),
-        inversePrimary = Color(dc.inversePrimary().getArgb(this)),
-        secondary = Color(dc.secondary().getArgb(this)),
-        onSecondary = Color(dc.onSecondary().getArgb(this)),
-        secondaryContainer = Color(dc.secondaryContainer().getArgb(this)),
-        onSecondaryContainer = Color(dc.onSecondaryContainer().getArgb(this)),
-        tertiary = Color(dc.tertiary().getArgb(this)),
-        onTertiary = Color(dc.onTertiary().getArgb(this)),
-        tertiaryContainer = Color(dc.tertiaryContainer().getArgb(this)),
-        onTertiaryContainer = Color(dc.onTertiaryContainer().getArgb(this)),
-        background = Color(dc.background().getArgb(this)),
-        onBackground = Color(dc.onBackground().getArgb(this)),
-        surface = Color(dc.surface().getArgb(this)),
-        onSurface = Color(dc.onSurface().getArgb(this)),
-        surfaceVariant = Color(dc.surfaceVariant().getArgb(this)),
-        onSurfaceVariant = Color(dc.onSurfaceVariant().getArgb(this)),
-        surfaceTint = Color(dc.primary().getArgb(this)),
-        inverseSurface = Color(dc.inverseSurface().getArgb(this)),
-        inverseOnSurface = Color(dc.inverseOnSurface().getArgb(this)),
-        error = Color(dc.error().getArgb(this)),
-        onError = Color(dc.onError().getArgb(this)),
-        errorContainer = Color(dc.errorContainer().getArgb(this)),
-        onErrorContainer = Color(dc.onErrorContainer().getArgb(this)),
-        outline = Color(dc.outline().getArgb(this)),
-        outlineVariant = Color(dc.outlineVariant().getArgb(this)),
-        scrim = Color(dc.scrim().getArgb(this)),
-        surfaceBright = Color(dc.surfaceBright().getArgb(this)),
-        surfaceDim = Color(dc.surfaceDim().getArgb(this)),
-        surfaceContainer = Color(dc.surfaceContainer().getArgb(this)),
-        surfaceContainerHigh = Color(dc.surfaceContainerHigh().getArgb(this)),
-        surfaceContainerHighest = Color(dc.surfaceContainerHighest().getArgb(this)),
-        surfaceContainerLow = Color(dc.surfaceContainerLow().getArgb(this)),
-        surfaceContainerLowest = Color(dc.surfaceContainerLowest().getArgb(this)),
-    )
-}
-
-fun ColorScheme.pureBlack(apply: Boolean, isDarkTheme: Boolean) =
-    if (apply && isDarkTheme) {
+fun ColorScheme.pureBlack(apply: Boolean) =
+    if (apply) {
         copy(
             surface = Color.Black,
             background = Color.Black,
@@ -300,15 +311,25 @@ fun ColorScheme.pureBlack(apply: Boolean, isDarkTheme: Boolean) =
             surfaceContainerLow = Color.Black,
             surfaceContainerLowest = Color.Black,
         )
-    } else this
+    } else {
+        this
+    }
 
 val ColorSaver = object : Saver<Color, Int> {
-    override fun restore(value: Int): Color = Color(value)
+    override fun restore(value: Int): Color = Color((value.toLong() and 0xFFFFFFFFL))
     override fun SaverScope.save(value: Color): Int = value.toArgb()
 }
 
+private fun Int.toComposeColor(): Color = Color(this.toLong() and 0xFFFFFFFFL)
+
 fun Bitmap.extractThemeColor(): Color {
-    val colorsToPopulation = Palette.from(this).maximumColorCount(8).generate().swatches.associate { it.rgb to it.population }
-    val rankedColors = Score.score(colorsToPopulation)
-    return Color(rankedColors.firstOrNull() ?: DefaultThemeColor.toArgb())
+    val palette = Palette.from(this).maximumColorCount(16).generate()
+    val swatch = palette.vibrantSwatch
+        ?: palette.dominantSwatch
+        ?: palette.mutedSwatch
+        ?: palette.lightVibrantSwatch
+        ?: palette.darkVibrantSwatch
+        ?: palette.lightMutedSwatch
+        ?: palette.darkMutedSwatch
+    return swatch?.rgb?.toComposeColor() ?: DefaultThemeColor
 }
