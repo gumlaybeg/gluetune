@@ -1,7 +1,9 @@
 package com.cgens67.gluetune.ui.theme
 
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import android.util.Base64
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.snap
@@ -22,16 +24,24 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import com.cgens67.gluetune.constants.AppFont
+import com.google.material.color.dynamiccolor.MaterialDynamicColors
 import com.google.material.color.hct.Hct
+import com.google.material.color.scheme.DynamicScheme
 import com.google.material.color.scheme.SchemeTonalSpot
 import com.google.material.color.score.Score
-import org.json.JSONObject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 val DefaultThemeColor = Color(0xFFED5564)
 val LocalGlueTuneFont = staticCompositionLocalOf { AppFont.SYSTEM }
@@ -232,10 +242,10 @@ private fun mergedSeedColorScheme(
         surfaceBright = neutralScheme.surfaceBright,
         surfaceDim = neutralScheme.surfaceDim,
         surfaceContainer = neutralScheme.surfaceContainer,
-        surfaceContainerLow = neutralScheme.surfaceContainerLow,
-        surfaceContainerLowest = neutralScheme.surfaceContainerLowest,
         surfaceContainerHigh = neutralScheme.surfaceContainerHigh,
         surfaceContainerHighest = neutralScheme.surfaceContainerHighest,
+        surfaceContainerLow = neutralScheme.surfaceContainerLow,
+        surfaceContainerLowest = neutralScheme.surfaceContainerLowest,
         outline = neutralScheme.outline,
         outlineVariant = neutralScheme.outlineVariant,
         error = primaryScheme.error,
@@ -247,44 +257,47 @@ private fun mergedSeedColorScheme(
     )
 }
 
-fun com.google.material.color.scheme.DynamicScheme.toColorScheme() = ColorScheme(
-    primary = Color(primary),
-    onPrimary = Color(onPrimary),
-    primaryContainer = Color(primaryContainer),
-    onPrimaryContainer = Color(onPrimaryContainer),
-    inversePrimary = Color(inversePrimary),
-    secondary = Color(secondary),
-    onSecondary = Color(onSecondary),
-    secondaryContainer = Color(secondaryContainer),
-    onSecondaryContainer = Color(onSecondaryContainer),
-    tertiary = Color(tertiary),
-    onTertiary = Color(onTertiary),
-    tertiaryContainer = Color(tertiaryContainer),
-    onTertiaryContainer = Color(onTertiaryContainer),
-    background = Color(background),
-    onBackground = Color(onBackground),
-    surface = Color(surface),
-    onSurface = Color(onSurface),
-    surfaceVariant = Color(surfaceVariant),
-    onSurfaceVariant = Color(onSurfaceVariant),
-    surfaceTint = Color(primary),
-    inverseSurface = Color(inverseSurface),
-    inverseOnSurface = Color(inverseOnSurface),
-    error = Color(error),
-    onError = Color(onError),
-    errorContainer = Color(errorContainer),
-    onErrorContainer = Color(onErrorContainer),
-    outline = Color(outline),
-    outlineVariant = Color(outlineVariant),
-    scrim = Color(scrim),
-    surfaceBright = Color(surfaceBright),
-    surfaceDim = Color(surfaceDim),
-    surfaceContainer = Color(surfaceContainer),
-    surfaceContainerHigh = Color(surfaceContainerHigh),
-    surfaceContainerHighest = Color(surfaceContainerHighest),
-    surfaceContainerLow = Color(surfaceContainerLow),
-    surfaceContainerLowest = Color(surfaceContainerLowest),
-)
+fun DynamicScheme.toColorScheme(): ColorScheme {
+    val dc = MaterialDynamicColors()
+    return ColorScheme(
+        primary = Color(dc.primary().getArgb(this)),
+        onPrimary = Color(dc.onPrimary().getArgb(this)),
+        primaryContainer = Color(dc.primaryContainer().getArgb(this)),
+        onPrimaryContainer = Color(dc.onPrimaryContainer().getArgb(this)),
+        inversePrimary = Color(dc.inversePrimary().getArgb(this)),
+        secondary = Color(dc.secondary().getArgb(this)),
+        onSecondary = Color(dc.onSecondary().getArgb(this)),
+        secondaryContainer = Color(dc.secondaryContainer().getArgb(this)),
+        onSecondaryContainer = Color(dc.onSecondaryContainer().getArgb(this)),
+        tertiary = Color(dc.tertiary().getArgb(this)),
+        onTertiary = Color(dc.onTertiary().getArgb(this)),
+        tertiaryContainer = Color(dc.tertiaryContainer().getArgb(this)),
+        onTertiaryContainer = Color(dc.onTertiaryContainer().getArgb(this)),
+        background = Color(dc.background().getArgb(this)),
+        onBackground = Color(dc.onBackground().getArgb(this)),
+        surface = Color(dc.surface().getArgb(this)),
+        onSurface = Color(dc.onSurface().getArgb(this)),
+        surfaceVariant = Color(dc.surfaceVariant().getArgb(this)),
+        onSurfaceVariant = Color(dc.onSurfaceVariant().getArgb(this)),
+        surfaceTint = Color(dc.primary().getArgb(this)),
+        inverseSurface = Color(dc.inverseSurface().getArgb(this)),
+        inverseOnSurface = Color(dc.inverseOnSurface().getArgb(this)),
+        error = Color(dc.error().getArgb(this)),
+        onError = Color(dc.onError().getArgb(this)),
+        errorContainer = Color(dc.errorContainer().getArgb(this)),
+        onErrorContainer = Color(dc.onErrorContainer().getArgb(this)),
+        outline = Color(dc.outline().getArgb(this)),
+        outlineVariant = Color(dc.outlineVariant().getArgb(this)),
+        scrim = Color(dc.scrim().getArgb(this)),
+        surfaceBright = Color(dc.surfaceBright().getArgb(this)),
+        surfaceDim = Color(dc.surfaceDim().getArgb(this)),
+        surfaceContainer = Color(dc.surfaceContainer().getArgb(this)),
+        surfaceContainerHigh = Color(dc.surfaceContainerHigh().getArgb(this)),
+        surfaceContainerHighest = Color(dc.surfaceContainerHighest().getArgb(this)),
+        surfaceContainerLow = Color(dc.surfaceContainerLow().getArgb(this)),
+        surfaceContainerLowest = Color(dc.surfaceContainerLowest().getArgb(this)),
+    )
+}
 
 fun ColorScheme.pureBlack(apply: Boolean, isDarkTheme: Boolean) =
     if (apply && isDarkTheme) {
@@ -302,6 +315,7 @@ val ColorSaver = object : Saver<Color, Int> {
     override fun SaverScope.save(value: Color): Int = value.toArgb()
 }
 
+// Integrated ThemeSeedPalette to prevent Redeclaration issues
 data class ThemeSeedPalette(
     val primary: Color,
     val secondary: Color,
@@ -309,35 +323,129 @@ data class ThemeSeedPalette(
     val neutral: Color
 )
 
+@Serializable
+data class ThemeExportV1(
+    val version: Int = 1,
+    val name: String? = null,
+    val primary: String,
+    val secondary: String,
+    val tertiary: String,
+    val neutral: String,
+)
+
 object ThemeSeedPaletteCodec {
-    fun decodeFromPreference(value: String): ThemeSeedPalette? {
-        if (!value.startsWith("{")) return null
-        return try {
-            val json = JSONObject(value)
-            ThemeSeedPalette(
-                primary = Color(json.getInt("primary")),
-                secondary = Color(json.getInt("secondary")),
-                tertiary = Color(json.getInt("tertiary")),
-                neutral = Color(json.getInt("neutral"))
+    private const val PreferencePrefix = "seedPalette:"
+    private val json = Json {
+        prettyPrint = true
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+        isLenient = true
+    }
+
+    fun encodeForPreference(palette: ThemeSeedPalette, name: String? = null): String {
+        val payload = json.encodeToString(
+            ThemeExportV1(
+                name = name,
+                primary = palette.primary.toHexArgbString(),
+                secondary = palette.secondary.toHexArgbString(),
+                tertiary = palette.tertiary.toHexArgbString(),
+                neutral = palette.neutral.toHexArgbString(),
             )
-        } catch (e: Exception) { null }
+        )
+        val b64 = Base64.encodeToString(payload.toByteArray(Charsets.UTF_8), Base64.URL_SAFE or Base64.NO_WRAP)
+        return PreferencePrefix + b64
     }
 
-    fun extractNameFromJsonOrNull(jsonString: String): String? {
-        return try {
-            val json = JSONObject(jsonString)
-            if (json.has("name")) json.getString("name") else null
-        } catch (e: Exception) { null }
+    fun decodeFromPreference(value: String): ThemeSeedPalette? {
+        if (!value.startsWith(PreferencePrefix)) return null
+        val b64 = value.removePrefix(PreferencePrefix)
+        val decoded = runCatching {
+            val bytes = Base64.decode(b64, Base64.URL_SAFE or Base64.NO_WRAP)
+            bytes.toString(Charsets.UTF_8)
+        }.getOrNull() ?: return null
+        return decodeFromJson(decoded)
     }
 
-    fun encodeForPreference(palette: ThemeSeedPalette, name: String?): String {
-        val json = JSONObject()
-        json.put("primary", palette.primary.toArgb())
-        json.put("secondary", palette.secondary.toArgb())
-        json.put("tertiary", palette.tertiary.toArgb())
-        json.put("neutral", palette.neutral.toArgb())
-        name?.let { json.put("name", it) }
-        return json.toString()
+    fun encodeAsJson(palette: ThemeSeedPalette, name: String? = null): String =
+        json.encodeToString(
+            ThemeExportV1(
+                name = name,
+                primary = palette.primary.toHexArgbString(),
+                secondary = palette.secondary.toHexArgbString(),
+                tertiary = palette.tertiary.toHexArgbString(),
+                neutral = palette.neutral.toHexArgbString(),
+            )
+        )
+
+    fun decodeFromJson(text: String): ThemeSeedPalette? {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) return null
+        return runCatching {
+            val element = json.parseToJsonElement(trimmed)
+            val obj = element.jsonObject
+
+            val version = obj["version"]?.jsonPrimitive?.content?.toIntOrNull() ?: 1
+            if (version != 1) return@runCatching null
+
+            fun getColor(key: String): Color? =
+                obj[key]?.jsonPrimitive?.content?.toColorOrNull()
+
+            val primary = getColor("primary") ?: return@runCatching null
+            val secondary = getColor("secondary") ?: primary
+            val tertiary = getColor("tertiary") ?: primary
+            val neutral = getColor("neutral") ?: primary
+
+            ThemeSeedPalette(primary, secondary, tertiary, neutral)
+        }.getOrNull() ?: decodeFromLegacyObject(trimmed)
+    }
+
+    fun extractNameFromJsonOrNull(text: String): String? {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) return null
+        return runCatching {
+            val element: JsonElement = json.parseToJsonElement(trimmed)
+            element.jsonObject["name"]?.jsonPrimitive?.content?.takeIf { it.isNotBlank() }
+        }.getOrNull()
+    }
+
+    fun extractNameFromPreference(value: String): String? {
+        if (!value.startsWith(PreferencePrefix)) return null
+        val b64 = value.removePrefix(PreferencePrefix)
+        val decoded = runCatching {
+            val bytes = Base64.decode(b64, Base64.URL_SAFE or Base64.NO_WRAP)
+            bytes.toString(Charsets.UTF_8)
+        }.getOrNull() ?: return null
+        return extractNameFromJsonOrNull(decoded)
+    }
+
+    private fun decodeFromLegacyObject(text: String): ThemeSeedPalette? {
+        val trimmed = text.trim()
+        if (!trimmed.startsWith("{")) return null
+        return runCatching {
+            val element = json.parseToJsonElement(trimmed)
+            val obj = element.jsonObject
+
+            fun getHex(key: String): String? =
+                obj[key]?.jsonPrimitive?.content?.takeIf { it.isNotBlank() }
+
+            val primary = getHex("primary")?.toColorOrNull() ?: return@runCatching null
+            val secondary = getHex("secondary")?.toColorOrNull() ?: primary
+            val tertiary = getHex("tertiary")?.toColorOrNull() ?: primary
+            val neutral = getHex("neutral")?.toColorOrNull() ?: primary
+
+            ThemeSeedPalette(primary, secondary, tertiary, neutral)
+        }.getOrNull()
+    }
+
+    private fun Color.toHexArgbString(): String = String.format("#%08X", this.toArgb())
+
+    private fun String.toColorOrNull(): Color? {
+        val normalized = trim()
+        if (normalized.isEmpty()) return null
+        return runCatching {
+            val withHash = if (normalized.startsWith("#")) normalized else "#$normalized"
+            Color(android.graphics.Color.parseColor(withHash))
+        }.getOrNull()
     }
 }
 
