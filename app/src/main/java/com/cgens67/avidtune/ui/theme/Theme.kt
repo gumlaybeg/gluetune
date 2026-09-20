@@ -29,9 +29,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import com.cgens67.gluetune.constants.AppFont
+import com.google.material.color.dynamiccolor.DynamicScheme
 import com.google.material.color.dynamiccolor.MaterialDynamicColors
 import com.google.material.color.hct.Hct
-import com.google.material.color.scheme.DynamicScheme
 import com.google.material.color.scheme.SchemeTonalSpot
 import com.google.material.color.score.Score
 
