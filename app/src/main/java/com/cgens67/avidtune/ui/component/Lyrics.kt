@@ -1,7 +1,6 @@
 package com.cgens67.gluetune.ui.component
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
@@ -14,6 +13,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -27,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -85,7 +88,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.saket.squiggles.SquigglySlider
 import kotlin.math.absoluteValue
-import kotlin.math.exp
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
@@ -117,7 +119,7 @@ fun Lyrics(
     val sponsorBlockEnabled by playerConnection.sponsorBlockEnabled.collectAsState()
 
     val sliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.DEFAULT)
-    val lyricsTextPosition by rememberEnumPreference(LyricsTextPositionKey, LyricsPosition.CENTER)
+    val lyricsTextPosition by rememberEnumPreference(LyricsTextPositionKey, LyricsPosition.LEFT)
     val changeLyrics by rememberPreference(LyricsClickKey, true)
     val scrollLyrics by rememberPreference(LyricsScrollKey, true)
     val animateLyrics by rememberPreference(AnimateLyricsKey, true)
@@ -277,11 +279,6 @@ fun Lyrics(
         else -> Color.White
     }
 
-    val textBackgroundColor = when (playerBackground) {
-        PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.onBackground
-        else -> Color.White
-    }
-
     var gradientColors by remember { mutableStateOf<List<Color>>(emptyList()) }
     val fallbackColorArgb = MaterialTheme.colorScheme.surface.toArgb()
 
@@ -322,7 +319,7 @@ fun Lyrics(
         }
     }
 
-    // Fetch lyrics
+    // Fetch lyrics logic
     LaunchedEffect(currentSongId) {
         currentSongId?.let { songId ->
             if (lyricsCache.containsKey(songId)) {
@@ -448,7 +445,7 @@ fun Lyrics(
         }
     }
 
-    suspend fun performSmoothPageScroll(targetIndex: Int, duration: Int = 1000) {
+    suspend fun performSmoothPageScroll(targetIndex: Int, duration: Int = 1200) {
         if (isAnimating) return
         isAnimating = true
         try {
@@ -482,7 +479,7 @@ fun Lyrics(
         }
 
         if (isAutoScrollEnabled && currentMainLineIndex != -1 && scrollLyrics) {
-            performSmoothPageScroll(currentMainLineIndex, 1000)
+            performSmoothPageScroll(currentMainLineIndex, 1200)
         }
         previousMainLineIndex = currentMainLineIndex
     }
@@ -492,7 +489,7 @@ fun Lyrics(
             .fillMaxSize()
             .background(if (isFullscreen) MaterialTheme.colorScheme.background else Color.Transparent)
     ) {
-        // Player Backgrounds
+        // Atmospheric Ambient Backgrounds
         if (isFullscreen) {
             Box(
                 modifier = Modifier
@@ -516,26 +513,133 @@ fun Lyrics(
         }
 
         Column(modifier = Modifier.fillMaxSize()) {
-            // Subtle Back Button in Fullscreen
+            // --- TOP HEADER BAR ---
             if (isFullscreen) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(onClick = { onNavigateBack?.invoke() }) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back),
-                            contentDescription = stringResource(R.string.back),
-                            tint = textBackgroundColor
-                        )
+                    // Back Glass Button
+                    Surface(
+                        onClick = { onNavigateBack?.invoke() },
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.15f),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
+                        modifier = Modifier.size(42.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back),
+                                contentDescription = stringResource(R.string.back),
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    // Interactive Action Pills (Translate, Romanize, Overflow)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Translation Pill
+                        Surface(
+                            onClick = { toggleTranslation() },
+                            shape = RoundedCornerShape(14.dp),
+                            color = if (showTranslated) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, if (showTranslated) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.12f)),
+                            modifier = Modifier.height(38.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (isTranslating) {
+                                    CircularProgressIndicator(
+                                        color = if (showTranslated) MaterialTheme.colorScheme.onPrimary else Color.White,
+                                        modifier = Modifier.size(14.dp),
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.translate),
+                                        contentDescription = null,
+                                        tint = if (showTranslated) MaterialTheme.colorScheme.onPrimary else Color.White,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    text = if (showTranslated) stringResource(R.string.show_original) else stringResource(R.string.Translate),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (showTranslated) MaterialTheme.colorScheme.onPrimary else Color.White
+                                )
+                            }
+                        }
+
+                        // Romanize Pill
+                        Surface(
+                            onClick = { toggleRomanization() },
+                            shape = RoundedCornerShape(14.dp),
+                            color = if (showRomanized) MaterialTheme.colorScheme.secondary else Color.White.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, if (showRomanized) MaterialTheme.colorScheme.secondary else Color.White.copy(alpha = 0.12f)),
+                            modifier = Modifier.height(38.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Rom",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (showRomanized) MaterialTheme.colorScheme.onSecondary else Color.White
+                                )
+                            }
+                        }
+
+                        // More Menu Pill
+                        Surface(
+                            onClick = {
+                                currentMetadata?.let { metadata ->
+                                    menuState.show {
+                                        LyricsMenu(
+                                            lyricsEntity = activeLyricsEntity,
+                                            mediaMetadata = metadata,
+                                            onDismiss = menuState::dismiss,
+                                            isTranslated = showTranslated,
+                                            onTranslateClick = { toggleTranslation() },
+                                            isRomanized = showRomanized,
+                                            onRomanizeClick = { toggleRomanization() },
+                                            navController = navController
+                                        )
+                                    }
+                                }
+                            },
+                            shape = CircleShape,
+                            color = Color.White.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
+                            modifier = Modifier.size(38.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    painter = painterResource(R.drawable.more_horiz),
+                                    contentDescription = stringResource(R.string.more_options),
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
 
-            // Lyrics List
+            // --- MAIN LYRICS AREA WITH SMOOTH FADING EDGES ---
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -544,14 +648,14 @@ fun Lyrics(
                 LazyColumn(
                     state = lazyListState,
                     contentPadding = PaddingValues(
-                        top = if (isFullscreen) 16.dp else 40.dp,
-                        bottom = if (isFullscreen) 180.dp else 70.dp,
-                        start = 16.dp,
-                        end = 16.dp
+                        top = if (isFullscreen) 24.dp else 48.dp,
+                        bottom = if (isFullscreen) 210.dp else 90.dp,
+                        start = 8.dp,
+                        end = 8.dp
                     ),
                     modifier = Modifier
                         .fillMaxSize()
-                        .fadingEdge(vertical = 40.dp)
+                        .fadingEdge(vertical = 48.dp)
                         .nestedScroll(nestedScrollConnection)
                 ) {
                     if (isLoadingLyrics) {
@@ -586,12 +690,13 @@ fun Lyrics(
                                     .padding(top = 96.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Card(
-                                    shape = RoundedCornerShape(20.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
-                                    ),
-                                    modifier = Modifier.fillMaxWidth(0.85f)
+                                Surface(
+                                    shape = RoundedCornerShape(24.dp),
+                                    color = Color.White.copy(alpha = 0.1f),
+                                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)),
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.85f)
+                                        .padding(20.dp)
                                 ) {
                                     Column(
                                         modifier = Modifier.padding(24.dp),
@@ -599,7 +704,7 @@ fun Lyrics(
                                         verticalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
                                         Icon(
-                                            painter = painterResource(R.drawable.music_note),
+                                            painter = painterResource(R.drawable.lyrics),
                                             contentDescription = null,
                                             modifier = Modifier.size(36.dp),
                                             tint = expressiveAccent
@@ -608,12 +713,13 @@ fun Lyrics(
                                             text = stringResource(R.string.lyrics_not_found),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
+                                            color = Color.White,
                                             textAlign = TextAlign.Center
                                         )
                                         Text(
                                             text = stringResource(R.string.lyrics_not_available_desc),
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            color = Color.White.copy(alpha = 0.7f),
                                             textAlign = TextAlign.Center
                                         )
                                     }
@@ -626,19 +732,17 @@ fun Lyrics(
                             key = { index, item -> "$index-${item.time}" }
                         ) { index, item ->
                             val isSelected = selectedIndices.contains(index)
-
-                            // BACKING VOCALS HIGHLIGHT FIX:
-                            // A backing vocal highlights whenever it is currently playing (currentLineIndex == index)
-                            // OR when the parent main line is playing and the backing line overlaps.
-                            val isCurrentlyPlayingLine = (index == currentLineIndex)
-                            val isParentMainLineOfPlayingBg = (!item.isBackground && currentLineIndex > index &&
-                                    displayedLines.subList(index + 1, currentLineIndex + 1).all { it.isBackground })
-                            val isChildBgLineOfPlayingMain = (item.isBackground && currentMainLineIndex >= 0 &&
+                            val isDirectlyCurrent = index == currentLineIndex
+                            val isCurrentMain = index == currentMainLineIndex
+                            val isAssociatedBg = item.isBackground && (
+                                isDirectlyCurrent || (
+                                    currentMainLineIndex >= 0 &&
                                     index > currentMainLineIndex &&
-                                    displayedLines.subList(currentMainLineIndex + 1, index + 1).all { it.isBackground } &&
-                                    currentLineIndex >= index)
+                                    displayedLines.subList(currentMainLineIndex + 1, index + 1).all { it.isBackground }
+                                )
+                            )
 
-                            val isActiveLine = (isCurrentlyPlayingLine || isParentMainLineOfPlayingBg || isChildBgLineOfPlayingMain) && isSynced
+                            val isActiveLine = (isCurrentMain || isDirectlyCurrent || isAssociatedBg) && isSynced
                             val distance = if (isActiveLine) 0 else kotlin.math.abs(index - currentMainLineIndex)
                             val romText = if (showRomanized) romanizedLines?.getOrNull(index) else null
 
@@ -651,7 +755,7 @@ fun Lyrics(
                                 lyricsTextPosition = lyricsTextPosition,
                                 textColor = expressiveAccent,
                                 textSize = 25f,
-                                lineSpacing = 6f,
+                                lineSpacing = 4f,
                                 onClick = {
                                     if (isSelectionModeActive) {
                                         if (isSelected) {
@@ -671,7 +775,7 @@ fun Lyrics(
                                             }
                                         }
                                         playerConnection.player.seekTo(targetVideoTime)
-                                        scope.launch { performSmoothPageScroll(index, 1000) }
+                                        scope.launch { performSmoothPageScroll(index, 1200) }
                                     }
                                 },
                                 onLongClick = {
@@ -689,7 +793,7 @@ fun Lyrics(
                                 sponsorBlockEnabled = sponsorBlockEnabled
                             )
 
-                            // Gap indicator between songs
+                            // Instrumental / Gap indicator
                             val nextItem = displayedLines.getOrNull(index + 1)
                             if (isSynced && nextItem != null && !item.isBackground && !nextItem.isBackground) {
                                 val itemEnd = item.words?.maxOfOrNull { (it.endTime * 1000).toLong() } ?: (item.time + 3000L)
@@ -714,96 +818,86 @@ fun Lyrics(
                                 Text(
                                     text = stringResource(R.string.lyrics_provided_by, lyricsProviderName),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = textBackgroundColor.copy(alpha = 0.5f),
+                                    color = Color.White.copy(alpha = 0.45f),
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 28.dp, bottom = 16.dp)
+                                        .padding(top = 32.dp, bottom = 16.dp)
                                 )
                             }
                         }
                     }
                 }
 
-                // Auto-Scroll Resume Button
+                // Auto-Scroll Paused Floating Pill
                 androidx.compose.animation.AnimatedVisibility(
                     visible = !isAutoScrollEnabled && isSynced && !isSelectionModeActive,
-                    enter = slideInVertically { it } + fadeIn(),
-                    exit = slideOutVertically { it } + fadeOut(),
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = if (isFullscreen) 200.dp else 80.dp)
+                        .padding(bottom = if (isFullscreen) 195.dp else 75.dp)
                 ) {
                     Surface(
                         onClick = {
-                            scope.launch { performSmoothPageScroll(currentLineIndex, 1000) }
+                            scope.launch { performSmoothPageScroll(currentLineIndex, 1200) }
                             isAutoScrollEnabled = true
                         },
                         shape = CircleShape,
-                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-                        tonalElevation = 6.dp,
-                        shadowElevation = 6.dp
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+                        shadowElevation = 8.dp
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.sync),
-                                contentDescription = stringResource(R.string.auto_scroll),
-                                modifier = Modifier.size(18.dp),
-                                tint = MaterialTheme.colorScheme.primary
+                                painter = painterResource(R.drawable.sync),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.auto_scroll),
                                 style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
                 }
 
-                // Selection Mode Actions
+                // Multi-Selection Floating Action Dock
                 androidx.compose.animation.AnimatedVisibility(
                     visible = isSelectionModeActive,
-                    enter = slideInVertically { it } + fadeIn(),
-                    exit = slideOutVertically { it } + fadeOut(),
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = if (isFullscreen) 200.dp else 80.dp)
+                        .padding(bottom = if (isFullscreen) 195.dp else 75.dp)
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Surface(
+                        shape = RoundedCornerShape(24.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shadowElevation = 12.dp,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.95f),
-                            tonalElevation = 4.dp,
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clickable {
-                                    isSelectionModeActive = false
-                                    selectedIndices.clear()
-                                }
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.close),
-                                    contentDescription = stringResource(R.string.cancel),
-                                    tint = MaterialTheme.colorScheme.onErrorContainer,
-                                    modifier = Modifier.size(22.dp)
-                                )
+                            TextButton(onClick = {
+                                isSelectionModeActive = false
+                                selectedIndices.clear()
+                            }) {
+                                Text(stringResource(R.string.cancel))
                             }
-                        }
 
-                        if (selectedIndices.isNotEmpty()) {
-                            Surface(
-                                shape = RoundedCornerShape(26.dp),
-                                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.95f),
-                                tonalElevation = 4.dp,
-                                modifier = Modifier.clickable {
+                            Button(
+                                onClick = {
                                     val sortedIndices = selectedIndices.sorted()
                                     val selectedLyricsText = sortedIndices
                                         .mapNotNull { displayedLines.getOrNull(it)?.text }
@@ -819,344 +913,44 @@ fun Lyrics(
                                     }
                                     isSelectionModeActive = false
                                     selectedIndices.clear()
-                                }
+                                },
+                                enabled = selectedIndices.isNotEmpty(),
+                                shape = RoundedCornerShape(16.dp)
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.media3_icon_share),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Text(
-                                        text = "${stringResource(R.string.share)} (${selectedIndices.size})",
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
+                                Icon(
+                                    painter = painterResource(R.drawable.share),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(6.dp))
+                                Text("${stringResource(R.string.share)} (${selectedIndices.size})")
                             }
                         }
                     }
                 }
             }
 
-            // Clean Original Bottom Player Controls
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
-            ) {
-                val offsetXAnimatable = remember { Animatable(0f) }
-                var dragStartTime by remember { mutableLongStateOf(0L) }
-                var totalDragDistance by remember { mutableFloatStateOf(0f) }
-                val layoutDirection = LocalLayoutDirection.current
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .pointerInput(swipeThumbnail) {
-                                if (!swipeThumbnail) return@pointerInput
-                                detectHorizontalDragGestures(
-                                    onDragStart = {
-                                        dragStartTime = System.currentTimeMillis()
-                                        totalDragDistance = 0f
-                                    },
-                                    onDragCancel = {
-                                        scope.launch {
-                                            offsetXAnimatable.animateTo(
-                                                targetValue = 0f,
-                                                animationSpec = spring(
-                                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                                    stiffness = Spring.StiffnessLow
-                                                )
-                                            )
-                                        }
-                                    },
-                                    onHorizontalDrag = { _, dragAmount ->
-                                        val adjustedDragAmount = if (layoutDirection == LayoutDirection.Rtl) -dragAmount else dragAmount
-                                        val allowLeft = adjustedDragAmount < 0 && canSkipNext
-                                        val allowRight = adjustedDragAmount > 0 && canSkipPrevious
-
-                                        if (allowLeft || allowRight) {
-                                            totalDragDistance += adjustedDragAmount.absoluteValue
-                                            scope.launch {
-                                                offsetXAnimatable.snapTo(offsetXAnimatable.value + adjustedDragAmount)
-                                            }
-                                        }
-                                    },
-                                    onDragEnd = {
-                                        val dragDuration = System.currentTimeMillis() - dragStartTime
-                                        val velocity = if (dragDuration > 0) totalDragDistance / dragDuration else 0f
-                                        val currentOffset = offsetXAnimatable.value
-
-                                        val minDistanceThreshold = 50f
-                                        val velocityThreshold = (0.73f * -8.25f) + 8.5f
-                                        val autoSwipeThreshold = (600 / (1f + exp(-(-11.44748 * 0.73f + 9.04945)))).roundToInt()
-
-                                        val shouldChangeSong = (
-                                                currentOffset.absoluteValue > minDistanceThreshold &&
-                                                        velocity > velocityThreshold
-                                                ) || (currentOffset.absoluteValue > autoSwipeThreshold)
-
-                                        if (shouldChangeSong) {
-                                            val isRightSwipe = currentOffset > 0
-                                            if (isRightSwipe && canSkipPrevious) {
-                                                playerConnection.seekToPrevious()
-                                            } else if (!isRightSwipe && canSkipNext) {
-                                                playerConnection.seekToNext()
-                                            }
-                                        }
-
-                                        scope.launch {
-                                            offsetXAnimatable.animateTo(
-                                                targetValue = 0f,
-                                                animationSpec = spring(
-                                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                                    stiffness = Spring.StiffnessLow
-                                                )
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .offset { IntOffset(offsetXAnimatable.value.roundToInt(), 0) }
-                                .fillMaxWidth()
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable {
-                                        if (playbackState == Player.STATE_ENDED) {
-                                            playerConnection.player.seekTo(0, 0)
-                                            playerConnection.player.playWhenReady = true
-                                        } else {
-                                            if (isPlaying) playerConnection.player.pause() else playerConnection.player.play()
-                                        }
-                                    }
-                            ) {
-                                currentMetadata?.let { metadata ->
-                                    AsyncImage(
-                                        model = metadata.thumbnailUrl,
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                }
-
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(Color.Black.copy(alpha = 0.4f))
-                                )
-
-                                Icon(
-                                    painter = painterResource(
-                                        if (playbackState == Player.STATE_ENDED) {
-                                            R.drawable.replay
-                                        } else if (isPlaying) {
-                                            R.drawable.pause
-                                        } else {
-                                            R.drawable.play
-                                        }
-                                    ),
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                currentMetadata?.let { metadata ->
-                                    Text(
-                                        text = metadata.title,
-                                        style = MaterialTheme.typography.titleMedium.copy(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.SemiBold
-                                        ),
-                                        color = textBackgroundColor,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-
-                                    Spacer(modifier = Modifier.height(4.dp))
-
-                                    Text(
-                                        text = if (metadata.artists.isNotEmpty()) {
-                                            metadata.artists.joinToString(", ") { it.name }
-                                        } else {
-                                            stringResource(R.string.unknown)
-                                        },
-                                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
-                                        color = textBackgroundColor.copy(alpha = 0.7f),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
+            // --- FLOATING GLASS PLAYER CONTROLS (FULLSCREEN) ---
+            if (isFullscreen) {
+                LyricsBottomPlayerDock(
+                    mediaMetadata = currentMetadata,
+                    position = position,
+                    duration = duration,
+                    isPlaying = isPlaying,
+                    sliderStyle = sliderStyle,
+                    canSkipPrevious = canSkipPrevious,
+                    canSkipNext = canSkipNext,
+                    playerConnection = playerConnection,
+                    sliderPosition = sliderPosition,
+                    onSliderPositionChange = { sliderPosition = it },
+                    onSliderSeekFinished = {
+                        sliderPosition?.let {
+                            playerConnection.player.seekTo(it)
+                            position = it
                         }
+                        sliderPosition = null
                     }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        IconButton(onClick = { playerConnection.toggleLike() }) {
-                            Icon(
-                                painter = painterResource(
-                                    if (currentSong?.song?.liked == true)
-                                        R.drawable.favorite
-                                    else R.drawable.favorite_border
-                                ),
-                                contentDescription = null,
-                                tint = if (currentSong?.song?.liked == true)
-                                    MaterialTheme.colorScheme.error
-                                else
-                                    textBackgroundColor.copy(alpha = 0.8f),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-
-                        IconButton(
-                            onClick = {
-                                currentMetadata?.let { metadata ->
-                                    menuState.show {
-                                        LyricsMenu(
-                                            lyricsEntity = activeLyricsEntity,
-                                            mediaMetadata = metadata,
-                                            onDismiss = menuState::dismiss,
-                                            isTranslated = showTranslated,
-                                            onTranslateClick = { toggleTranslation() },
-                                            isRomanized = showRomanized,
-                                            onRomanizeClick = { toggleRomanization() },
-                                            navController = navController
-                                        )
-                                    }
-                                }
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.more_horiz),
-                                contentDescription = stringResource(R.string.more_options),
-                                tint = textBackgroundColor,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // Progress Slider
-                when (sliderStyle) {
-                    SliderStyle.DEFAULT -> {
-                        Slider(
-                            value = (sliderPosition ?: position).toFloat(),
-                            valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
-                            onValueChange = { sliderPosition = it.toLong() },
-                            onValueChangeFinished = {
-                                sliderPosition?.let {
-                                    playerConnection.player.seekTo(it)
-                                    position = it
-                                }
-                                sliderPosition = null
-                            },
-                            colors = SliderDefaults.colors(
-                                activeTrackColor = textBackgroundColor,
-                                inactiveTrackColor = textBackgroundColor.copy(alpha = 0.3f),
-                                thumbColor = textBackgroundColor
-                            ),
-                        )
-                    }
-                    SliderStyle.SQUIGGLY -> {
-                        SquigglySlider(
-                            value = (sliderPosition ?: position).toFloat(),
-                            valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
-                            onValueChange = { sliderPosition = it.toLong() },
-                            onValueChangeFinished = {
-                                sliderPosition?.let {
-                                    playerConnection.player.seekTo(it)
-                                    position = it
-                                }
-                                sliderPosition = null
-                            },
-                            colors = SliderDefaults.colors(
-                                activeTrackColor = textBackgroundColor,
-                                inactiveTrackColor = textBackgroundColor.copy(alpha = 0.3f),
-                                thumbColor = textBackgroundColor
-                            ),
-                            squigglesSpec = SquigglySlider.SquigglesSpec(
-                                amplitude = if (isPlaying && animateLyrics) (4.dp).coerceAtLeast(2.dp) else 0.dp,
-                                strokeWidth = 3.dp,
-                                wavelength = 36.dp,
-                            ),
-                        )
-                    }
-                    SliderStyle.SLIM -> {
-                        Slider(
-                            value = (sliderPosition ?: position).toFloat(),
-                            valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
-                            onValueChange = { sliderPosition = it.toLong() },
-                            onValueChangeFinished = {
-                                sliderPosition?.let {
-                                    playerConnection.player.seekTo(it)
-                                    position = it
-                                }
-                                sliderPosition = null
-                            },
-                            thumb = { Spacer(modifier = Modifier.size(0.dp)) },
-                            colors = SliderDefaults.colors(
-                                activeTrackColor = textBackgroundColor,
-                                inactiveTrackColor = textBackgroundColor.copy(alpha = 0.3f)
-                            )
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = makeTimeString(sliderPosition ?: position),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = textBackgroundColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    Text(
-                        text = if (duration != C.TIME_UNSET) makeTimeString(duration) else "",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = textBackgroundColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+                )
             }
         }
     }
@@ -1232,12 +1026,210 @@ fun GapIndicator(
                 .padding(vertical = 32.dp),
             contentAlignment = Alignment.Center
         ) {
-            CircularWavyProgressIndicator(
+            androidx.compose.material3.CircularWavyProgressIndicator(
                 progress = { progress },
                 color = color,
                 trackColor = color.copy(alpha = 0.2f),
                 modifier = Modifier.size(40.dp)
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LyricsBottomPlayerDock(
+    mediaMetadata: com.cgens67.gluetune.models.MediaMetadata?,
+    position: Long,
+    duration: Long,
+    isPlaying: Boolean,
+    sliderStyle: SliderStyle,
+    canSkipPrevious: Boolean,
+    canSkipNext: Boolean,
+    playerConnection: PlayerConnection,
+    sliderPosition: Long?,
+    onSliderPositionChange: (Long) -> Unit,
+    onSliderSeekFinished: () -> Unit
+) {
+    val currentSong by playerConnection.currentSong.collectAsState(initial = null)
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(32.dp),
+        color = Color.Black.copy(alpha = 0.5f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)),
+        shadowElevation = 16.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp)
+        ) {
+            // Track Info & Like Action
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    ) {
+                        AsyncImage(
+                            model = mediaMetadata?.thumbnailUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    Spacer(Modifier.width(12.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = mediaMetadata?.title.orEmpty(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = mediaMetadata?.artists?.joinToString(", ") { it.name }.orEmpty(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.7f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
+                IconButton(onClick = { playerConnection.toggleLike() }) {
+                    Icon(
+                        painter = painterResource(
+                            if (currentSong?.song?.liked == true) R.drawable.favorite else R.drawable.favorite_border
+                        ),
+                        contentDescription = null,
+                        tint = if (currentSong?.song?.liked == true) Color(0xFFFF4B6E) else Color.White.copy(alpha = 0.8f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // Progress Slider
+            when (sliderStyle) {
+                SliderStyle.SQUIGGLY -> {
+                    SquigglySlider(
+                        value = (sliderPosition ?: position).toFloat(),
+                        valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
+                        onValueChange = { onSliderPositionChange(it.toLong()) },
+                        onValueChangeFinished = onSliderSeekFinished,
+                        colors = SliderDefaults.colors(
+                            activeTrackColor = Color.White,
+                            inactiveTrackColor = Color.White.copy(alpha = 0.25f),
+                            thumbColor = Color.White
+                        ),
+                        squigglesSpec = SquigglySlider.SquigglesSpec(
+                            amplitude = if (isPlaying) 3.dp else 0.dp,
+                            strokeWidth = 3.dp,
+                            wavelength = 32.dp
+                        )
+                    )
+                }
+                else -> {
+                    Slider(
+                        value = (sliderPosition ?: position).toFloat(),
+                        valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
+                        onValueChange = { onSliderPositionChange(it.toLong()) },
+                        onValueChangeFinished = onSliderSeekFinished,
+                        colors = SliderDefaults.colors(
+                            activeTrackColor = Color.White,
+                            inactiveTrackColor = Color.White.copy(alpha = 0.25f),
+                            thumbColor = Color.White
+                        )
+                    )
+                }
+            }
+
+            // Timestamps
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-4).dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = makeTimeString(sliderPosition ?: position),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.65f)
+                )
+                Text(
+                    text = if (duration != C.TIME_UNSET) makeTimeString(duration) else "--:--",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.65f)
+                )
+            }
+
+            // Transport Controls
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { playerConnection.seekToPrevious() },
+                    enabled = canSkipPrevious,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.skip_previous),
+                        contentDescription = null,
+                        tint = if (canSkipPrevious) Color.White else Color.White.copy(alpha = 0.3f),
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+
+                Spacer(Modifier.width(24.dp))
+
+                Surface(
+                    onClick = { playerConnection.togglePlayPause() },
+                    shape = CircleShape,
+                    color = Color.White,
+                    modifier = Modifier.size(56.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            painter = painterResource(if (isPlaying) R.drawable.pause else R.drawable.play),
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.width(24.dp))
+
+                IconButton(
+                    onClick = { playerConnection.seekToNext() },
+                    enabled = canSkipNext,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.skip_next),
+                        contentDescription = null,
+                        tint = if (canSkipNext) Color.White else Color.White.copy(alpha = 0.3f),
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
         }
     }
 }
