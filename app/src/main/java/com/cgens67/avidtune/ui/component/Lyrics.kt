@@ -1,8 +1,8 @@
 package com.cgens67.gluetune.ui.component
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -55,6 +56,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.navigation.NavController
+import androidx.palette.graphics.Palette
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cgens67.gluetune.LocalDatabase
@@ -69,6 +72,7 @@ import com.cgens67.gluetune.lyrics.LyricsUtils.findCurrentLineIndex
 import com.cgens67.gluetune.lyrics.LyricsUtils.parseLyrics
 import com.cgens67.gluetune.playback.PlayerConnection
 import com.cgens67.gluetune.ui.menu.LyricsMenu
+import com.cgens67.gluetune.ui.player.PlayerBackground
 import com.cgens67.gluetune.ui.screens.settings.DarkMode
 import com.cgens67.gluetune.ui.screens.settings.LyricsPosition
 import com.cgens67.gluetune.ui.theme.PlayerColorExtractor
@@ -86,6 +90,9 @@ import me.saket.squiggles.SquigglySlider
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
+
+const val ANIMATE_SCROLL_DURATION = 300L
+val LyricsPreviewTime = 2.seconds
 
 @RequiresApi(Build.VERSION_CODES.M)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -273,6 +280,44 @@ fun Lyrics(
     }
 
     var gradientColors by remember { mutableStateOf<List<Color>>(emptyList()) }
+    val fallbackColorArgb = MaterialTheme.colorScheme.surface.toArgb()
+
+    LaunchedEffect(currentMetadata?.thumbnailUrl, playerBackground, fallbackColorArgb) {
+        val thumbUrl = currentMetadata?.thumbnailUrl
+        if ((playerBackground == PlayerBackgroundStyle.GRADIENT || playerBackground == PlayerBackgroundStyle.APPLE_MUSIC || playerBackground == PlayerBackgroundStyle.LIVE_MESH) && thumbUrl != null) {
+            val cached = PlayerColorExtractor.gradientCache.get(thumbUrl)
+            if (cached != null && cached.isNotEmpty()) {
+                gradientColors = cached
+                return@LaunchedEffect
+            }
+            withContext(Dispatchers.IO) {
+                val result = runCatching {
+                    ImageLoader(context).execute(
+                        ImageRequest.Builder(context)
+                            .data(thumbUrl)
+                            .allowHardware(false)
+                            .build()
+                    ).drawable as? BitmapDrawable
+                }.getOrNull()
+                result?.bitmap?.let { bitmap ->
+                    val palette = Palette.from(bitmap)
+                        .maximumColorCount(8)
+                        .resizeBitmapArea(100 * 100)
+                        .generate()
+                    val extracted = PlayerColorExtractor.extractGradientColors(
+                        palette = palette,
+                        fallbackColor = fallbackColorArgb
+                    )
+                    PlayerColorExtractor.gradientCache.put(thumbUrl, extracted)
+                    withContext(Dispatchers.Main) {
+                        gradientColors = extracted
+                    }
+                }
+            }
+        } else {
+            gradientColors = emptyList()
+        }
+    }
 
     // Fetch lyrics logic
     LaunchedEffect(currentSongId) {
@@ -413,7 +458,10 @@ fun Lyrics(
                 if (kotlin.math.abs(offset) > 8) {
                     lazyListState.animateScrollBy(
                         value = offset.toFloat(),
-                        animationSpec = tween(durationMillis = if (animateLyrics) duration else 1, easing = FastOutSlowInEasing)
+                        animationSpec = tween<Float>(
+                            durationMillis = if (animateLyrics) duration else 1,
+                            easing = FastOutSlowInEasing
+                        )
                     )
                 }
             } else {
@@ -777,7 +825,7 @@ fun Lyrics(
                 }
 
                 // Auto-Scroll Paused Floating Pill
-                AnimatedVisibility(
+                androidx.compose.animation.AnimatedVisibility(
                     visible = !isAutoScrollEnabled && isSynced && !isSelectionModeActive,
                     enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                     exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
@@ -817,7 +865,7 @@ fun Lyrics(
                 }
 
                 // Multi-Selection Floating Action Dock
-                AnimatedVisibility(
+                androidx.compose.animation.AnimatedVisibility(
                     visible = isSelectionModeActive,
                     enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                     exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
@@ -913,6 +961,73 @@ fun Lyrics(
                 shareDialogData = null
             }
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun GapIndicator(
+    gapStart: Long,
+    gapEnd: Long,
+    playerConnection: PlayerConnection,
+    lyricsOffset: Long,
+    color: Color,
+    currentSkipSegments: List<Pair<Long, Long>> = emptyList(),
+    sponsorBlockEnabled: Boolean = false
+) {
+    var smoothPosition by remember { mutableLongStateOf(gapStart) }
+
+    LaunchedEffect(Unit, currentSkipSegments, sponsorBlockEnabled) {
+        var lastPlayerPos = playerConnection.player.currentPosition
+        var lastUpdateTime = System.currentTimeMillis()
+        while (isActive) {
+            withFrameMillis {
+                val now = System.currentTimeMillis()
+                val playerPos = playerConnection.player.currentPosition
+                if (playerPos != lastPlayerPos) {
+                    lastPlayerPos = playerPos
+                    lastUpdateTime = now
+                }
+                val elapsed = now - lastUpdateTime
+                val currentVideoPos = lastPlayerPos + (if (playerConnection.player.isPlaying) elapsed else 0)
+
+                var sponsorBlockOffset = 0L
+                if (sponsorBlockEnabled) {
+                    for (segment in currentSkipSegments) {
+                        if (currentVideoPos >= segment.second) {
+                            sponsorBlockOffset += (segment.second - segment.first)
+                        } else if (currentVideoPos > segment.first) {
+                            sponsorBlockOffset += (currentVideoPos - segment.first)
+                        }
+                    }
+                }
+
+                smoothPosition = currentVideoPos - sponsorBlockOffset + lyricsOffset
+            }
+        }
+    }
+
+    val progress by remember { derivedStateOf { ((smoothPosition - gapStart).toFloat() / (gapEnd - gapStart)).coerceIn(0f, 1f) } }
+    val isVisible by remember { derivedStateOf { smoothPosition in gapStart..(gapEnd - 1000L) } }
+
+    androidx.compose.animation.AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(tween(1000)) + expandVertically(tween(1000)),
+        exit = fadeOut(tween(1000)) + shrinkVertically(tween(1000))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.CircularWavyProgressIndicator(
+                progress = { progress },
+                color = color,
+                trackColor = color.copy(alpha = 0.2f),
+                modifier = Modifier.size(40.dp)
+            )
+        }
     }
 }
 
