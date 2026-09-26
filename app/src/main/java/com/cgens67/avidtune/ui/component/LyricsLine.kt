@@ -68,9 +68,7 @@ import com.cgens67.gluetune.ui.screens.settings.LyricsPosition
 import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.isActive
 import java.text.BreakIterator
-import kotlin.math.cos
-import kotlin.math.exp
-import kotlin.math.sin
+import kotlin.math.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -99,11 +97,17 @@ fun LyricsLine(
     val (disableBlur) = rememberPreference(DisableBlurKey, false)
     val playerConnection = LocalPlayerConnection.current ?: return
 
+    // Depth-of-field progressive atmospheric blur
     val blurRadius by animateFloatAsState(
-        targetValue = if (disableBlur || !appleMusicLyricsBlur || !isAutoScrollActive || isActive || !isSynced || isSelectionModeActive)
+        targetValue = if (disableBlur || !appleMusicLyricsBlur || !isAutoScrollActive || isActive || !isSynced || isSelectionModeActive) {
             0f
-        else
-            6f,
+        } else {
+            when (distanceFromCurrent) {
+                1 -> 2.5f
+                2 -> 4.5f
+                else -> 7f
+            }
+        },
         animationSpec = if (animateLyrics) tween(durationMillis = 500) else snap(),
         label = "blur"
     )
@@ -130,27 +134,6 @@ fun LyricsLine(
         label = "alpha"
     )
 
-    val itemModifier = modifier
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(8.dp))
-        .combinedClickable(
-            enabled = true,
-            onClick = onClick,
-            onLongClick = onLongClick
-        )
-        .background(
-            if (isSelected && isSelectionModeActive)
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-            else Color.Transparent
-        )
-        .padding(horizontal = 24.dp, vertical = lineSpacing.dp)
-        .graphicsLayer {
-            this.alpha = animatedAlpha
-            this.scaleX = animatedScale
-            this.scaleY = animatedScale
-        }
-        .then(if (blurRadius > 0.05f) Modifier.blur(blurRadius.dp) else Modifier)
-
     val agentAlignment = when {
         entry.agent == "v1" -> Alignment.Start
         entry.agent == "v2" -> Alignment.End
@@ -174,6 +157,27 @@ fun LyricsLine(
             LyricsPosition.RIGHT -> TextAlign.Right
         }
     }
+
+    val itemModifier = modifier
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(8.dp))
+        .combinedClickable(
+            enabled = true,
+            onClick = onClick,
+            onLongClick = onLongClick
+        )
+        .background(
+            if (isSelected && isSelectionModeActive)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            else Color.Transparent
+        )
+        .padding(horizontal = 24.dp, vertical = lineSpacing.dp)
+        .graphicsLayer {
+            this.alpha = animatedAlpha
+            this.scaleX = animatedScale
+            this.scaleY = animatedScale
+        }
+        .then(if (blurRadius > 0.05f) Modifier.blur(blurRadius.dp) else Modifier)
 
     Column(
         modifier = itemModifier,
