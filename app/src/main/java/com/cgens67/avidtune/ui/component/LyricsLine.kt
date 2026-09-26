@@ -8,7 +8,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,10 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
@@ -40,7 +35,6 @@ import com.cgens67.gluetune.playback.PlayerConnection
 import com.cgens67.gluetune.ui.screens.settings.LyricsPosition
 import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.isActive
-import java.text.BreakIterator
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -69,41 +63,34 @@ fun LyricsLine(
     val (disableBlur) = rememberPreference(DisableBlurKey, false)
     val playerConnection = LocalPlayerConnection.current ?: return
 
-    // Depth-of-field progressive atmospheric blur
     val blurRadius by animateFloatAsState(
-        targetValue = if (disableBlur || !appleMusicLyricsBlur || !isAutoScrollActive || isActive || !isSynced || isSelectionModeActive) {
+        targetValue = if (disableBlur || !appleMusicLyricsBlur || !isAutoScrollActive || isActive || !isSynced || isSelectionModeActive)
             0f
-        } else {
-            when (distanceFromCurrent) {
-                1 -> 2.5f
-                2 -> 4.5f
-                else -> 7f
-            }
-        },
-        animationSpec = if (animateLyrics) tween(durationMillis = 500) else snap(),
+        else
+            6f,
+        animationSpec = if (animateLyrics) tween(durationMillis = 600) else snap(),
         label = "blur"
     )
 
     val animatedScale by animateFloatAsState(
         targetValue = when {
-            !isSynced || isActive -> 1.06f
-            distanceFromCurrent == 1 -> 0.98f
-            else -> 0.92f
+            !isSynced || isActive -> 1.05f
+            distanceFromCurrent == 1 -> 1f
+            else -> 0.95f
         },
-        animationSpec = if (animateLyrics) spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessMediumLow) else snap(),
+        animationSpec = if (animateLyrics) tween(durationMillis = 400) else snap(),
         label = "scale"
     )
 
     val animatedAlpha by animateFloatAsState(
         targetValue = when {
-            !isSynced -> 1f
-            isSelectionModeActive && isSelected -> 1f
+            !isSynced || (isSelectionModeActive && isSelected) -> 1f
             isActive -> 1f
-            distanceFromCurrent == 1 -> 0.65f
-            distanceFromCurrent == 2 -> 0.38f
-            else -> 0.18f
+            distanceFromCurrent == 1 -> 0.7f
+            distanceFromCurrent == 2 -> 0.4f
+            else -> 0.2f
         },
-        animationSpec = if (animateLyrics) tween(durationMillis = 350) else snap(),
+        animationSpec = if (animateLyrics) tween(durationMillis = 400) else snap(),
         label = "alpha"
     )
 
@@ -111,7 +98,6 @@ fun LyricsLine(
         entry.agent == "v1" -> Alignment.Start
         entry.agent == "v2" -> Alignment.End
         entry.agent == "v1000" -> Alignment.CenterHorizontally
-        entry.isBackground -> Alignment.End
         else -> when (lyricsTextPosition) {
             LyricsPosition.LEFT -> Alignment.Start
             LyricsPosition.CENTER -> Alignment.CenterHorizontally
@@ -123,7 +109,6 @@ fun LyricsLine(
         entry.agent == "v1" -> TextAlign.Left
         entry.agent == "v2" -> TextAlign.Right
         entry.agent == "v1000" -> TextAlign.Center
-        entry.isBackground -> TextAlign.Right
         else -> when (lyricsTextPosition) {
             LyricsPosition.LEFT -> TextAlign.Left
             LyricsPosition.CENTER -> TextAlign.Center
@@ -133,53 +118,55 @@ fun LyricsLine(
 
     val itemModifier = modifier
         .fillMaxWidth()
-        .clip(RoundedCornerShape(16.dp))
+        .clip(RoundedCornerShape(8.dp))
         .combinedClickable(
             enabled = true,
             onClick = onClick,
             onLongClick = onLongClick
         )
         .background(
-            if (isSelected && isSelectionModeActive) {
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.28f)
-            } else Color.Transparent
+            if (isSelected && isSelectionModeActive)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            else Color.Transparent
         )
-        .padding(horizontal = 16.dp, vertical = lineSpacing.dp)
+        .padding(horizontal = 24.dp, vertical = lineSpacing.dp)
         .graphicsLayer {
             this.alpha = animatedAlpha
             this.scaleX = animatedScale
             this.scaleY = animatedScale
         }
-        .then(if (blurRadius > 0.1f) Modifier.blur(blurRadius.dp) else Modifier)
+        .then(if (blurRadius > 0.01f) Modifier.blur(blurRadius.dp) else Modifier)
 
     Column(
         modifier = itemModifier,
         horizontalAlignment = agentAlignment
     ) {
-        val mainText = if (entry.isBackground) entry.text.removePrefix("(").removeSuffix(")") else entry.text
-
-        // Tag label for background vocal lines
-        if (entry.isBackground) {
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = textColor.copy(alpha = 0.15f),
-                modifier = Modifier.padding(bottom = 4.dp)
-            ) {
-                Text(
-                    text = "Backing",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = textColor.copy(alpha = 0.75f),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                )
+        // BACKING VOCALS FIX:
+        // Backing vocal lines (entry.isBackground) now highlight to 1.0f when isActive is true!
+        val targetAlpha = when {
+            !isSynced -> 1f
+            isActive -> 1f
+            entry.isBackground -> 0.35f
+            isAutoScrollActive -> when (distanceFromCurrent) {
+                1 -> 0.35f
+                2 -> 0.25f
+                3 -> 0.18f
+                4 -> 0.12f
+                else -> 0.08f
             }
+            else -> 0.2f
         }
 
+        val lineAlpha by animateFloatAsState(targetAlpha, if (animateLyrics) tween(250) else snap(), label = "lyricsLineAlpha")
+        val lineColor = textColor.copy(alpha = lineAlpha)
+
+        val mainText = if (entry.isBackground && !entry.text.startsWith("(")) "(${entry.text})" else entry.text
+
         val lyricStyle = TextStyle(
-            fontSize = if (entry.isBackground) (textSize * 0.78f).sp else textSize.sp,
+            fontSize = if (entry.isBackground) (textSize * 0.85f).sp else textSize.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = if (entry.isBackground) FontStyle.Italic else FontStyle.Normal,
-            lineHeight = if (entry.isBackground) (textSize * 0.78f * 1.35f).sp else (textSize * 1.35f).sp,
+            lineHeight = if (entry.isBackground) (textSize * 0.85f * 1.3f).sp else (textSize * 1.3f).sp,
             letterSpacing = (-0.5).sp,
             textAlign = agentTextAlign,
             fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
@@ -192,46 +179,75 @@ fun LyricsLine(
 
         val effectiveWords = if (entry.words?.isNotEmpty() == true) {
             entry.words
-        } else if (mainText.isNotBlank()) {
-            remember(mainText, entry.time) {
-                val splitWords = mainText.split(Regex("\\s+")).filter { it.isNotBlank() }
-                val wordDurationSec = 0.22
-                val wordStaggerSec = 0.04
-                val startTimeSec = entry.time / 1000.0
-                splitWords.mapIndexed { idx, wordText ->
-                    WordTimestamp(
-                        text = wordText,
-                        startTime = startTimeSec + (idx * wordStaggerSec),
-                        endTime = startTimeSec + (idx * wordStaggerSec) + wordDurationSec,
-                        hasTrailingSpace = idx < splitWords.size - 1
-                    )
-                }
-            }
         } else null
 
         val isTracking = isActive || distanceFromCurrent <= 2
 
         if (isSynced && effectiveWords != null && isTracking && mainText.isNotBlank()) {
-            FluidWordKaraoke(
+            WordLevelLyrics(
                 mainText = mainText,
                 words = effectiveWords,
                 isTracking = isTracking,
                 lyricsOffset = lyricsOffset,
                 playerConnection = playerConnection,
                 lyricStyle = lyricStyle,
+                lineColor = lineColor,
                 expressiveAccent = textColor,
                 alignment = agentTextAlign,
                 entryTime = entry.time,
-                animateLyrics = animateLyrics,
                 currentSkipSegments = currentSkipSegments,
                 sponsorBlockEnabled = sponsorBlockEnabled
             )
         } else {
-            Text(
-                text = mainText,
-                style = lyricStyle.copy(color = textColor.copy(alpha = if (isActive) 1f else 0.45f)),
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (isActive && isSynced) {
+                val fillProgress = remember { Animatable(if (animateLyrics) 0f else 1f) }
+
+                LaunchedEffect(entry.time, animateLyrics) {
+                    fillProgress.snapTo(if (animateLyrics) 0f else 1f)
+                    if (animateLyrics) {
+                        fillProgress.animateTo(
+                            targetValue = 1f,
+                            animationSpec = tween(
+                                durationMillis = 800,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
+                    }
+                }
+
+                val fill = fillProgress.value
+                val glowBrush = Brush.horizontalGradient(
+                    0.0f to textColor,
+                    fill to textColor,
+                    (fill + 0.08f).coerceIn(0f, 1f) to lineColor,
+                    1.0f to lineColor
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                brush = glowBrush,
+                                shadow = Shadow(
+                                    color = textColor.copy(alpha = 0.6f * fill),
+                                    offset = Offset(0f, 0f),
+                                    blurRadius = 16f
+                                )
+                            )
+                        ) {
+                            append(mainText)
+                        }
+                    },
+                    style = lyricStyle,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(
+                    text = mainText,
+                    style = lyricStyle.copy(color = lineColor),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
         if (!romanizedText.isNullOrBlank()) {
@@ -243,25 +259,29 @@ fun LyricsLine(
                     lineHeight = (textSize * 0.75f * 1.3f).sp,
                     fontStyle = FontStyle.Italic
                 ),
-                color = textColor.copy(alpha = 0.6f),
+                color = lineColor.copy(alpha = lineAlpha * 0.8f),
                 modifier = Modifier.fillMaxWidth()
             )
         }
     }
 }
 
+/**
+ * High-performance, 120 FPS word-level karaoke text drawing.
+ * Renders base line once in GPU, then clips and paints the active portion smoothly.
+ */
 @Composable
-private fun FluidWordKaraoke(
+private fun WordLevelLyrics(
     mainText: String,
     words: List<WordTimestamp>,
     isTracking: Boolean,
     lyricsOffset: Long,
     playerConnection: PlayerConnection,
     lyricStyle: TextStyle,
+    lineColor: Color,
     expressiveAccent: Color,
     alignment: TextAlign,
     entryTime: Long,
-    animateLyrics: Boolean = true,
     currentSkipSegments: List<Pair<Long, Long>> = emptyList(),
     sponsorBlockEnabled: Boolean = false
 ) {
@@ -302,18 +322,6 @@ private fun FluidWordKaraoke(
         }
     }
 
-    val graphemeClusters = remember(mainText) { mainText.toGraphemeClusters() }
-    val clusterCount = graphemeClusters.size
-    val clusterCharOffsets = remember(mainText) {
-        IntArray(clusterCount).also { offsets ->
-            var charOffset = 0
-            graphemeClusters.forEachIndexed { i, cluster ->
-                offsets[i] = charOffset
-                charOffset += cluster.length
-            }
-        }
-    }
-
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val maxWidthPx = constraints.maxWidth
         val layoutResult = remember(mainText, maxWidthPx, lyricStyle) {
@@ -325,49 +333,65 @@ private fun FluidWordKaraoke(
             )
         }
 
-        val charBoundsList = remember(layoutResult, clusterCharOffsets) {
-            Array(clusterCount) { i -> layoutResult.getBoundingBox(clusterCharOffsets[i]) }
+        // Cache character start & end offsets for words
+        val wordCharSpans = remember(mainText, words) {
+            var searchStart = 0
+            words.map { word ->
+                val cleanWord = word.text.trim().removePrefix("(").removeSuffix(")")
+                val startIndex = if (cleanWord.isNotEmpty()) mainText.indexOf(cleanWord, searchStart).takeIf { it != -1 } ?: searchStart else searchStart
+                val endIndex = (startIndex + cleanWord.length).coerceAtMost(mainText.length)
+                if (cleanWord.isNotEmpty() && startIndex != -1) {
+                    searchStart = endIndex
+                }
+                startIndex to endIndex
+            }
         }
 
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height((layoutResult.size.height / density.density).dp)
-                .graphicsLayer(clip = false)
         ) {
             if (mainText.isEmpty()) return@Canvas
 
-            // 1. Draw Inactive / Ghost Base Text
-            drawText(layoutResult, color = expressiveAccent.copy(alpha = 0.32f))
-
-            // 2. Active Karaoke Progressive Reveal with Fluid Gradient Sweep
             val currentSmooth = smoothPosition
 
-            words.forEach { word ->
+            // 1. Draw inactive background text in ONE draw call
+            drawText(layoutResult, color = lineColor)
+
+            // 2. Draw active sung portions with hardware clipRect
+            words.forEachIndexed { idx, word ->
                 val startMs = (word.startTime * 1000).toLong()
                 val endMs = (word.endTime * 1000).toLong()
                 val isCompleted = currentSmooth >= endMs
-                val isActive = currentSmooth in startMs..endMs
+                val isActiveWord = currentSmooth in startMs..endMs
 
-                if (isCompleted || isActive) {
-                    val progress = if (isCompleted) 1f else ((currentSmooth - startMs).toFloat() / (endMs - startMs).coerceAtLeast(1L)).coerceIn(0f, 1f)
+                if (isCompleted || isActiveWord) {
+                    val progress = if (isCompleted) 1f
+                    else ((currentSmooth - startMs).toFloat() / (endMs - startMs).coerceAtLeast(1L)).coerceIn(0f, 1f)
 
-                    // Find text bounds corresponding to this word in mainText
-                    val cleanText = word.text.trim()
-                    val wordIndex = mainText.indexOf(cleanText)
-                    if (wordIndex != -1) {
-                        val wordEnd = (wordIndex + cleanText.length).coerceAtMost(mainText.length)
-                        val startCluster = clusterCharOffsets.indexOfFirst { it >= wordIndex }.coerceAtLeast(0)
-                        val endCluster = clusterCharOffsets.indexOfLast { it < wordEnd }.coerceAtLeast(startCluster)
+                    val (startChar, endChar) = wordCharSpans[idx]
+                    if (startChar < endChar && endChar <= mainText.length) {
+                        val startBox = layoutResult.getBoundingBox(startChar)
+                        val endBox = layoutResult.getBoundingBox((endChar - 1).coerceAtLeast(startChar))
 
-                        if (startCluster in charBoundsList.indices && endCluster in charBoundsList.indices) {
-                            val left = charBoundsList[startCluster].left
-                            val right = charBoundsList[endCluster].right
-                            val top = charBoundsList[startCluster].top
-                            val bottom = charBoundsList[endCluster].bottom
-                            val currentRight = left + (right - left) * progress
+                        if (startBox.top == endBox.top) {
+                            val wordLeft = startBox.left
+                            val wordRight = endBox.right
+                            val currentRight = wordLeft + (wordRight - wordLeft) * progress
 
-                            clipRect(left = left, top = top, right = currentRight, bottom = bottom) {
+                            clipRect(
+                                left = wordLeft,
+                                top = startBox.top,
+                                right = currentRight,
+                                bottom = startBox.bottom
+                            ) {
+                                drawText(layoutResult, color = expressiveAccent)
+                            }
+                        } else {
+                            val firstLineRight = layoutResult.getLineRight(layoutResult.getLineForOffset(startChar))
+                            val currentRight = startBox.left + (firstLineRight - startBox.left) * progress
+                            clipRect(left = startBox.left, top = startBox.top, right = currentRight, bottom = endBox.bottom) {
                                 drawText(layoutResult, color = expressiveAccent)
                             }
                         }
@@ -376,19 +400,4 @@ private fun FluidWordKaraoke(
             }
         }
     }
-}
-
-private fun String.toGraphemeClusters(): List<String> {
-    if (isEmpty()) return emptyList()
-    val result = mutableListOf<String>()
-    val it = BreakIterator.getCharacterInstance()
-    it.setText(this)
-    var start = it.first()
-    var end = it.next()
-    while (end != BreakIterator.DONE) {
-        result.add(substring(start, end))
-        start = end
-        end = it.next()
-    }
-    return result
 }
