@@ -7,124 +7,29 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -136,62 +41,38 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.C
 import androidx.media3.common.Player
-import androidx.palette.graphics.Palette
-import coil.ImageLoader
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.cgens67.gluetune.LocalDatabase
 import com.cgens67.gluetune.LocalPlayerConnection
 import com.cgens67.gluetune.R
-import com.cgens67.gluetune.constants.AnimateLyricsKey
-import com.cgens67.gluetune.constants.AppleMusicLyricsBlurKey
-import com.cgens67.gluetune.constants.DarkModeKey
-import com.cgens67.gluetune.constants.DisableBlurKey
-import com.cgens67.gluetune.constants.LyricsClickKey
-import com.cgens67.gluetune.constants.LyricsScrollKey
-import com.cgens67.gluetune.constants.LyricsTextPositionKey
-import com.cgens67.gluetune.constants.PlayerBackgroundStyle
-import com.cgens67.gluetune.constants.PlayerBackgroundStyleKey
-import com.cgens67.gluetune.constants.SliderStyle
-import com.cgens67.gluetune.constants.SliderStyleKey
-import com.cgens67.gluetune.constants.SwipeThumbnailKey
+import com.cgens67.gluetune.constants.*
 import com.cgens67.gluetune.db.entities.LyricsEntity
 import com.cgens67.gluetune.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
 import com.cgens67.gluetune.lyrics.LyricsEntry
 import com.cgens67.gluetune.lyrics.LyricsResult
 import com.cgens67.gluetune.lyrics.LyricsUtils.findCurrentLineIndex
 import com.cgens67.gluetune.lyrics.LyricsUtils.parseLyrics
-import com.cgens67.gluetune.lyrics.WordTimestamp
 import com.cgens67.gluetune.playback.PlayerConnection
 import com.cgens67.gluetune.ui.menu.LyricsMenu
 import com.cgens67.gluetune.ui.screens.settings.DarkMode
 import com.cgens67.gluetune.ui.screens.settings.LyricsPosition
+import com.cgens67.gluetune.ui.theme.PlayerColorExtractor
 import com.cgens67.gluetune.ui.utils.fadingEdge
-import com.cgens67.gluetune.utils.ComposeToImage
 import com.cgens67.gluetune.utils.makeTimeString
 import com.cgens67.gluetune.utils.rememberEnumPreference
 import com.cgens67.gluetune.utils.rememberPreference
@@ -203,35 +84,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.saket.squiggles.SquigglySlider
 import kotlin.math.absoluteValue
-import kotlin.math.exp
-import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.TextUnit
-import androidx.core.graphics.drawable.toBitmap
-import android.text.Layout
-import android.text.StaticLayout
-import android.text.TextPaint
-import android.graphics.Typeface
-import android.graphics.Rect
-import android.graphics.RectF
-import android.graphics.Shader
-import android.graphics.LinearGradient
-import android.graphics.Paint
-import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.runtime.derivedStateOf
-import androidx.navigation.NavController
 
 @RequiresApi(Build.VERSION_CODES.M)
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class
-)
-@SuppressLint("UnusedBoxWithConstraintsScope", "StringFormatInvalid",
-    "LocalContextGetResourceValueCall"
-)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun Lyrics(
     sliderPositionProvider: () -> Long?,
@@ -243,20 +101,18 @@ fun Lyrics(
     navController: NavController? = null,
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
-    val menuState = com.cgens67.gluetune.ui.component.LocalMenuState.current
-    val density = LocalDensity.current
+    val menuState = LocalMenuState.current
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val scope = rememberCoroutineScope()
     val database = LocalDatabase.current
 
+    val isFullscreen = onNavigateBack != null
     val currentSkipSegments by playerConnection.currentSkipSegments.collectAsState()
     val sponsorBlockEnabled by playerConnection.sponsorBlockEnabled.collectAsState()
 
-    val isFullscreen = onNavigateBack != null
     val sliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.DEFAULT)
-    val landscapeOffset = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val lyricsTextPosition by rememberEnumPreference(LyricsTextPositionKey, LyricsPosition.CENTER)
+    val lyricsTextPosition by rememberEnumPreference(LyricsTextPositionKey, LyricsPosition.LEFT)
     val changeLyrics by rememberPreference(LyricsClickKey, true)
     val scrollLyrics by rememberPreference(LyricsScrollKey, true)
     val animateLyrics by rememberPreference(AnimateLyricsKey, true)
@@ -277,21 +133,18 @@ fun Lyrics(
     var shouldScrollToFirstLine by remember(currentSongId) { mutableStateOf(true) }
     var isAppMinimized by rememberSaveable { mutableStateOf(false) }
     var sliderPosition by remember { mutableStateOf<Long?>(null) }
-    var cornerRadius by remember { mutableFloatStateOf(16f) }
 
     var isAutoScrollEnabled by rememberSaveable { mutableStateOf(true) }
 
     var isSelectionModeActive by remember(currentSongId) { mutableStateOf(false) }
     val selectedIndices = remember(currentSongId) { mutableStateListOf<Int>() }
     var showMaxSelectionToast by remember { mutableStateOf(false) }
-
-    var showProgressDialog by remember { mutableStateOf(false) }
     var showShareDialog by remember { mutableStateOf(false) }
     var shareDialogData by remember { mutableStateOf<Triple<String, String, String>?>(null) }
 
     val lazyListState = rememberLazyListState()
     var isAnimating by remember { mutableStateOf(false) }
-    val maxSelectionLimit = 5
+    val maxSelectionLimit = 6
 
     val canSkipPrevious by playerConnection.canSkipPrevious.collectAsState()
     val canSkipNext by playerConnection.canSkipNext.collectAsState()
@@ -303,10 +156,9 @@ fun Lyrics(
     var isLoadingLyrics by remember(currentSongId) { mutableStateOf(false) }
 
     val rawLyricsEntity by playerConnection.currentLyrics.collectAsState(initial = null)
-    
     val activeLyricsEntity = rawLyricsEntity ?: currentLyricsEntity
-    
-    val originalLyrics = remember(activeLyricsEntity) { 
+
+    val originalLyrics = remember(activeLyricsEntity) {
         var text = activeLyricsEntity?.lyrics?.trim()
         if (text != null && text.startsWith("[provider:")) {
             text = text.substringAfter('\n').trim()
@@ -318,22 +170,20 @@ fun Lyrics(
         val raw = activeLyricsEntity?.lyrics.orEmpty()
         Regex("\\[offset:(-?\\d+)\\]").find(raw)?.groupValues?.get(1)?.toLongOrNull() ?: 0L
     }
-    
+
     val lyricsProviderName = remember(activeLyricsEntity) {
         val text = activeLyricsEntity?.lyrics?.trim()
         if (text != null && text.startsWith("[provider:")) {
             text.substringBefore('\n').trim().removePrefix("[provider:").removeSuffix("]")
-        } else {
-            null
-        }
+        } else null
     }
 
     val isSynced = remember(originalLyrics) {
         !originalLyrics.isNullOrEmpty() && "\\[\\d\\d:\\d\\d\\.\\d{2,3}\\]".toRegex().containsMatchIn(originalLyrics)
     }
 
-    val lines = remember(originalLyrics, scope) {
-        if (originalLyrics == null || originalLyrics == LYRICS_NOT_FOUND) {
+    val lines = remember(originalLyrics) {
+        if (originalLyrics.isNullOrEmpty() || originalLyrics == LYRICS_NOT_FOUND) {
             emptyList()
         } else if (isSynced) {
             val parsedLines = parseLyrics(originalLyrics)
@@ -347,10 +197,8 @@ fun Lyrics(
 
     var translatedLines by remember(currentSongId) { mutableStateOf<List<LyricsEntry>?>(null) }
     var showTranslated by remember(currentSongId) { mutableStateOf(false) }
-    var showTranslatePrompt by remember(currentSongId) { mutableStateOf(false) }
-    var translationPromptText by remember(currentSongId) { mutableStateOf("") }
     var isTranslating by remember(currentSongId) { mutableStateOf(false) }
-    
+
     var showRomanized by remember(currentSongId) { mutableStateOf(false) }
     var romanizedLines by remember(currentSongId) { mutableStateOf<List<String>?>(null) }
 
@@ -361,60 +209,27 @@ fun Lyrics(
             showTranslated = false
         } else if (translatedLines != null) {
             showTranslated = true
-            showTranslatePrompt = false
         } else {
             scope.launch {
                 isTranslating = true
-                showTranslatePrompt = false
-                
-                val isZhConversion = translationPromptText == context.getString(R.string.translate_zh_tw_prompt)
-                
-                val itemsToTranslate = mutableListOf<String>()
-                lines.forEach { entry ->
-                    if (entry.text.isNotBlank()) {
-                        itemsToTranslate.add(entry.text)
-                        if (isZhConversion && entry.words != null) {
-                            entry.words.forEach { word ->
-                                itemsToTranslate.add(word.text)
-                            }
-                        }
-                    }
-                }
-                
-                val textToTranslate = itemsToTranslate.joinToString("\n")
-                val translatedText = com.cgens67.gluetune.utils.TranslationHelper.translate(textToTranslate)
-                
+                val itemsToTranslate = lines.mapNotNull { if (it.text.isNotBlank()) it.text else null }
+                val translatedText = com.cgens67.gluetune.utils.TranslationHelper.translate(itemsToTranslate.joinToString("\n"))
+
                 if (translatedText != null) {
-                    val translatedSplit = translatedText.split("\n")
-                    val newEntries = lines.toMutableList()
-                    
+                    val split = translatedText.split("\n")
                     var transIdx = 0
+                    val newEntries = lines.toMutableList()
                     for (i in newEntries.indices) {
                         val entry = newEntries[i]
                         if (entry.text.isNotBlank()) {
-                            val newLineText = translatedSplit.getOrElse(transIdx++) { entry.text }
-                            
-                            val newWords = if (isZhConversion && entry.words != null) {
-                                entry.words.map { word ->
-                                    val newWordText = translatedSplit.getOrElse(transIdx++) { word.text }
-                                    word.copy(text = newWordText)
-                                }
-                            } else {
-                                null
-                            }
-                            
-                            newEntries[i] = entry.copy(text = newLineText, words = newWords)
-                        } else {
-                            newEntries[i] = entry.copy(words = null)
+                            newEntries[i] = entry.copy(text = split.getOrElse(transIdx++) { entry.text }, words = null)
                         }
                     }
-                    
                     translatedLines = newEntries
                     showTranslated = true
                 } else {
                     Toast.makeText(context, R.string.translation_failed, Toast.LENGTH_SHORT).show()
                 }
-                
                 isTranslating = false
             }
         }
@@ -428,18 +243,8 @@ fun Lyrics(
         } else {
             scope.launch {
                 val linesToRomanize = lines.map { it.text }
-                val romanizedResult = com.cgens67.gluetune.utils.TranslationHelper.romanize(linesToRomanize)
-
-                // romanizedResult is a List<String> aligned with 'lines'
-                val finalRomanizedLines = mutableListOf<String>()
-                for (i in lines.indices) {
-                    if (lines[i].text.isNotBlank()) {
-                        finalRomanizedLines.add(romanizedResult.getOrElse(i) { "" })
-                    } else {
-                        finalRomanizedLines.add("")
-                    }
-                }
-                romanizedLines = finalRomanizedLines
+                val result = com.cgens67.gluetune.utils.TranslationHelper.romanize(linesToRomanize)
+                romanizedLines = result
                 showRomanized = true
             }
         }
@@ -453,24 +258,11 @@ fun Lyrics(
         key = PlayerBackgroundStyleKey,
         defaultValue = PlayerBackgroundStyle.DEFAULT
     )
-
     val darkTheme by rememberEnumPreference(DarkModeKey, defaultValue = DarkMode.AUTO)
     val isSystemInDarkTheme = isSystemInDarkTheme()
     val useDarkTheme = remember(darkTheme, isSystemInDarkTheme) {
         if (darkTheme == DarkMode.AUTO) isSystemInDarkTheme else darkTheme == DarkMode.ON
     }
-
-    var progress by remember { mutableFloatStateOf(0f) }
-    val animatedProgress by
-    animateFloatAsState(
-        targetValue = progress,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioNoBouncy,
-                stiffness = Spring.StiffnessVeryLow,
-                visibilityThreshold = 1 / 1000f,
-            ),
-    )
 
     var position by rememberSaveable(playbackState) { mutableLongStateOf(playerConnection.player.currentPosition) }
     var duration by rememberSaveable(playbackState) { mutableLongStateOf(playerConnection.player.duration) }
@@ -479,190 +271,50 @@ fun Lyrics(
         PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.primary
         else -> Color.White
     }
-    val textColor = expressiveAccent
-
-    val textBackgroundColor = when (playerBackground) {
-        PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.onBackground
-        PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT, PlayerBackgroundStyle.APPLE_MUSIC, PlayerBackgroundStyle.LIVE_MESH -> Color.White
-    }
-
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val secondaryColor = MaterialTheme.colorScheme.secondary
-    val tertiaryColor = MaterialTheme.colorScheme.tertiary
 
     var gradientColors by remember { mutableStateOf<List<Color>>(emptyList()) }
-    val gradientColorsCache = remember { mutableMapOf<String, List<Color>>() }
-    val fallbackColor = MaterialTheme.colorScheme.surface.toArgb()
 
-    LaunchedEffect(currentMetadata?.id, playerBackground) {
-        if ((playerBackground == PlayerBackgroundStyle.GRADIENT || playerBackground == PlayerBackgroundStyle.APPLE_MUSIC) && currentMetadata?.thumbnailUrl != null) {
-            val cachedColors = gradientColorsCache[currentMetadata.id]
-            if (cachedColors != null) {
-                gradientColors = cachedColors
-                return@LaunchedEffect
-            }
-
-            withContext(Dispatchers.IO) {
-                try {
-
-                    val fallbackColors = listOf(primaryColor, secondaryColor, tertiaryColor)
-                    gradientColorsCache[currentMetadata.id] = fallbackColors
-                    withContext(Dispatchers.Main) { gradientColors = fallbackColors }
-                } catch (e: Exception) {
-                    val fallbackColors = listOf(primaryColor, secondaryColor, tertiaryColor)
-                    gradientColorsCache[currentMetadata.id] = fallbackColors
-                    withContext(Dispatchers.Main) { gradientColors = fallbackColors }
-                }
-            }
-        } else {
-            gradientColors = emptyList()
-        }
-    }
-
+    // Fetch lyrics logic
     LaunchedEffect(currentSongId) {
         currentSongId?.let { songId ->
             if (lyricsCache.containsKey(songId)) {
-                val cached = lyricsCache[songId]
-                currentLyricsEntity = cached
+                currentLyricsEntity = lyricsCache[songId]
                 return@LaunchedEffect
             }
 
             isLoadingLyrics = true
-
             withContext(Dispatchers.IO) {
                 try {
-                    val existingLyrics = try {
-                        database.getLyrics(songId)
-                    } catch (e: Throwable) {
-                        null
-                    }
-
-                    if (existingLyrics != null && existingLyrics.lyrics != LYRICS_NOT_FOUND) {
-                        val newCache = lyricsCache.toMutableMap().apply {
-                            put(songId, existingLyrics)
-                        }
-                        lyricsCache = newCache
-                        currentLyricsEntity = existingLyrics
-
-                        val text = existingLyrics.lyrics.trim()
-                        if (!text.startsWith("[provider:")) {
-                            // Old format, trigger a background upgrade
-                            scope.launch(Dispatchers.IO) {
-                                try {
-                                    val entryPoint = EntryPointAccessors.fromApplication(
-                                        context.applicationContext,
-                                        com.cgens67.gluetune.di.LyricsHelperEntryPoint::class.java
-                                    )
-                                    val lyricsHelper = entryPoint.lyricsHelper()
-                                    val fetchedResult: LyricsResult? = currentMetadata?.let { lyricsHelper.getLyrics(it) }
-                                    
-                                    val fetchedLyrics = fetchedResult?.lyrics
-                                    val pName = fetchedResult?.providerName
-
-                                    if (!fetchedLyrics.isNullOrBlank() && fetchedLyrics != LYRICS_NOT_FOUND) {
-                                        val textToSave = if (pName != null) "[provider:${pName}]\n$fetchedLyrics" else fetchedLyrics
-                                        val upgradedEntity = LyricsEntity(songId, textToSave)
-                                        try {
-                                            database.query {
-                                                upsert(upgradedEntity)
-                                            }
-                                        } catch (e: Throwable) {}
-
-                                        // Update state to show provider credit
-                                        currentLyricsEntity = upgradedEntity
-                                        val upgradedCache = lyricsCache.toMutableMap().apply {
-                                            put(songId, upgradedEntity)
-                                        }
-                                        lyricsCache = upgradedCache
-                                    }
-                                } catch (e: Throwable) {
-                                    // Ignore errors during background upgrade
-                                }
-                            }
-                        }
+                    val existing = database.getLyrics(songId)
+                    if (existing != null && existing.lyrics != LYRICS_NOT_FOUND) {
+                        lyricsCache = lyricsCache + (songId to existing)
+                        currentLyricsEntity = existing
                     } else {
-                        try {
-                            val entryPoint = EntryPointAccessors.fromApplication(
-                                context.applicationContext,
-                                com.cgens67.gluetune.di.LyricsHelperEntryPoint::class.java
-                            )
-                            val lyricsHelper = entryPoint.lyricsHelper()
-                            val fetchedResult: LyricsResult? = currentMetadata?.let { lyricsHelper.getLyrics(it) }
-                            
-                            val fetchedLyrics = fetchedResult?.lyrics
-                            val pName = fetchedResult?.providerName
+                        val entryPoint = EntryPointAccessors.fromApplication(
+                            context.applicationContext,
+                            com.cgens67.gluetune.di.LyricsHelperEntryPoint::class.java
+                        )
+                        val fetchedResult = currentMetadata?.let { entryPoint.lyricsHelper().getLyrics(it) }
+                        val fetchedLyrics = fetchedResult?.lyrics
+                        val pName = fetchedResult?.providerName
 
-                            val entity = if (!fetchedLyrics.isNullOrBlank() && fetchedLyrics != LYRICS_NOT_FOUND) {
-                                val textToSave = if (pName != null) "[provider:${pName}]\n$fetchedLyrics" else fetchedLyrics
-                                LyricsEntity(songId, textToSave)
-                            } else {
-                                LyricsEntity(songId, LYRICS_NOT_FOUND)
-                            }
-
-                            try {
-                                database.query {
-                                    upsert(entity)
-                                }
-                            } catch (e: Throwable) {}
-
-                            val newCache = lyricsCache.toMutableMap().apply {
-                                put(songId, entity)
-                            }
-                            lyricsCache = newCache
-                            currentLyricsEntity = entity
-                        } catch (e: Throwable) {
-                            val errorEntity = LyricsEntity(songId, LYRICS_NOT_FOUND)
-                            val newCache = lyricsCache.toMutableMap().apply {
-                                put(songId, errorEntity)
-                            }
-                            lyricsCache = newCache
-                            currentLyricsEntity = errorEntity
+                        val entity = if (!fetchedLyrics.isNullOrBlank() && fetchedLyrics != LYRICS_NOT_FOUND) {
+                            val textToSave = if (pName != null) "[provider:$pName]\n$fetchedLyrics" else fetchedLyrics
+                            LyricsEntity(songId, textToSave)
+                        } else {
+                            LyricsEntity(songId, LYRICS_NOT_FOUND)
                         }
+
+                        database.query { upsert(entity) }
+                        lyricsCache = lyricsCache + (songId to entity)
+                        currentLyricsEntity = entity
                     }
                 } catch (e: Exception) {
                     val errorEntity = LyricsEntity(songId, LYRICS_NOT_FOUND)
-                    val newCache = lyricsCache.toMutableMap().apply {
-                        put(songId, errorEntity)
-                    }
-                    lyricsCache = newCache
+                    lyricsCache = lyricsCache + (songId to errorEntity)
                     currentLyricsEntity = errorEntity
                 } finally {
                     isLoadingLyrics = false
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(lines) {
-        isSelectionModeActive = false
-        selectedIndices.clear()
-        currentLineIndex = -1
-        currentMainLineIndex = -1
-        deferredCurrentMainLineIndex = 0
-        previousMainLineIndex = 0
-        initialScrollDone = false
-        shouldScrollToFirstLine = true
-        isAutoScrollEnabled = true
-
-        if (lines.isNotEmpty() && originalLyrics != LYRICS_NOT_FOUND) {
-            val textOnly = lines.mapNotNull { it.text }.filter { it.isNotBlank() }.joinToString("\n").take(500)
-            if (textOnly.isNotBlank()) {
-                val detectedLang = com.cgens67.gluetune.utils.TranslationHelper.detectLanguage(textOnly)
-                val systemLocale = java.util.Locale.getDefault()
-                val systemLang = systemLocale.language.lowercase()
-                val langTag = systemLocale.toLanguageTag().lowercase()
-                
-                val isSystemZhCn = langTag.contains("zh-cn") || langTag.contains("zh-hans") || (langTag == "zh")
-                
-                if (detectedLang != null && detectedLang != "und") {
-                    val detectedLower = detectedLang.lowercase()
-                    if (isSystemZhCn && (detectedLower == "zh-tw" || detectedLower == "zh-hant")) {
-                        translationPromptText = context.getString(R.string.translate_zh_tw_prompt)
-                        showTranslatePrompt = true
-                    } else if (!detectedLower.startsWith(systemLang)) {
-                        translationPromptText = context.getString(R.string.translate_lyrics_prompt)
-                        showTranslatePrompt = true
-                    }
                 }
             }
         }
@@ -680,36 +332,13 @@ fun Lyrics(
 
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
                 if (source == NestedScrollSource.UserInput) {
                     isAutoScrollEnabled = false
-                }
-                if (!isSelectionModeActive) {
                     lastPreviewTime = System.currentTimeMillis()
                 }
                 return super.onPostScroll(consumed, available, source)
             }
-
-            override suspend fun onPostFling(
-                consumed: androidx.compose.ui.unit.Velocity,
-                available: androidx.compose.ui.unit.Velocity
-            ): androidx.compose.ui.unit.Velocity {
-                isAutoScrollEnabled = false
-                if (!isSelectionModeActive) {
-                    lastPreviewTime = System.currentTimeMillis()
-                }
-                return super.onPostFling(consumed, available)
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        if (isFullscreen) {
-            cornerRadius = 16f
         }
     }
 
@@ -723,37 +352,20 @@ fun Lyrics(
         }
     }
 
-    LaunchedEffect(showMaxSelectionToast) {
-        if (showMaxSelectionToast) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.max_selection_limit, maxSelectionLimit),
-                Toast.LENGTH_SHORT
-            ).show()
-            showMaxSelectionToast = false
-        }
-    }
-
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_STOP) {
-                val visibleItemsInfo = lazyListState.layoutInfo.visibleItemsInfo
-                val isCurrentLineVisible = visibleItemsInfo.any { it.index == currentMainLineIndex }
-                if (isCurrentLineVisible) {
-                    initialScrollDone = false
-                }
                 isAppMinimized = true
             } else if (event == Lifecycle.Event.ON_START) {
                 isAppMinimized = false
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    // Tracking position & line selection
     LaunchedEffect(originalLyrics, lyricsOffsetMs, currentSkipSegments, sponsorBlockEnabled) {
         if (originalLyrics.isNullOrEmpty() || !isSynced) {
             currentLineIndex = -1
@@ -761,11 +373,11 @@ fun Lyrics(
             return@LaunchedEffect
         }
         while (isActive) {
-            delay(50)
+            delay(40)
             val sliderPos = sliderPositionProvider()
             isSeeking = sliderPos != null
             val basePosition = sliderPos ?: playerConnection.player.currentPosition
-            
+
             var sponsorBlockOffset = 0L
             if (sponsorBlockEnabled) {
                 for (segment in currentSkipSegments) {
@@ -776,15 +388,11 @@ fun Lyrics(
                     }
                 }
             }
-            
-            val rawIndex = findCurrentLineIndex(
-                lines,
-                basePosition - sponsorBlockOffset + lyricsOffsetMs
-            )
+
+            val rawIndex = findCurrentLineIndex(lines, basePosition - sponsorBlockOffset + lyricsOffsetMs)
             currentLineIndex = rawIndex
 
             var mainIdx = rawIndex
-            // Navigate back to find the closest main line (ignoring background lines)
             while (mainIdx >= 0 && lines.getOrNull(mainIdx)?.isBackground == true) {
                 mainIdx--
             }
@@ -792,39 +400,21 @@ fun Lyrics(
         }
     }
 
-    LaunchedEffect(isSeeking, lastPreviewTime) {
-        if (isSeeking) {
-            lastPreviewTime = 0L
-        } else if (lastPreviewTime != 0L) {
-            delay(if (isFullscreen) 2.seconds else LyricsPreviewTime)
-            lastPreviewTime = 0L
-        }
-    }
-
-    suspend fun performSmoothPageScroll(targetIndex: Int, duration: Int = 1500) {
+    suspend fun performSmoothPageScroll(targetIndex: Int, duration: Int = 1200) {
         if (isAnimating) return
         isAnimating = true
         try {
-            val itemInfo = lazyListState.layoutInfo.visibleItemsInfo
-                .firstOrNull { it.index == targetIndex }
+            val itemInfo = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == targetIndex }
             if (itemInfo != null) {
-                val viewportHeight = lazyListState.layoutInfo.viewportEndOffset -
-                        lazyListState.layoutInfo.viewportStartOffset
-                val center = lazyListState.layoutInfo.viewportStartOffset + (viewportHeight / 2)
+                val viewportHeight = lazyListState.layoutInfo.viewportEndOffset - lazyListState.layoutInfo.viewportStartOffset
+                val center = lazyListState.layoutInfo.viewportStartOffset + (viewportHeight / 3)
                 val itemCenter = itemInfo.offset + itemInfo.size / 2
                 val offset = itemCenter - center
-                if (kotlin.math.abs(offset) > 10) {
-                    if (animateLyrics) {
-                        lazyListState.animateScrollBy(
-                            value = offset.toFloat(),
-                            animationSpec = tween(durationMillis = duration)
-                        )
-                    } else {
-                        lazyListState.animateScrollBy(
-                            value = offset.toFloat(),
-                            animationSpec = tween(durationMillis = 1)
-                        )
-                    }
+                if (kotlin.math.abs(offset) > 8) {
+                    lazyListState.animateScrollBy(
+                        value = offset.toFloat(),
+                        animationSpec = tween(durationMillis = if (animateLyrics) duration else 1, easing = FastOutSlowInEasing)
+                    )
                 }
             } else {
                 lazyListState.scrollToItem(targetIndex)
@@ -834,34 +424,14 @@ fun Lyrics(
         }
     }
 
-    LaunchedEffect(currentMainLineIndex, lastPreviewTime, initialScrollDone, isAutoScrollEnabled) {
+    LaunchedEffect(currentMainLineIndex, isAutoScrollEnabled) {
         if (!isSynced) return@LaunchedEffect
-
         if (currentMainLineIndex != -1) {
             deferredCurrentMainLineIndex = currentMainLineIndex
         }
 
-        if (isAutoScrollEnabled) {
-            if ((currentMainLineIndex == 0 && shouldScrollToFirstLine) || !initialScrollDone) {
-                shouldScrollToFirstLine = false
-                val initialCenterIndex = kotlin.math.max(0, currentMainLineIndex)
-                performSmoothPageScroll(initialCenterIndex, 800)
-                if (!isAppMinimized) {
-                    initialScrollDone = true
-                }
-            } else if (currentMainLineIndex != -1) {
-                if (isSeeking) {
-                    val seekCenterIndex = kotlin.math.max(0, currentMainLineIndex - 1)
-                    performSmoothPageScroll(seekCenterIndex, 500)
-                } else if ((lastPreviewTime == 0L || currentMainLineIndex != previousMainLineIndex) && scrollLyrics) {
-                    if (currentMainLineIndex != previousMainLineIndex) {
-                        performSmoothPageScroll(currentMainLineIndex, 1500)
-                    }
-                }
-            }
-        }
-        if (currentMainLineIndex > 0) {
-            shouldScrollToFirstLine = true
+        if (isAutoScrollEnabled && currentMainLineIndex != -1 && scrollLyrics) {
+            performSmoothPageScroll(currentMainLineIndex, 1200)
         }
         previousMainLineIndex = currentMainLineIndex
     }
@@ -871,962 +441,410 @@ fun Lyrics(
             .fillMaxSize()
             .background(if (isFullscreen) MaterialTheme.colorScheme.background else Color.Transparent)
     ) {
+        // Atmospheric Ambient Backgrounds
         if (isFullscreen) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer { alpha = backgroundAlpha() }
             ) {
-                when (playerBackground) {
-                    PlayerBackgroundStyle.BLUR -> {
-                        currentMetadata?.let { metadata ->
-                            AsyncImage(
-                                model = metadata.thumbnailUrl,
-                                contentDescription = null,
-                                contentScale = ContentScale.FillBounds,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .let { if (!disableBlur) it.blur(if (useDarkTheme) 150.dp else 100.dp) else it }
-                            )
-                        }
-                    }
-                    PlayerBackgroundStyle.GRADIENT -> {
-                        if (gradientColors.isNotEmpty()) {
-                            val gradientColorStops = if (gradientColors.size >= 3) {
-                                arrayOf(
-                                    0.0f to gradientColors[0],
-                                    0.5f to gradientColors[1],
-                                    1.0f to gradientColors[2]
-                                )
-                            } else {
-                                arrayOf(
-                                    0.0f to gradientColors[0],
-                                    0.6f to gradientColors[0].copy(alpha = 0.7f),
-                                    1.0f to Color.Black
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Brush.verticalGradient(colorStops = gradientColorStops))
-                            )
-                        }
-                    }
-                    PlayerBackgroundStyle.APPLE_MUSIC -> {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            if (gradientColors.isNotEmpty()) {
-                                val color1 = gradientColors[0]
-                                val color2 = gradientColors.getOrElse(1) { gradientColors[0].copy(alpha = 0.8f) }
-                                val color3 = gradientColors.getOrElse(2) { gradientColors[0].copy(alpha = 0.6f) }
-
-                                Canvas(modifier = Modifier
-                                    .fillMaxSize()
-                                    .let { if (!disableBlur) it.blur(32.dp) else it }
-                                ) {
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            listOf(color1, color2, color3)
-                                        )
-                                    )
-
-                                    drawCircle(
-                                        brush = Brush.radialGradient(
-                                            colors = listOf(color1, Color.Transparent),
-                                            center = Offset(size.width * 0.2f, size.height * 0.2f),
-                                            radius = size.width * 0.8f
-                                        ),
-                                        center = Offset(size.width * 0.2f, size.height * 0.2f),
-                                        radius = size.width * 0.8f
-                                    )
-
-                                    drawCircle(
-                                        brush = Brush.radialGradient(
-                                            colors = listOf(color2, Color.Transparent),
-                                            center = Offset(size.width * 0.8f, size.height * 0.5f),
-                                            radius = size.width * 0.7f
-                                        ),
-                                        center = Offset(size.width * 0.8f, size.height * 0.5f),
-                                        radius = size.width * 0.7f
-                                    )
-
-                                    drawCircle(
-                                        brush = Brush.radialGradient(
-                                            colors = listOf(color3, Color.Transparent),
-                                            center = Offset(size.width * 0.3f, size.height * 0.8f),
-                                            radius = size.width * 0.9f
-                                        ),
-                                        center = Offset(size.width * 0.3f, size.height * 0.8f),
-                                        radius = size.width * 0.9f
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    PlayerBackgroundStyle.LIVE_MESH -> {
-                        currentMetadata?.let { metadata ->
-                            val infiniteTransition = rememberInfiniteTransition(label = "live_mesh")
-                            
-                            val anchorRotation by infiniteTransition.animateFloat(
-                                initialValue = 0f, targetValue = -360f,
-                                animationSpec = infiniteRepeatable(tween(80000, easing = LinearEasing), RepeatMode.Restart),
-                                label = "anchor"
-                            )
-                            val fastRotation by infiniteTransition.animateFloat(
-                                initialValue = 0f, targetValue = 360f,
-                                animationSpec = infiniteRepeatable(tween(40000, easing = LinearEasing), RepeatMode.Restart),
-                                label = "fast"
-                            )
-                            val slowRotation by infiniteTransition.animateFloat(
-                                initialValue = 0f, targetValue = 360f,
-                                animationSpec = infiniteRepeatable(tween(60000, easing = LinearEasing), RepeatMode.Restart),
-                                label = "slow"
-                            )
-
-                            val saturationMatrix = remember { ColorMatrix().apply { setToSaturation(1.8f) } }
-                            
-                            Box(modifier = Modifier.fillMaxSize().graphicsLayer { scaleX = 3f; scaleY = 3f }) {
-                                val imageRequest = remember(metadata.thumbnailUrl) {
-                                    ImageRequest.Builder(context)
-                                        .data(metadata.thumbnailUrl)
-                                        .size(64, 64)
-                                        .allowHardware(true)
-                                        .build()
-                                }
-                                
-                                val blurAmount = if (!disableBlur) 32.dp else 0.dp
-
-                                // Layer 1 (Anchor)
-                                AsyncImage(
-                                    model = imageRequest,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    colorFilter = ColorFilter.colorMatrix(saturationMatrix),
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .let { if (blurAmount > 0.dp) it.blur(blurAmount) else it }
-                                        .graphicsLayer { rotationZ = anchorRotation }
-                                )
-
-                                // Layer 2 (Fast)
-                                AsyncImage(
-                                    model = imageRequest,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    alignment = Alignment.TopStart,
-                                    colorFilter = ColorFilter.colorMatrix(saturationMatrix),
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .let { if (blurAmount > 0.dp) it.blur(blurAmount) else it }
-                                        .graphicsLayer { 
-                                            rotationZ = fastRotation
-                                            alpha = 0.6f
-                                        }
-                                )
-
-                                // Layer 3 (Slow)
-                                AsyncImage(
-                                    model = imageRequest,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    alignment = Alignment.BottomEnd,
-                                    colorFilter = ColorFilter.colorMatrix(saturationMatrix),
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .let { if (blurAmount > 0.dp) it.blur(blurAmount) else it }
-                                        .graphicsLayer { 
-                                            rotationZ = slowRotation
-                                            alpha = 0.5f
-                                        }
-                                )
-                                
-                                // Depth & Contrast Overlays
-                                Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.2f)))
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(
-                                            Brush.verticalGradient(
-                                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.25f))
-                                            )
-                                        )
-                                )
-                            }
-                        }
-                    }
-                    PlayerBackgroundStyle.DEFAULT -> {
-                    }
-                }
-
-                if (playerBackground != PlayerBackgroundStyle.DEFAULT) {
+                PlayerBackground(
+                    playerBackground = playerBackground,
+                    mediaMetadata = currentMetadata,
+                    gradientColors = gradientColors,
+                    disableBlur = disableBlur
+                )
+                if (playerBackground != PlayerBackgroundStyle.APPLE_MUSIC) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.Black.copy(alpha = if (useDarkTheme) 0.3f else 0.45f))
+                            .background(Color.Black.copy(alpha = if (useDarkTheme) 0.35f else 0.5f))
                     )
                 }
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(WindowInsets.systemBars.asPaddingValues())
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // --- TOP HEADER BAR ---
+            if (isFullscreen) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Back Glass Button
+                    Surface(
+                        onClick = { onNavigateBack?.invoke() },
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.15f),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
+                        modifier = Modifier.size(42.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back),
+                                contentDescription = stringResource(R.string.back),
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    // Interactive Action Pills (Translate, Romanize, Overflow)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Translation Pill
+                        Surface(
+                            onClick = { toggleTranslation() },
+                            shape = RoundedCornerShape(14.dp),
+                            color = if (showTranslated) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, if (showTranslated) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.12f)),
+                            modifier = Modifier.height(38.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (isTranslating) {
+                                    CircularProgressIndicator(
+                                        color = if (showTranslated) MaterialTheme.colorScheme.onPrimary else Color.White,
+                                        modifier = Modifier.size(14.dp),
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.translate),
+                                        contentDescription = null,
+                                        tint = if (showTranslated) MaterialTheme.colorScheme.onPrimary else Color.White,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    text = if (showTranslated) stringResource(R.string.show_original) else stringResource(R.string.Translate),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (showTranslated) MaterialTheme.colorScheme.onPrimary else Color.White
+                                )
+                            }
+                        }
+
+                        // Romanize Pill
+                        Surface(
+                            onClick = { toggleRomanization() },
+                            shape = RoundedCornerShape(14.dp),
+                            color = if (showRomanized) MaterialTheme.colorScheme.secondary else Color.White.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, if (showRomanized) MaterialTheme.colorScheme.secondary else Color.White.copy(alpha = 0.12f)),
+                            modifier = Modifier.height(38.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Rom",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (showRomanized) MaterialTheme.colorScheme.onSecondary else Color.White
+                                )
+                            }
+                        }
+
+                        // More Menu Pill
+                        Surface(
+                            onClick = {
+                                currentMetadata?.let { metadata ->
+                                    menuState.show {
+                                        LyricsMenu(
+                                            lyricsEntity = activeLyricsEntity,
+                                            mediaMetadata = metadata,
+                                            onDismiss = menuState::dismiss,
+                                            isTranslated = showTranslated,
+                                            onTranslateClick = { toggleTranslation() },
+                                            isRomanized = showRomanized,
+                                            onRomanizeClick = { toggleRomanization() },
+                                            navController = navController
+                                        )
+                                    }
+                                }
+                            },
+                            shape = CircleShape,
+                            color = Color.White.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
+                            modifier = Modifier.size(38.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    painter = painterResource(R.drawable.more_horiz),
+                                    contentDescription = stringResource(R.string.more_options),
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // --- MAIN LYRICS AREA WITH SMOOTH FADING EDGES ---
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp),
-                contentAlignment = Alignment.TopCenter
             ) {
-                BoxWithConstraints(
-                    contentAlignment = Alignment.TopStart,
+                LazyColumn(
+                    state = lazyListState,
+                    contentPadding = PaddingValues(
+                        top = if (isFullscreen) 24.dp else 48.dp,
+                        bottom = if (isFullscreen) 210.dp else 90.dp,
+                        start = 12.dp,
+                        end = 12.dp
+                    ),
                     modifier = Modifier
                         .fillMaxSize()
+                        .fadingEdge(vertical = 48.dp)
+                        .nestedScroll(nestedScrollConnection)
                 ) {
-                    val topPadding = with(LocalDensity.current) {
-                        100.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-                    }
-
-                    LazyColumn(
-                        state = lazyListState,
-                        contentPadding = PaddingValues(
-                            top = topPadding,
-                            bottom = if (isFullscreen) 180.dp else 0.dp,
-                            start = 8.dp,
-                            end = 8.dp
-                        ),
-                        modifier = Modifier
-                            .fadingEdge(vertical = 32.dp)
-                            .nestedScroll(nestedScrollConnection)
-                    ) {
-                        val displayedCurrentMainLineIndex =
-                            if (isSeeking || isSelectionModeActive)
-                                deferredCurrentMainLineIndex
-                            else
-                                currentMainLineIndex
-
-                        if (isLoadingLyrics) {
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 64.dp),
-                                    contentAlignment = when (lyricsTextPosition) {
-                                        LyricsPosition.LEFT -> Alignment.CenterStart
-                                        LyricsPosition.CENTER -> Alignment.Center
-                                        LyricsPosition.RIGHT -> Alignment.CenterEnd
-                                    }
+                    if (isLoadingLyrics) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 96.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
                                 ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                                    ) {
-                                        androidx.compose.material3.LoadingIndicator(
-                                            color = expressiveAccent
-                                        )
-                                        Text(
-                                            text = stringResource(R.string.loading_lyrics),
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = expressiveAccent.copy(alpha = 0.7f)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            if (showTranslatePrompt && !isTranslating && !showTranslated) {
-                                item(key = "translate_prompt") {
-                                    Surface(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                                        shape = RoundedCornerShape(20.dp),
-                                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(16.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(48.dp)
-                                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), CircleShape),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.translate),
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                            Spacer(Modifier.width(16.dp))
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                Text(
-                                                    text = translationPromptText,
-                                                    style = MaterialTheme.typography.bodyMedium,
-                                                    fontWeight = FontWeight.Medium,
-                                                    color = MaterialTheme.colorScheme.onSurface
-                                                )
-                                                Spacer(Modifier.height(8.dp))
-                                                Row(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.End
-                                                ) {
-                                                    TextButton(
-                                                        onClick = { showTranslatePrompt = false },
-                                                        contentPadding = PaddingValues(horizontal = 12.dp)
-                                                    ) {
-                                                        Text(
-                                                            stringResource(R.string.dismiss),
-                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                        )
-                                                    }
-                                                    Spacer(Modifier.width(8.dp))
-                                                    Button(
-                                                        onClick = { toggleTranslation() },
-                                                        colors = ButtonDefaults.buttonColors(
-                                                            containerColor = MaterialTheme.colorScheme.primary,
-                                                            contentColor = MaterialTheme.colorScheme.onPrimary
-                                                        ),
-                                                        contentPadding = PaddingValues(horizontal = 16.dp)
-                                                    ) {
-                                                        Text(stringResource(R.string.Translate))
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (isTranslating) {
-                                item(key = "translating_indicator") {
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth().padding(32.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        androidx.compose.material3.LoadingIndicator(
-                                            color = expressiveAccent
-                                        )
-                                    }
-                                }
-                            }
-
-                            itemsIndexed(
-                                items = displayedLines,
-                                key = { index, item -> "$index-${item.time}" }
-                            ) { index, item ->
-                                val isSelected = selectedIndices.contains(index)
-                                
-                                val isAssociatedBg = item.isBackground &&
-                                        displayedCurrentMainLineIndex >= 0 &&
-                                        index > displayedCurrentMainLineIndex &&
-                                        displayedLines.subList(displayedCurrentMainLineIndex + 1, index + 1).all { it.isBackground }
-
-                                val isActiveLine = (index == displayedCurrentMainLineIndex || isAssociatedBg) && isSynced
-                                val distance = if (isActiveLine) 0 else kotlin.math.abs(index - displayedCurrentMainLineIndex)
-
-                                val romText = if (showRomanized) romanizedLines?.getOrNull(index) else null
-
-                                LyricsLine(
-                                    entry = item,
-                                    romanizedText = romText,
-                                    isSynced = isSynced,
-                                    isActive = isActiveLine,
-                                    distanceFromCurrent = distance,
-                                    lyricsTextPosition = lyricsTextPosition,
-                                    textColor = expressiveAccent,
-                                    textSize = 25f,
-                                    lineSpacing = 4f,
-                                    onClick = {
-                                        if (isSelectionModeActive) {
-                                            if (isSelected) {
-                                                selectedIndices.remove(index)
-                                                if (selectedIndices.isEmpty()) {
-                                                    isSelectionModeActive = false
-                                                }
-                                            } else {
-                                                if (selectedIndices.size < maxSelectionLimit) {
-                                                    selectedIndices.add(index)
-                                                } else {
-                                                    showMaxSelectionToast = true
-                                                }
-                                            }
-                                        } else if (isSynced && changeLyrics) {
-                                            var targetVideoTime = item.time - lyricsOffsetMs
-                                            if (sponsorBlockEnabled) {
-                                                for (segment in currentSkipSegments) {
-                                                    if (targetVideoTime >= segment.first) {
-                                                        targetVideoTime += (segment.second - segment.first)
-                                                    }
-                                                }
-                                            }
-                                            playerConnection.player.seekTo(targetVideoTime)
-                                            scope.launch {
-                                                performSmoothPageScroll(index, 1500)
-                                            }
-                                            lastPreviewTime = 0L
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!isSelectionModeActive) {
-                                            isSelectionModeActive = true
-                                            selectedIndices.add(index)
-                                        } else if (!isSelected && selectedIndices.size < maxSelectionLimit) {
-                                            selectedIndices.add(index)
-                                        } else if (!isSelected) {
-                                            showMaxSelectionToast = true
-                                        }
-                                    },
-                                    isSelected = isSelected,
-                                    isSelectionModeActive = isSelectionModeActive,
-                                    isAutoScrollActive = isAutoScrollEnabled,
-                                    animateLyrics = animateLyrics,
-                                    lyricsOffset = lyricsOffsetMs,
-                                    currentSkipSegments = currentSkipSegments,
-                                    sponsorBlockEnabled = sponsorBlockEnabled,
-                                    modifier = Modifier
-                                )
-
-                                val nextItem = displayedLines.getOrNull(index + 1)
-                                if (isSynced && nextItem != null && !item.isBackground && !nextItem.isBackground) {
-                                    val itemEnd = item.words?.maxOfOrNull { (it.endTime * 1000).toLong() } ?: (item.time + 3000L)
-                                    val gapDuration = nextItem.time - itemEnd
-
-                                    if (gapDuration > 10000L) {
-                                        GapIndicator(
-                                            gapStart = itemEnd,
-                                            gapEnd = nextItem.time,
-                                            playerConnection = playerConnection,
-                                            lyricsOffset = lyricsOffsetMs,
-                                            color = expressiveAccent,
-                                            currentSkipSegments = currentSkipSegments,
-                                            sponsorBlockEnabled = sponsorBlockEnabled
-                                        )
-                                    }
-                                }
-                            }
-                            
-                            if (originalLyrics != LYRICS_NOT_FOUND && !lyricsProviderName.isNullOrBlank()) {
-                                item(key = "provider_credit") {
+                                    CircularWavyProgressIndicator(
+                                        color = expressiveAccent,
+                                        modifier = Modifier.size(48.dp)
+                                    )
                                     Text(
-                                        text = stringResource(R.string.lyrics_provided_by, lyricsProviderName ?: ""),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = textColor.copy(alpha = 0.5f),
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 24.dp, bottom = 16.dp)
+                                        text = stringResource(R.string.loading_lyrics),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = expressiveAccent.copy(alpha = 0.8f)
                                     )
                                 }
                             }
                         }
-                    }
-
-                    if (originalLyrics == LYRICS_NOT_FOUND) {
-                        Card(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .fillMaxWidth(0.8f)
-                                .padding(vertical = 32.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f)
-                            ),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                        ) {
-                            Column(
+                    } else if (originalLyrics == LYRICS_NOT_FOUND || displayedLines.isEmpty()) {
+                        item {
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(20.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    .padding(top = 96.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.music_note),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(32.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                Surface(
+                                    shape = RoundedCornerShape(24.dp),
+                                    color = Color.White.copy(alpha = 0.1f),
+                                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)),
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.85f)
+                                        .padding(20.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(24.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.lyrics),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(36.dp),
+                                            tint = expressiveAccent
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.lyrics_not_found),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.lyrics_not_available_desc),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color.White.copy(alpha = 0.7f),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        itemsIndexed(
+                            items = displayedLines,
+                            key = { index, item -> "$index-${item.time}" }
+                        ) { index, item ->
+                            val isSelected = selectedIndices.contains(index)
+                            val isAssociatedBg = item.isBackground &&
+                                    currentMainLineIndex >= 0 &&
+                                    index > currentMainLineIndex &&
+                                    displayedLines.subList(currentMainLineIndex + 1, index + 1).all { it.isBackground }
 
-                                Text(
-                                    text = stringResource(R.string.lyrics_not_found),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    textAlign = TextAlign.Center
-                                )
+                            val isActiveLine = (index == currentMainLineIndex || isAssociatedBg) && isSynced
+                            val distance = if (isActiveLine) 0 else kotlin.math.abs(index - currentMainLineIndex)
+                            val romText = if (showRomanized) romanizedLines?.getOrNull(index) else null
 
+                            LyricsLine(
+                                entry = item,
+                                romanizedText = romText,
+                                isSynced = isSynced,
+                                isActive = isActiveLine,
+                                distanceFromCurrent = distance,
+                                lyricsTextPosition = lyricsTextPosition,
+                                textColor = expressiveAccent,
+                                textSize = 26f,
+                                lineSpacing = 6f,
+                                onClick = {
+                                    if (isSelectionModeActive) {
+                                        if (isSelected) {
+                                            selectedIndices.remove(index)
+                                            if (selectedIndices.isEmpty()) isSelectionModeActive = false
+                                        } else {
+                                            if (selectedIndices.size < maxSelectionLimit) selectedIndices.add(index)
+                                            else showMaxSelectionToast = true
+                                        }
+                                    } else if (isSynced && changeLyrics) {
+                                        var targetVideoTime = item.time - lyricsOffsetMs
+                                        if (sponsorBlockEnabled) {
+                                            for (segment in currentSkipSegments) {
+                                                if (targetVideoTime >= segment.first) {
+                                                    targetVideoTime += (segment.second - segment.first)
+                                                }
+                                            }
+                                        }
+                                        playerConnection.player.seekTo(targetVideoTime)
+                                        scope.launch { performSmoothPageScroll(index, 1200) }
+                                    }
+                                },
+                                onLongClick = {
+                                    if (!isSelectionModeActive) {
+                                        isSelectionModeActive = true
+                                        selectedIndices.add(index)
+                                    }
+                                },
+                                isSelected = isSelected,
+                                isSelectionModeActive = isSelectionModeActive,
+                                isAutoScrollActive = isAutoScrollEnabled,
+                                animateLyrics = animateLyrics,
+                                lyricsOffset = lyricsOffsetMs,
+                                currentSkipSegments = currentSkipSegments,
+                                sponsorBlockEnabled = sponsorBlockEnabled
+                            )
+
+                            // Instrumental / Gap indicator
+                            val nextItem = displayedLines.getOrNull(index + 1)
+                            if (isSynced && nextItem != null && !item.isBackground && !nextItem.isBackground) {
+                                val itemEnd = item.words?.maxOfOrNull { (it.endTime * 1000).toLong() } ?: (item.time + 3000L)
+                                val gapDuration = nextItem.time - itemEnd
+
+                                if (gapDuration > 8000L) {
+                                    GapIndicator(
+                                        gapStart = itemEnd,
+                                        gapEnd = nextItem.time,
+                                        playerConnection = playerConnection,
+                                        lyricsOffset = lyricsOffsetMs,
+                                        color = expressiveAccent,
+                                        currentSkipSegments = currentSkipSegments,
+                                        sponsorBlockEnabled = sponsorBlockEnabled
+                                    )
+                                }
+                            }
+                        }
+
+                        if (!lyricsProviderName.isNullOrBlank()) {
+                            item(key = "provider_credit") {
                                 Text(
-                                    text = stringResource(R.string.lyrics_not_available_desc),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
+                                    text = stringResource(R.string.lyrics_provided_by, lyricsProviderName),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White.copy(alpha = 0.45f),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 32.dp, bottom = 16.dp)
                                 )
                             }
                         }
                     }
                 }
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
-            ) {
 
-                val coroutineScope = rememberCoroutineScope()
-                val offsetXAnimatable = remember { Animatable(0f) }
-                var dragStartTime by remember { mutableLongStateOf(0L) }
-                var totalDragDistance by remember { mutableFloatStateOf(0f) }
-                val layoutDirection = LocalLayoutDirection.current
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                // Auto-Scroll Paused Floating Pill
+                AnimatedVisibility(
+                    visible = !isAutoScrollEnabled && isSynced && !isSelectionModeActive,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = if (isFullscreen) 195.dp else 75.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .pointerInput(swipeThumbnail) {
-                                if (!swipeThumbnail) return@pointerInput
-                                detectHorizontalDragGestures(
-                                    onDragStart = {
-                                        dragStartTime = System.currentTimeMillis()
-                                        totalDragDistance = 0f
-                                    },
-                                    onDragCancel = {
-                                        coroutineScope.launch {
-                                            offsetXAnimatable.animateTo(
-                                                targetValue = 0f,
-                                                animationSpec = spring(
-                                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                                    stiffness = Spring.StiffnessLow
-                                                )
-                                            )
-                                        }
-                                    },
-                                    onHorizontalDrag = { _, dragAmount ->
-                                        val adjustedDragAmount = if (layoutDirection == LayoutDirection.Rtl)
-                                            -dragAmount else dragAmount
-                                        val allowLeft = adjustedDragAmount < 0 && canSkipNext
-                                        val allowRight = adjustedDragAmount > 0 && canSkipPrevious
-
-                                        if (allowLeft || allowRight) {
-                                            totalDragDistance += adjustedDragAmount.absoluteValue
-                                            coroutineScope.launch {
-                                                offsetXAnimatable.snapTo(offsetXAnimatable.value + adjustedDragAmount)
-                                            }
-                                        }
-                                    },
-                                    onDragEnd = {
-                                        val dragDuration = System.currentTimeMillis() - dragStartTime
-                                        val velocity = if (dragDuration > 0)
-                                            totalDragDistance / dragDuration else 0f
-                                        val currentOffset = offsetXAnimatable.value
-
-                                        val minDistanceThreshold = 50f
-                                        val velocityThreshold = (0.73f * -8.25f) + 8.5f
-                                        val autoSwipeThreshold = (600 / (1f + exp(-(-11.44748 * 0.73f + 9.04945)))).roundToInt()
-
-                                        val shouldChangeSong = (
-                                                currentOffset.absoluteValue > minDistanceThreshold &&
-                                                        velocity > velocityThreshold
-                                                ) || (currentOffset.absoluteValue > autoSwipeThreshold)
-
-                                        if (shouldChangeSong) {
-                                            val isRightSwipe = currentOffset > 0
-                                            if (isRightSwipe && canSkipPrevious) {
-                                                playerConnection.seekToPrevious()
-                                            } else if (!isRightSwipe && canSkipNext) {
-                                                playerConnection.seekToNext()
-                                            }
-                                        }
-
-                                        coroutineScope.launch {
-                                            offsetXAnimatable.animateTo(
-                                                targetValue = 0f,
-                                                animationSpec = spring(
-                                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                                    stiffness = Spring.StiffnessLow
-                                                )
-                                            )
-                                        }
-                                    }
-                                )
-                            }
+                    Surface(
+                        onClick = {
+                            scope.launch { performSmoothPageScroll(currentLineIndex, 1200) }
+                            isAutoScrollEnabled = true
+                        },
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+                        shadowElevation = 8.dp
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .offset { IntOffset(offsetXAnimatable.value.roundToInt(), 0) }
-                                .fillMaxWidth()
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable {
-                                        if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
-                                            playerConnection.player.seekTo(0, 0)
-                                            playerConnection.player.playWhenReady = true
-                                        } else {
-                                            if (isPlaying) playerConnection.player.pause() else playerConnection.player.play()
-                                        }
-                                    }
-                            ) {
-                                currentMetadata?.let { metadata ->
-                                    AsyncImage(
-                                        model = metadata.thumbnailUrl,
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                }
-
-                                val overlayAlphaState by androidx.compose.animation.core.animateFloatAsState(
-                                    targetValue = if (isPlaying) 0.4f else 0.4f,
-                                    label = "overlay_alpha",
-                                    animationSpec = if (animateLyrics) spring() else snap()
-                                )
-
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(Color.Black.copy(alpha = overlayAlphaState))
-                                )
-
-                                androidx.compose.animation.AnimatedVisibility(
-                                    visible = playbackState == androidx.media3.common.Player.STATE_ENDED || !isPlaying || isPlaying,
-                                    enter = fadeIn(),
-                                    exit = fadeOut()
-                                ) {
-                                    Icon(
-                                        painter = painterResource(
-                                            if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
-                                                R.drawable.replay
-                                            } else if (isPlaying) {
-                                                R.drawable.pause
-                                            } else {
-                                                R.drawable.play
-                                            }
-                                        ),
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                currentMetadata?.let { metadata ->
-                                    Text(
-                                        text = metadata.title,
-                                        style = MaterialTheme.typography.titleMedium.copy(
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.SemiBold
-                                        ),
-                                        color = textBackgroundColor,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-
-                                    Spacer(modifier = Modifier.height(6.dp))
-
-                                    Text(
-                                        text = if (metadata.artists.isNotEmpty()) {
-                                            metadata.artists.joinToString(", ") { it.name }
-                                        } else {
-                                            stringResource(R.string.unknown)
-                                        },
-                                        style = MaterialTheme.typography.bodyMedium.copy(
-                                            fontSize = 14.sp
-                                        ),
-                                        color = textBackgroundColor.copy(alpha = 0.7f),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                        }
-
-                        if (offsetXAnimatable.value.absoluteValue > 20f) {
-                            if (offsetXAnimatable.value > 0 && canSkipPrevious) {
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.CenterStart)
-                                        .padding(start = 8.dp)
-                                        .alpha((offsetXAnimatable.value.absoluteValue / 100f).coerceIn(0.2f, 0.6f))
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.skip_previous),
-                                        contentDescription = null,
-                                        tint = textBackgroundColor,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-
-                            if (offsetXAnimatable.value < 0 && canSkipNext) {
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.CenterEnd)
-                                        .padding(end = 8.dp)
-                                        .alpha((offsetXAnimatable.value.absoluteValue / 100f).coerceIn(0.2f, 0.6f))
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.skip_next),
-                                        contentDescription = null,
-                                        tint = textBackgroundColor,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clickable {
-                                    playerConnection.toggleLike()
-                                },
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp)
                         ) {
                             Icon(
-                                painter = painterResource(
-                                    if (currentSong?.song?.liked == true)
-                                        R.drawable.favorite
-                                    else R.drawable.favorite_border
-                                ),
-                                contentDescription = if (currentSong?.song?.liked == true) stringResource(R.string.remove_from_library) else stringResource(R.string.add_to_library),
-                                tint = if (currentSong?.song?.liked == true)
-                                    MaterialTheme.colorScheme.error
-                                else
-                                    textBackgroundColor.copy(alpha = 0.8f),
-                                modifier = Modifier.size(20.dp)
+                                painter = painterResource(R.drawable.sync),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
                             )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clickable {
-                                    currentMetadata?.let { metadata ->
-                                        menuState.show {
-                                            LyricsMenu(
-                                                lyricsEntity = activeLyricsEntity,
-                                                mediaMetadata = metadata,
-                                                onDismiss = menuState::dismiss,
-                                                isTranslated = showTranslated,
-                                                onTranslateClick = { toggleTranslation() },
-                                                isRomanized = showRomanized,
-                                                onRomanizeClick = { toggleRomanization() },
-                                                navController = navController
-                                            )
-                                        }
-                                    }
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.more_horiz),
-                                contentDescription = stringResource(R.string.more_options),
-                                tint = textBackgroundColor,
-                                modifier = Modifier.size(20.dp)
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.auto_scroll),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                when (sliderStyle) {
-                    SliderStyle.DEFAULT -> {
-                        Slider(
-                            value = (sliderPosition ?: position).toFloat(),
-                            valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
-                            onValueChange = { sliderPosition = it.toLong() },
-                            onValueChangeFinished = {
-                                sliderPosition?.let {
-                                    playerConnection.player.seekTo(it)
-                                    position = it
-                                }
-                                sliderPosition = null
-                            },
-                            colors = androidx.compose.material3.SliderDefaults.colors(
-                                activeTrackColor = textBackgroundColor,
-                                inactiveTrackColor = textBackgroundColor.copy(alpha = 0.3f),
-                                thumbColor = textBackgroundColor
-                            ),
-                        )
-                    }
-
-                    SliderStyle.SQUIGGLY -> {
-                        SquigglySlider(
-                            value = (sliderPosition ?: position).toFloat(),
-                            valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
-                            onValueChange = { sliderPosition = it.toLong() },
-                            onValueChangeFinished = {
-                                sliderPosition?.let {
-                                    playerConnection.player.seekTo(it)
-                                    position = it
-                                }
-                                sliderPosition = null
-                            },
-                            colors = androidx.compose.material3.SliderDefaults.colors(
-                                activeTrackColor = textBackgroundColor,
-                                inactiveTrackColor = textBackgroundColor.copy(alpha = 0.3f),
-                                thumbColor = textBackgroundColor
-                            ),
-                            squigglesSpec = SquigglySlider.SquigglesSpec(
-                                amplitude = if (isPlaying && animateLyrics) (4.dp).coerceAtLeast(2.dp) else 0.dp,
-                                strokeWidth = 3.dp,
-                                wavelength = 36.dp,
-                            ),
-                        )
-                    }
-
-                    SliderStyle.SLIM -> {
-                        Slider(
-                            value = (sliderPosition ?: position).toFloat(),
-                            valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
-                            onValueChange = { sliderPosition = it.toLong() },
-                            onValueChangeFinished = {
-                                sliderPosition?.let {
-                                    playerConnection.player.seekTo(it)
-                                    position = it
-                                }
-                                sliderPosition = null
-                            },
-                            thumb = { Spacer(modifier = Modifier.size(0.dp)) },
-                            colors = androidx.compose.material3.SliderDefaults.colors(
-                                activeTrackColor = textBackgroundColor,
-                                inactiveTrackColor = textBackgroundColor.copy(alpha = 0.3f)
-                            )
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = makeTimeString(sliderPosition ?: position),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = textBackgroundColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    Text(
-                        text = if (duration != C.TIME_UNSET) makeTimeString(duration) else "",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = textBackgroundColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
-        }
-
-        AnimatedVisibility(
-            visible = !isAutoScrollEnabled && isSynced,
-            enter = slideInVertically { it } + fadeIn(),
-            exit = slideOutVertically { it } + fadeOut(),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 220.dp)
-        ) {
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                tonalElevation = 4.dp,
-                modifier = Modifier
-                    .clickable {
-                        scope.launch {
-                            performSmoothPageScroll(currentLineIndex, 1500)
-                        }
-                        isAutoScrollEnabled = true
-                    }
-                    .padding(12.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.sync),
-                        contentDescription = stringResource(R.string.auto_scroll),
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.auto_scroll),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
-
-        if (isFullscreen && isSelectionModeActive) {
-            AnimatedVisibility(
-                visible = isSelectionModeActive,
-                enter = fadeIn(tween(300)) + slideInVertically(tween(300)) { it },
-                exit = fadeOut(tween(300)) + slideOutVertically(tween(300)) { it },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 180.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // Multi-Selection Floating Action Dock
+                AnimatedVisibility(
+                    visible = isSelectionModeActive,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = if (isFullscreen) 195.dp else 75.dp)
                 ) {
                     Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.9f),
-                        tonalElevation = 4.dp,
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clickable {
+                        shape = RoundedCornerShape(24.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shadowElevation = 12.dp,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            TextButton(onClick = {
                                 isSelectionModeActive = false
                                 selectedIndices.clear()
+                            }) {
+                                Text(stringResource(R.string.cancel))
                             }
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.close),
-                                contentDescription = stringResource(R.string.cancel),
-                                tint = MaterialTheme.colorScheme.onErrorContainer,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
 
-                    if (selectedIndices.isNotEmpty()) {
-                        Surface(
-                            shape = RoundedCornerShape(28.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
-                            tonalElevation = 4.dp,
-                            modifier = Modifier
-                                .clickable {
+                            Button(
+                                onClick = {
                                     val sortedIndices = selectedIndices.sorted()
                                     val selectedLyricsText = sortedIndices
                                         .mapNotNull { displayedLines.getOrNull(it)?.text }
@@ -1842,47 +860,44 @@ fun Lyrics(
                                     }
                                     isSelectionModeActive = false
                                     selectedIndices.clear()
-                                }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                },
+                                enabled = selectedIndices.isNotEmpty(),
+                                shape = RoundedCornerShape(16.dp)
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.media3_icon_share),
-                                    contentDescription = stringResource(R.string.share_selected),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(20.dp)
+                                    painter = painterResource(R.drawable.share),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
                                 )
-                                Text(
-                                    text = stringResource(R.string.share),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Spacer(Modifier.width(6.dp))
+                                Text("${stringResource(R.string.share)} (${selectedIndices.size})")
                             }
                         }
                     }
                 }
             }
-        }
 
-    }
-
-    if (showProgressDialog) {
-        BasicAlertDialog(onDismissRequest = { /* No permitir cerrar */ }) {
-            Card(
-                shape = MaterialTheme.shapes.medium,
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-            ) {
-                Box(modifier = Modifier.padding(32.dp)) {
-                    Text(
-                        text = stringResource(R.string.generating_image) + "\n" + stringResource(R.string.please_wait),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+            // --- FLOATING GLASS PLAYER CONTROLS (FULLSCREEN) ---
+            if (isFullscreen) {
+                LyricsBottomPlayerDock(
+                    mediaMetadata = currentMetadata,
+                    position = position,
+                    duration = duration,
+                    isPlaying = isPlaying,
+                    sliderStyle = sliderStyle,
+                    canSkipPrevious = canSkipPrevious,
+                    canSkipNext = canSkipNext,
+                    playerConnection = playerConnection,
+                    sliderPosition = sliderPosition,
+                    onSliderPositionChange = { sliderPosition = it },
+                    onSliderSeekFinished = {
+                        sliderPosition?.let {
+                            playerConnection.player.seekTo(it)
+                            position = it
+                        }
+                        sliderPosition = null
+                    }
+                )
             }
         }
     }
@@ -1901,198 +916,200 @@ fun Lyrics(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-fun GapIndicator(
-    gapStart: Long,
-    gapEnd: Long,
-    playerConnection: PlayerConnection,
-    lyricsOffset: Long,
-    color: Color,
-    currentSkipSegments: List<Pair<Long, Long>> = emptyList(),
-    sponsorBlockEnabled: Boolean = false
-) {
-    var smoothPosition by remember { mutableLongStateOf(gapStart) }
-
-    LaunchedEffect(Unit, currentSkipSegments, sponsorBlockEnabled) {
-        var lastPlayerPos = playerConnection.player.currentPosition
-        var lastUpdateTime = System.currentTimeMillis()
-        while (isActive) {
-            withFrameMillis {
-                val now = System.currentTimeMillis()
-                val playerPos = playerConnection.player.currentPosition
-                if (playerPos != lastPlayerPos) {
-                    lastPlayerPos = playerPos
-                    lastUpdateTime = now
-                }
-                val elapsed = now - lastUpdateTime
-                val currentVideoPos = lastPlayerPos + (if (playerConnection.player.isPlaying) elapsed else 0)
-                
-                var sponsorBlockOffset = 0L
-                if (sponsorBlockEnabled) {
-                    for (segment in currentSkipSegments) {
-                        if (currentVideoPos >= segment.second) {
-                            sponsorBlockOffset += (segment.second - segment.first)
-                        } else if (currentVideoPos > segment.first) {
-                            sponsorBlockOffset += (currentVideoPos - segment.first)
-                        }
-                    }
-                }
-                
-                smoothPosition = currentVideoPos - sponsorBlockOffset + lyricsOffset
-            }
-        }
-    }
-
-    val progress by remember { derivedStateOf { ((smoothPosition - gapStart).toFloat() / (gapEnd - gapStart)).coerceIn(0f, 1f) } }
-    val isVisible by remember { derivedStateOf { smoothPosition in gapStart..(gapEnd - 1000L) } }
-
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(tween(1000)) + expandVertically(tween(1000)),
-        exit = fadeOut(tween(1000)) + shrinkVertically(tween(1000))
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            androidx.compose.material3.CircularWavyProgressIndicator(
-                progress = { progress },
-                color = color,
-                trackColor = color.copy(alpha = 0.2f),
-                modifier = Modifier.size(40.dp)
-            )
-        }
-    }
-}
-
-@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ShareLyricsDialog(
-    lyricsText: String,
-    songTitle: String,
-    artists: String,
+private fun LyricsBottomPlayerDock(
     mediaMetadata: com.cgens67.gluetune.models.MediaMetadata?,
-    onDismiss: () -> Unit,
-    onShareAsImage: (String, String, String) -> Unit = { _, _, _ -> }
+    position: Long,
+    duration: Long,
+    isPlaying: Boolean,
+    sliderStyle: SliderStyle,
+    canSkipPrevious: Boolean,
+    canSkipNext: Boolean,
+    playerConnection: PlayerConnection,
+    sliderPosition: Long?,
+    onSliderPositionChange: (Long) -> Unit,
+    onSliderSeekFinished: () -> Unit
 ) {
-    val context = LocalContext.current
+    val currentSong by playerConnection.currentSong.collectAsState(initial = null)
 
-    BasicAlertDialog(onDismissRequest = onDismiss) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(0.85f)
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(32.dp),
+        color = Color.Black.copy(alpha = 0.5f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)),
+        shadowElevation = 16.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp)
         ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(
-                    text = stringResource(R.string.share_lyrics),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Share as text
+            // Track Info & Like Action
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            val shareIntent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                type = "text/plain"
-                                val songLink =
-                                    "https://music.youtube.com/watch?v=${mediaMetadata?.id}"
-                                putExtra(
-                                    Intent.EXTRA_TEXT,
-                                    "\"$lyricsText\"\n\n$songTitle - $artists\n$songLink"
-                                )
-                            }
-                            context.startActivity(
-                                Intent.createChooser(
-                                    shareIntent,
-                                    context.getString(R.string.share_lyrics)
-                                )
-                            )
-                            onDismiss()
-                        }
-                        .padding(vertical = 12.dp),
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.media3_icon_share),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.share_as_text),
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                // Share as image
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onShareAsImage(lyricsText, songTitle, artists)
-                        }
-                        .padding(vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.media3_icon_share),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.share_as_image),
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                // Cancel button
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 4.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    Text(
-                        text = stringResource(R.string.cancel),
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Medium,
+                    Box(
                         modifier = Modifier
-                            .clickable { onDismiss() }
-                            .padding(vertical = 8.dp, horizontal = 12.dp)
+                            .size(46.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    ) {
+                        AsyncImage(
+                            model = mediaMetadata?.thumbnailUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    Spacer(Modifier.width(12.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = mediaMetadata?.title.orEmpty(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = mediaMetadata?.artists?.joinToString(", ") { it.name }.orEmpty(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.7f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
+                IconButton(onClick = { playerConnection.toggleLike() }) {
+                    Icon(
+                        painter = painterResource(
+                            if (currentSong?.song?.liked == true) R.drawable.favorite else R.drawable.favorite_border
+                        ),
+                        contentDescription = null,
+                        tint = if (currentSong?.song?.liked == true) Color(0xFFFF4B6E) else Color.White.copy(alpha = 0.8f),
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // Progress Slider
+            when (sliderStyle) {
+                SliderStyle.SQUIGGLY -> {
+                    SquigglySlider(
+                        value = (sliderPosition ?: position).toFloat(),
+                        valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
+                        onValueChange = { onSliderPositionChange(it.toLong()) },
+                        onValueChangeFinished = onSliderSeekFinished,
+                        colors = SliderDefaults.colors(
+                            activeTrackColor = Color.White,
+                            inactiveTrackColor = Color.White.copy(alpha = 0.25f),
+                            thumbColor = Color.White
+                        ),
+                        squigglesSpec = SquigglySlider.SquigglesSpec(
+                            amplitude = if (isPlaying) 3.dp else 0.dp,
+                            strokeWidth = 3.dp,
+                            wavelength = 32.dp
+                        )
+                    )
+                }
+                else -> {
+                    Slider(
+                        value = (sliderPosition ?: position).toFloat(),
+                        valueRange = 0f..(if (duration == C.TIME_UNSET) 0f else duration.toFloat()),
+                        onValueChange = { onSliderPositionChange(it.toLong()) },
+                        onValueChangeFinished = onSliderSeekFinished,
+                        colors = SliderDefaults.colors(
+                            activeTrackColor = Color.White,
+                            inactiveTrackColor = Color.White.copy(alpha = 0.25f),
+                            thumbColor = Color.White
+                        )
+                    )
+                }
+            }
+
+            // Timestamps
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-4).dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = makeTimeString(sliderPosition ?: position),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.65f)
+                )
+                Text(
+                    text = if (duration != C.TIME_UNSET) makeTimeString(duration) else "--:--",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.65f)
+                )
+            }
+
+            // Transport Controls
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { playerConnection.seekToPrevious() },
+                    enabled = canSkipPrevious,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.skip_previous),
+                        contentDescription = null,
+                        tint = if (canSkipPrevious) Color.White else Color.White.copy(alpha = 0.3f),
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+
+                Spacer(Modifier.width(24.dp))
+
+                Surface(
+                    onClick = { playerConnection.togglePlayPause() },
+                    shape = CircleShape,
+                    color = Color.White,
+                    modifier = Modifier.size(56.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            painter = painterResource(if (isPlaying) R.drawable.pause else R.drawable.play),
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                Spacer(Modifier.width(24.dp))
+
+                IconButton(
+                    onClick = { playerConnection.seekToNext() },
+                    enabled = canSkipNext,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.skip_next),
+                        contentDescription = null,
+                        tint = if (canSkipNext) Color.White else Color.White.copy(alpha = 0.3f),
+                        modifier = Modifier.size(28.dp)
                     )
                 }
             }
         }
     }
 }
-
-
-/**
- * Calculates the auto-swipe threshold based on swipe sensitivity.
- */
-private fun calculateAutoSwipeThreshold(swipeSensitivity: Float): Int {
-    return (600 / (1f + exp(-(-11.44748 * swipeSensitivity + 9.04945)))).roundToInt()
-}
-
-// Preview time constant
-val LyricsPreviewTime = 2.seconds
-const val ANIMATE_SCROLL_DURATION = 300L
