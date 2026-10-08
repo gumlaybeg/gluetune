@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,118 +50,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cgens67.gluetune.R
-import com.cgens67.gluetune.extensions.toMediaItem
 import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.models.CreatorPick
+import com.cgens67.gluetune.models.CreatorsPicksRepository
 import com.cgens67.gluetune.models.MediaMetadata
 import com.cgens67.gluetune.playback.PlayerConnection
 import com.cgens67.gluetune.playback.queues.ListQueue
 import com.cgens67.gluetune.ui.menu.YouTubeSongMenu
-import com.cgens67.innertube.models.Artist as InnertubeArtist
-import com.cgens67.innertube.models.SongItem
-import com.cgens67.innertube.models.WatchEndpoint
-
-@Immutable
-data class CreatorPick(
-    val id: String,
-    val title: String,
-    val artist: String,
-    val durationSeconds: Int,
-    val thumbnailUrl: String = "https://i.ytimg.com/vi/$id/hqdefault.jpg",
-    val note: String? = null
-) {
-    fun toMediaMetadata(): MediaMetadata = MediaMetadata(
-        id = id,
-        title = title,
-        artists = listOf(MediaMetadata.Artist(id = null, name = artist)),
-        duration = durationSeconds,
-        thumbnailUrl = thumbnailUrl,
-        album = null,
-        explicit = false,
-        liked = false,
-        isVideo = false
-    )
-
-    fun toMediaItem() = toMediaMetadata().toMediaItem()
-
-    fun toSongItem() = SongItem(
-        id = id,
-        title = title,
-        artists = listOf(InnertubeArtist(id = null, name = artist)),
-        album = null,
-        duration = durationSeconds,
-        thumbnail = thumbnailUrl,
-        explicit = false,
-        endpoint = WatchEndpoint(videoId = id)
-    )
-}
-
-object CreatorsPicksRepository {
-    val picks: List<CreatorPick> = listOf(
-        CreatorPick(
-            id = "Zi_XLOR8Kw0",
-            title = "Billie Jean",
-            artist = "Michael Jackson",
-            durationSeconds = 294,
-            note = "All-Time Classic"
-        ),
-        CreatorPick(
-            id = "JSvT_f_a91I",
-            title = "Timeless",
-            artist = "The Weeknd & Playboi Carti",
-            durationSeconds = 256,
-            note = "Heavy Rotation"
-        ),
-        CreatorPick(
-            id = "kPa7bsKwL-8",
-            title = "Die With A Smile",
-            artist = "Lady Gaga & Bruno Mars",
-            durationSeconds = 251,
-            note = "Creator's Favorite"
-        ),
-        CreatorPick(
-            id = "d38H45c9x9g",
-            title = "Starboy",
-            artist = "The Weeknd ft. Daft Punk",
-            durationSeconds = 230,
-            note = "Essential"
-        ),
-        CreatorPick(
-            id = "h_D3VFfhvs4",
-            title = "Smooth Criminal",
-            artist = "Michael Jackson",
-            durationSeconds = 257,
-            note = "Masterpiece"
-        ),
-        CreatorPick(
-            id = "fJ9rUzIMcZQ",
-            title = "Bohemian Rhapsody",
-            artist = "Queen",
-            durationSeconds = 354,
-            note = "Legendary"
-        ),
-        CreatorPick(
-            id = "5NV6Rdv1a3w",
-            title = "Get Lucky",
-            artist = "Daft Punk ft. Pharrell Williams",
-            durationSeconds = 248,
-            note = "Timeless Vibe"
-        ),
-        CreatorPick(
-            id = "T6eK-2OQtew",
-            title = "Not Like Us",
-            artist = "Kendrick Lamar",
-            durationSeconds = 274,
-            note = "Instant Classic"
-        ),
-        CreatorPick(
-            id = "uzS3WG6__G4",
-            title = "Pink + White",
-            artist = "Frank Ocean",
-            durationSeconds = 184,
-            note = "Pure Soul"
-        )
-    )
-}
 
 @Composable
 fun CreatorsPicksSection(
