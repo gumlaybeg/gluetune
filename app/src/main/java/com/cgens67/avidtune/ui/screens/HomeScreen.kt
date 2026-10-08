@@ -12,6 +12,7 @@ import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
@@ -153,6 +154,7 @@ import com.cgens67.gluetune.playback.queues.YouTubeAlbumRadio
 import com.cgens67.gluetune.playback.queues.YouTubeQueue
 import com.cgens67.gluetune.ui.component.AlbumGridItem
 import com.cgens67.gluetune.ui.component.ArtistGridItem
+import com.cgens67.gluetune.ui.component.CreatorsPicksSection
 import com.cgens67.gluetune.ui.component.LocalMenuState
 import com.cgens67.gluetune.ui.component.MenuState
 import com.cgens67.gluetune.ui.component.NavigationTitle
@@ -391,6 +393,21 @@ fun HomeScreen(
             }
             item {
                 HomeQuickActionsRow(navController = navController, modifier = Modifier.animateItem())
+            }
+
+            // --- Creator's Top Picks Section ---
+            item {
+                CreatorsPicksSection(
+                    currentMediaMetadata = mediaMetadata,
+                    isPlaying = isPlaying,
+                    navController = navController,
+                    playerConnection = playerConnection,
+                    menuState = menuState,
+                    haptic = haptic,
+                    modifier = Modifier
+                        .animateItem()
+                        .padding(bottom = 8.dp)
+                )
             }
 
             quickPicks?.takeIf { it.isNotEmpty() }?.let { quickPicks ->
