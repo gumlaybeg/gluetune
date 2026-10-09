@@ -4,6 +4,25 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class RecognitionResult(
+    val trackId: String,
+    val title: String,
+    val artist: String,
+    val album: String? = null,
+    val coverArtUrl: String? = null,
+    val coverArtHqUrl: String? = null,
+    val genre: String? = null,
+    val releaseDate: String? = null,
+    val label: String? = null,
+    val lyrics: List<String>? = null,
+    val shazamUrl: String? = null,
+    val appleMusicUrl: String? = null,
+    val spotifyUrl: String? = null,
+    val isrc: String? = null,
+    val youtubeVideoId: String? = null
+)
+
+@Serializable
 data class ShazamRequestJson(
     @SerialName("geolocation")
     val geolocation: Geolocation,
@@ -42,7 +61,7 @@ data class ShazamResponseJson(
     @SerialName("location")
     val location: Location? = null,
     @SerialName("timestamp")
-    val timestamp: Long? = null,
+    val timestamp: Long,
     @SerialName("timezone")
     val timezone: String? = null,
     @SerialName("track")
