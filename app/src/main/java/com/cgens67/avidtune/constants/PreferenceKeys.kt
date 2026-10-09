@@ -68,6 +68,8 @@ val ProxyUrlKey = stringPreferencesKey("proxyUrl")
 val ProxyTypeKey = stringPreferencesKey("proxyType")
 val YtmSyncKey = booleanPreferencesKey("ytmSync")
 
+val AuddApiTokenKey = stringPreferencesKey("auddApiToken")
+
 val AudioQualityKey = stringPreferencesKey("audioQuality")
 
 enum class AudioQuality {
