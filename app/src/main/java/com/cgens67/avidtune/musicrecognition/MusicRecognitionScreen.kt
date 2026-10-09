@@ -42,26 +42,32 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -87,6 +93,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -97,6 +104,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
@@ -135,7 +143,7 @@ fun MusicRecognitionScreen(
     val strings =
         remember {
             MusicRecognitionStrings(
-                signatureFailed = context.getString(R.string.error_unknown), // Fallback
+                signatureFailed = context.getString(R.string.error_unknown),
                 noMatchFallback = context.getString(R.string.no_results_found),
                 recognitionFailedFallback = context.getString(R.string.error_unknown),
             )
@@ -316,13 +324,13 @@ fun MusicRecognitionScreen(
                         MusicRecognitionState.Ready -> {
                             StatusPill(
                                 label = "Tap to listen",
-                                iconRes = R.drawable.mic,
+                                iconRes = R.drawable.graphic_eq,
                             )
                         }
                         MusicRecognitionState.Listening -> {
                             StatusPill(
                                 label = "Listening...",
-                                iconRes = R.drawable.listening,
+                                iconRes = R.drawable.graphic_eq,
                             )
                         }
                         MusicRecognitionState.Processing -> {
@@ -633,8 +641,8 @@ private fun ListeningOrb(
         val icon =
             when {
                 isProcessing -> R.drawable.cached
-                isActive -> R.drawable.listening
-                else -> R.drawable.mic
+                isActive -> R.drawable.graphic_eq
+                else -> R.drawable.graphic_eq
             }
 
         val iconAlpha by animateFloatAsState(
@@ -800,7 +808,7 @@ private fun SuccessActions(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = stringResource(R.string.music_recognition_listen_again),
+                    text = "Listen Again",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     softWrap = false,
@@ -852,7 +860,7 @@ private fun SuccessActions(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = stringResource(R.string.music_recognition_open_shazam),
+                    text = "Open in Shazam",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     softWrap = false,
@@ -1019,7 +1027,7 @@ private fun ResultCard(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = stringResource(R.string.music_recognition_lyrics_preview),
+                            text = "Lyrics Preview",
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -1126,7 +1134,7 @@ private fun FlowChips(
             buildList {
                 album?.takeIf { it.isNotBlank() }?.let { add(ChipData(R.drawable.album, it)) }
                 genre?.takeIf { it.isNotBlank() }?.let { add(ChipData(R.drawable.info, it)) }
-                releaseDate?.takeIf { it.isNotBlank() }?.let { add(ChipData(R.drawable.calendar_today, it)) }
+                releaseDate?.takeIf { it.isNotBlank() }?.let { add(ChipData(R.drawable.schedule, it)) }
                 isrc?.takeIf { it.isNotBlank() }?.let { add(ChipData(R.drawable.link, it)) }
             }
         }
@@ -1142,7 +1150,7 @@ private fun FlowChips(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items.forEach { chip ->
-            androidx.compose.material3.AssistChip(
+            AssistChip(
                 onClick = {},
                 label = {
                     Text(
@@ -1160,7 +1168,7 @@ private fun FlowChips(
                     )
                 },
                 colors =
-                    androidx.compose.material3.AssistChipDefaults.assistChipColors(
+                    AssistChipDefaults.assistChipColors(
                         containerColor = containerColor,
                         labelColor = labelColor,
                         leadingIconContentColor = labelColor,
