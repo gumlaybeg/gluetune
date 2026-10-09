@@ -83,6 +83,7 @@ import com.cgens67.gluetune.constants.SYSTEM_DEFAULT
 import com.cgens67.gluetune.constants.TopSize
 import com.cgens67.gluetune.constants.AiContentFilterEnabledKey
 import com.cgens67.gluetune.constants.AiContentFilterIncludeModerateKey
+import com.cgens67.gluetune.constants.AuddApiTokenKey
 import com.cgens67.gluetune.ui.component.EditTextPreference
 import com.cgens67.gluetune.ui.component.ListPreference
 import com.cgens67.gluetune.ui.component.PreferenceEntry
@@ -90,6 +91,7 @@ import com.cgens67.gluetune.ui.component.SettingsGeneralCategory
 import com.cgens67.gluetune.ui.component.SettingsPage
 import com.cgens67.gluetune.ui.component.SliderPreference
 import com.cgens67.gluetune.ui.component.SwitchPreference
+import com.cgens67.gluetune.ui.component.TextFieldDialog
 import com.cgens67.gluetune.utils.rememberEnumPreference
 import com.cgens67.gluetune.utils.rememberPreference
 import kotlinx.coroutines.launch
@@ -190,6 +192,11 @@ fun ContentSettings(
         defaultValue = false
     )
 
+    val (auddApiToken, onAuddApiTokenChange) = rememberPreference(
+        key = AuddApiTokenKey,
+        defaultValue = ""
+    )
+
     val defaultOrder = listOf("AvidLyrics", "LyricsPlus", "Paxsenix", "BetterLyrics", "SimpMusic", "LrcLib", "Kugou", "NetEase", "Genius", "YouTube Subtitle", "YouTube Music")
     val (providerOrderStr, onProviderOrderChange) = rememberPreference(LyricsProviderOrderKey, defaultOrder.joinToString(","))
     val currentOrder = remember(providerOrderStr) {
@@ -199,6 +206,7 @@ fun ContentSettings(
         }
     }
     var showReorderDialog by remember { mutableStateOf(false) }
+    var showAuddTokenDialog by remember { mutableStateOf(false) }
 
     if (showReorderDialog) {
         ReorderLyricsProvidersBottomSheet(
@@ -207,6 +215,29 @@ fun ContentSettings(
             onSave = { newOrder ->
                 onProviderOrderChange(newOrder.joinToString(","))
                 showReorderDialog = false
+            }
+        )
+    }
+
+    if (showAuddTokenDialog) {
+        TextFieldDialog(
+            onDismiss = { showAuddTokenDialog = false },
+            icon = { Icon(painterResource(R.drawable.token), null) },
+            title = { Text("AudD API Token") },
+            onDone = {
+                onAuddApiTokenChange(it)
+                showAuddTokenDialog = false
+            },
+            singleLine = true,
+            initialTextFieldValue = androidx.compose.ui.text.input.TextFieldValue(auddApiToken),
+            isInputValid = { true },
+            extraContent = {
+                Text(
+                    text = "If no token is provided, a free trial tier is used for recognition which has hard rate limits. To get unlimited Humming matching, obtain an AudD Enterprise token.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 12.dp)
+                )
             }
         )
     }
@@ -317,6 +348,18 @@ fun ContentSettings(
                         )
                     }
                 }}
+            )
+        )
+
+        SettingsGeneralCategory(
+            title = stringResource(R.string.music_recognition),
+            items = listOf(
+                {PreferenceEntry(
+                    title = { Text("AudD API Token") },
+                    description = "Used as fallback for unlimited humming/singing recognition",
+                    icon = { Icon(painterResource(R.drawable.mic), null) },
+                    onClick = { showAuddTokenDialog = true }
+                )}
             )
         )
 
