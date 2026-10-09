@@ -788,6 +788,7 @@ private fun HomeQuickActionsRow(
 ) {
     val actions = remember {
         listOf(
+            QuickActionItem("music_recognition", R.drawable.graphic_eq, "Identify", isSecondary = false),
             QuickActionItem("history", R.drawable.history, "History", isSecondary = true),
             QuickActionItem("stats", R.drawable.equalizer, "Stats", isSecondary = false),
             QuickActionItem("auto_playlist/liked", R.drawable.favorite, "Liked", isSecondary = false),
