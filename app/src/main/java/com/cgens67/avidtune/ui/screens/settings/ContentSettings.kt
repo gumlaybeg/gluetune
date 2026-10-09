@@ -352,12 +352,12 @@ fun ContentSettings(
         )
 
         SettingsGeneralCategory(
-            title = stringResource(R.string.music_recognition),
+            title = "Music Recognition",
             items = listOf(
                 {PreferenceEntry(
                     title = { Text("AudD API Token") },
                     description = "Used as fallback for unlimited humming/singing recognition",
-                    icon = { Icon(painterResource(R.drawable.mic), null) },
+                    icon = { Icon(painterResource(R.drawable.graphic_eq), null) },
                     onClick = { showAuddTokenDialog = true }
                 )}
             )
@@ -492,7 +492,6 @@ fun ReorderLyricsProvidersBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
 
-    // Consumes ALL vertical overscroll to prevent the sheet from dragging and snapping back
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPostScroll(
@@ -589,7 +588,6 @@ fun ReorderLyricsProvidersBottomSheet(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(16.dp)
                             ) {
-                                // Priority Number Badge
                                 Box(
                                     modifier = Modifier
                                         .size(28.dp)
@@ -611,7 +609,6 @@ fun ReorderLyricsProvidersBottomSheet(
                                 
                                 Spacer(Modifier.width(16.dp))
                                 
-                                // Provider Name
                                 Text(
                                     text = item,
                                     style = MaterialTheme.typography.bodyLarge,
@@ -619,7 +616,6 @@ fun ReorderLyricsProvidersBottomSheet(
                                     modifier = Modifier.weight(1f)
                                 )
                                 
-                                // Drag Handle
                                 Icon(
                                     painter = painterResource(R.drawable.drag_handle),
                                     contentDescription = "Drag",
