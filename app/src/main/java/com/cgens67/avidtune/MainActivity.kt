@@ -10,6 +10,7 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
+import androidx.activity.compose.rememberLauncherForActivityResult
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,7 +21,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -1307,6 +1307,10 @@ class MainActivity : ComponentActivity() {
                                                     it.route == screen.route
                                                 } == true
                                             },
+                                            onMusicRecognitionClick = {
+                                                navController.navigate("music_recognition")
+                                            },
+                                            musicRecognitionContentDescription = stringResource(R.string.music_recognition),
                                             onItemClick = { screen, isSelected ->
                                                 val currentTapTime = System.currentTimeMillis()
                                                 val timeSinceLastTap =
