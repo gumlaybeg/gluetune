@@ -95,7 +95,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -105,6 +104,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -1310,7 +1310,7 @@ class MainActivity : ComponentActivity() {
                                             onMusicRecognitionClick = {
                                                 navController.navigate("music_recognition")
                                             },
-                                            musicRecognitionContentDescription = stringResource(R.string.music_recognition),
+                                            musicRecognitionContentDescription = "Music Recognition",
                                             onItemClick = { screen, isSelected ->
                                                 val currentTapTime = System.currentTimeMillis()
                                                 val timeSinceLastTap =
