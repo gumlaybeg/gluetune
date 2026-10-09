@@ -5,8 +5,8 @@ package com.cgens67.gluetune.ui.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +34,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -43,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
@@ -57,104 +57,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.cgens67.gluetune.LocalDatabase
 import com.cgens67.gluetune.R
 import com.cgens67.gluetune.extensions.toMediaItem
 import com.cgens67.gluetune.extensions.togglePlayPause
+import com.cgens67.gluetune.models.CreatorPick
+import com.cgens67.gluetune.models.CreatorsPicksRepository
 import com.cgens67.gluetune.models.MediaMetadata
 import com.cgens67.gluetune.playback.PlayerConnection
 import com.cgens67.gluetune.playback.queues.ListQueue
 import com.cgens67.gluetune.ui.menu.YouTubeSongMenu
 import com.cgens67.gluetune.ui.utils.resize
 import com.cgens67.innertube.YouTube
-import com.cgens67.innertube.models.Artist as InnertubeArtist
+import com.cgens67.innertube.models.AlbumItem
 import com.cgens67.innertube.models.ArtistItem
 import com.cgens67.innertube.models.SongItem
-import com.cgens67.innertube.models.WatchEndpoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-@Immutable
-data class CreatorPick(
-    val id: String,
-    val title: String,
-    val artist: String,
-    val durationSeconds: Int,
-    val thumbnailUrl: String = "https://i.ytimg.com/vi/$id/maxresdefault.jpg",
-    val note: String? = null
-) {
-    fun toMediaMetadata(resolvedThumbnail: String? = null): MediaMetadata = MediaMetadata(
-        id = id,
-        title = title,
-        artists = listOf(MediaMetadata.Artist(id = null, name = artist)),
-        duration = durationSeconds,
-        thumbnailUrl = resolvedThumbnail ?: thumbnailUrl,
-        album = null,
-        explicit = false,
-        liked = false,
-        isVideo = false
-    )
-
-    fun toMediaItem(resolvedThumbnail: String? = null) = toMediaMetadata(resolvedThumbnail).toMediaItem()
-
-    fun toSongItem(resolvedThumbnail: String? = null) = SongItem(
-        id = id,
-        title = title,
-        artists = listOf(InnertubeArtist(id = null, name = artist)),
-        album = null,
-        duration = durationSeconds,
-        thumbnail = (resolvedThumbnail ?: thumbnailUrl),
-        explicit = false,
-        endpoint = WatchEndpoint(videoId = id)
-    )
-}
-
-object CreatorsPicksRepository {
-    val picks: List<CreatorPick> = listOf(
-        CreatorPick(
-            id = "Kr4EQDVETuA",
-            title = "Billie Jean",
-            artist = "Michael Jackson",
-            durationSeconds = 294,
-            note = "All-Time Classic"
-        ),
-        CreatorPick(
-            id = "g0ViBH7m4XA",
-            title = "Off The Wall",
-            artist = "Michael Jackson",
-            durationSeconds = 246,
-            note = "Groovy Vibe"
-        ),
-        CreatorPick(
-            id = "a4O-abCXsfA",
-            title = "Timeless",
-            artist = "The Weeknd & Playboi Carti",
-            durationSeconds = 256,
-            note = "Heavy Rotation"
-        ),
-        CreatorPick(
-            id = "IKlTR6Wlu0o",
-            title = "Who's Lovin' You",
-            artist = "Jackson 5",
-            durationSeconds = 241,
-            note = "Soul Classic"
-        ),
-        CreatorPick(
-            id = "ML63tY6uWFk",
-            title = "RATHER LIE",
-            artist = "Playboi Carti & The Weeknd",
-            durationSeconds = 160,
-            note = "Trending"
-        ),
-        CreatorPick(
-            id = "pzaNexXFWpA",
-            title = "National Treasures",
-            artist = "Drake",
-            durationSeconds = 174,
-            note = "Top Pick"
-        )
-    )
-}
+import java.net.URLEncoder
 
 @Composable
 fun CreatorsPicksSection(
@@ -171,18 +93,33 @@ fun CreatorsPicksSection(
 
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val database = LocalDatabase.current
 
-    // Cache clean thumbnails fetched directly from YouTube Music to replace letterboxed ones
-    val resolvedThumbnails = remember { mutableStateMapMapOf<String, String>() }
+    // Caches official clean metadata (clean square cover, artist ID, album ID)
+    val resolvedSongItems = remember { mutableStateMapOf<String, SongItem>() }
 
     LaunchedEffect(picks) {
         withContext(Dispatchers.IO) {
             picks.forEach { pick ->
-                if (!resolvedThumbnails.containsKey(pick.id)) {
-                    YouTube.player(pick.id).onSuccess { response ->
-                        val cleanThumb = response.videoDetails?.thumbnail?.thumbnails?.maxByOrNull { it.width }?.url
-                        if (cleanThumb != null) {
-                            resolvedThumbnails[pick.id] = cleanThumb.resize(800, 800)
+                if (!resolvedSongItems.containsKey(pick.id)) {
+                    // Check local database first
+                    val dbSong = database.song(pick.id).firstOrNull()
+                    if (dbSong != null && !dbSong.song.thumbnailUrl.isNullOrBlank()) {
+                        resolvedSongItems[pick.id] = SongItem(
+                            id = dbSong.song.id,
+                            title = dbSong.song.title,
+                            artists = dbSong.artists.map { com.cgens67.innertube.models.Artist(id = it.id, name = it.name) },
+                            album = dbSong.album?.let { com.cgens67.innertube.models.Album(name = it.title, id = it.id) },
+                            duration = dbSong.song.duration,
+                            thumbnail = dbSong.song.thumbnailUrl ?: "",
+                            explicit = false
+                        )
+                    } else {
+                        // Fetch official YouTube Music metadata
+                        YouTube.queue(listOf(pick.id)).onSuccess { songs ->
+                            songs.firstOrNull()?.let { songItem ->
+                                resolvedSongItems[pick.id] = songItem
+                            }
                         }
                     }
                 }
@@ -191,7 +128,6 @@ fun CreatorsPicksSection(
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // Section Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -237,7 +173,15 @@ fun CreatorsPicksSection(
                     playerConnection.playQueue(
                         ListQueue(
                             title = "Creator's Top Picks",
-                            items = picks.shuffled().map { it.toMediaItem(resolvedThumbnails[it.id]) },
+                            items = picks.shuffled().map { pick ->
+                                val song = resolvedSongItems[pick.id]
+                                pick.toMediaItem(
+                                    resolvedThumbnail = song?.thumbnail,
+                                    resolvedArtistId = song?.artists?.firstOrNull()?.id,
+                                    resolvedAlbumId = song?.album?.id,
+                                    resolvedAlbumName = song?.album?.name
+                                )
+                            },
                             startIndex = 0
                         )
                     )
@@ -269,7 +213,6 @@ fun CreatorsPicksSection(
 
         Spacer(Modifier.height(8.dp))
 
-        // Card List
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
@@ -277,7 +220,10 @@ fun CreatorsPicksSection(
         ) {
             itemsIndexed(picks, key = { _, item -> item.id }) { index, pick ->
                 val isActive = currentMediaMetadata?.id == pick.id
-                val currentArt = resolvedThumbnails[pick.id] ?: pick.thumbnailUrl
+                val resolvedSong = resolvedSongItems[pick.id]
+                val hasCleanThumbnail = resolvedSong?.thumbnail != null
+                val currentArt = resolvedSong?.thumbnail?.resize(800, 800)
+                    ?: "https://i.ytimg.com/vi/${pick.id}/mqdefault.jpg"
 
                 Card(
                     shape = RoundedCornerShape(20.dp),
@@ -297,7 +243,15 @@ fun CreatorsPicksSection(
                                     playerConnection.playQueue(
                                         ListQueue(
                                             title = "Creator's Top Picks",
-                                            items = picks.map { it.toMediaItem(resolvedThumbnails[it.id]) },
+                                            items = picks.map { p ->
+                                                val s = resolvedSongItems[p.id]
+                                                p.toMediaItem(
+                                                    resolvedThumbnail = s?.thumbnail,
+                                                    resolvedArtistId = s?.artists?.firstOrNull()?.id,
+                                                    resolvedAlbumId = s?.album?.id,
+                                                    resolvedAlbumName = s?.album?.name
+                                                )
+                                            },
                                             startIndex = index
                                         )
                                     )
@@ -306,8 +260,9 @@ fun CreatorsPicksSection(
                             onLongClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 menuState.show {
+                                    val songItem = resolvedSong ?: pick.toSongItem()
                                     YouTubeSongMenu(
-                                        song = pick.toSongItem(resolvedThumbnails[pick.id]),
+                                        song = songItem,
                                         navController = navController,
                                         onDismiss = menuState::dismiss
                                     )
@@ -316,7 +271,6 @@ fun CreatorsPicksSection(
                         )
                 ) {
                     Column(modifier = Modifier.padding(10.dp)) {
-                        // Square Aspect-ratio Box with zoom-crop to remove black borders
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -331,10 +285,9 @@ fun CreatorsPicksSection(
                                     .build(),
                                 contentDescription = pick.title,
                                 contentScale = ContentScale.Crop,
-                                // Scale up slightly to clip off any hardcoded YouTube black bars
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .scale(1.15f),
+                                    .scale(if (hasCleanThumbnail) 1f else 1.45f), // Crops out fallback YouTube letterboxes
                                 loading = {
                                     Box(
                                         modifier = Modifier.fillMaxSize(),
@@ -348,7 +301,6 @@ fun CreatorsPicksSection(
                                 }
                             )
 
-                            // Shading gradient
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -363,7 +315,6 @@ fun CreatorsPicksSection(
                                     )
                             )
 
-                            // Active Playing Indicator
                             if (isActive && isPlaying) {
                                 Surface(
                                     shape = CircleShape,
@@ -384,7 +335,6 @@ fun CreatorsPicksSection(
                                 }
                             }
 
-                            // Note Tag
                             if (!pick.note.isNullOrBlank()) {
                                 Surface(
                                     shape = RoundedCornerShape(8.dp),
@@ -408,54 +358,95 @@ fun CreatorsPicksSection(
 
                         Spacer(Modifier.height(10.dp))
 
-                        // Song Title
                         Text(
-                            text = pick.title,
+                            text = resolvedSong?.title ?: pick.title,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        
+
                         Spacer(Modifier.height(2.dp))
 
                         // Clickable Artist Navigation
+                        val artistName = resolvedSong?.artists?.joinToString(", ") { it.name } ?: pick.artist
+                        val artistId = resolvedSong?.artists?.firstOrNull()?.id ?: pick.artistId
+
                         Text(
-                            text = pick.artist,
+                            text = artistName,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = MaterialTheme.colorScheme.primary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(4.dp))
                                 .clickable {
-                                    val primaryArtist = pick.artist.split("&", ",", "feat.", "ft.").firstOrNull()?.trim() ?: pick.artist
-                                    coroutineScope.launch(Dispatchers.IO) {
-                                        YouTube.search(primaryArtist, YouTube.SearchFilter.FILTER_ARTIST).onSuccess { res ->
-                                            val artistItem = res.items.filterIsInstance<ArtistItem>().firstOrNull()
-                                            if (artistItem != null) {
+                                    if (!artistId.isNullOrBlank()) {
+                                        navController.navigate("artist/$artistId")
+                                    } else {
+                                        val primaryArtist = artistName.split("&", ",", "feat.", "ft.").firstOrNull()?.trim() ?: artistName
+                                        coroutineScope.launch(Dispatchers.IO) {
+                                            YouTube.search(primaryArtist, YouTube.SearchFilter.FILTER_ARTIST).onSuccess { res ->
+                                                val foundArtist = res.items.filterIsInstance<ArtistItem>().firstOrNull()
                                                 withContext(Dispatchers.Main) {
-                                                    navController.navigate("artist/${artistItem.id}")
+                                                    if (foundArtist != null) {
+                                                        navController.navigate("artist/${foundArtist.id}")
+                                                    } else {
+                                                        navController.navigate("search/${URLEncoder.encode(primaryArtist, "UTF-8")}")
+                                                    }
                                                 }
-                                            } else {
+                                            }.onFailure {
                                                 withContext(Dispatchers.Main) {
-                                                    navController.navigate("search/${java.net.URLEncoder.encode(primaryArtist, "UTF-8")}")
+                                                    navController.navigate("search/${URLEncoder.encode(primaryArtist, "UTF-8")}")
                                                 }
-                                            }
-                                        }.onFailure {
-                                            withContext(Dispatchers.Main) {
-                                                navController.navigate("search/${java.net.URLEncoder.encode(primaryArtist, "UTF-8")}")
                                             }
                                         }
                                     }
                                 }
                         )
+
+                        // Clickable Album Navigation
+                        val albumName = resolvedSong?.album?.name ?: pick.album
+                        val albumId = resolvedSong?.album?.id ?: pick.albumId
+
+                        if (!albumName.isNullOrBlank()) {
+                            Spacer(Modifier.height(2.dp))
+                            Text(
+                                text = albumName,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .clickable {
+                                        if (!albumId.isNullOrBlank()) {
+                                            navController.navigate("album/$albumId")
+                                        } else {
+                                            coroutineScope.launch(Dispatchers.IO) {
+                                                YouTube.search("$albumName $artistName", YouTube.SearchFilter.FILTER_ALBUM).onSuccess { res ->
+                                                    val foundAlbum = res.items.filterIsInstance<AlbumItem>().firstOrNull()
+                                                    withContext(Dispatchers.Main) {
+                                                        if (foundAlbum != null) {
+                                                            navController.navigate("album/${foundAlbum.id}")
+                                                        } else {
+                                                            navController.navigate("search/${URLEncoder.encode(albumName, "UTF-8")}")
+                                                        }
+                                                    }
+                                                }.onFailure {
+                                                    withContext(Dispatchers.Main) {
+                                                        navController.navigate("search/${URLEncoder.encode(albumName, "UTF-8")}")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
-
-private fun <K, V> mutableStateMapMapOf() = mutableStateMapOf<K, V>()
