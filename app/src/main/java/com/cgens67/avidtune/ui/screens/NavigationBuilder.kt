@@ -48,6 +48,7 @@ import com.cgens67.gluetune.ui.screens.settings.SettingsScreen
 import com.cgens67.gluetune.ui.screens.settings.StorageSettings
 import com.cgens67.gluetune.ui.screens.settings.ThemeCreatorScreen
 import com.cgens67.gluetune.ui.screens.settings.AlarmSettingsScreen
+import com.cgens67.gluetune.musicrecognition.MusicRecognitionScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnrememberedMutableState")
@@ -98,6 +99,10 @@ fun NavGraphBuilder.navigationBuilder(
 
     composable("apple_music_trending") {
         AppleMusicTrendingScreen(navController)
+    }
+    
+    composable("music_recognition") {
+        MusicRecognitionScreen(navController)
     }
 
     composable("equalizer") {
