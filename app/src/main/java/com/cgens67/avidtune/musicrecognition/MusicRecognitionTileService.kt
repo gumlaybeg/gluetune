@@ -42,8 +42,8 @@ class MusicRecognitionTileService : TileService() {
     private fun updateTile() {
         qsTile?.apply {
             state = Tile.STATE_INACTIVE
-            label = getString(R.string.music_recognition)
-            icon = Icon.createWithResource(this@MusicRecognitionTileService, R.drawable.mic)
+            label = "Music Recognition"
+            icon = Icon.createWithResource(this@MusicRecognitionTileService, R.drawable.gluetune_monochrome)
             updateTile()
         }
     }
